@@ -17,12 +17,21 @@ const DraftBoxCard = ({ draft }) => {
   
   const docIcon = draft.templateName?.includes('휴가') ? '🌴' : '📄';
 
+  // 첨부파일 개수 계산
+  const attachmentCount = draft.attachments?.length || 0;
+
   return (
     <div className={styles['draftbox-card']} onClick={handleCardClick}>
       {/* Left Section: 아이콘 및 양식명 */}
       <div className={styles['left-section']}>
         <span className={styles['doc-icon']}>{docIcon}</span>
         <span className={styles['template-name']}>{draft.templateName || '일반 문서'}</span>
+        {/* 첨부파일 표시 */}
+        {attachmentCount > 0 && (
+          <span className={styles['attachment-indicator']} title={`첨부파일 ${attachmentCount}개`}>
+            📎 {attachmentCount}
+          </span>
+        )}
       </div>
 
       {/* Center Section: 제목 및 정보 */}

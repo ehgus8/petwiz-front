@@ -33,6 +33,7 @@ import MyReportsList from '../pages/approval/MyReportsList';
 import ApprovalNew from '../pages/approval/ApprovalNew';
 import TemplateAdminPage from '../pages/approval/TemplateAdminPage';
 import AdminRoute from './AdminRoute';
+import RejectedBox from '../pages/approval/RejectedBox';
 
 const AppRouter = () => {
   const { user, loading } = useContext(UserContext);
@@ -63,6 +64,7 @@ const AppRouter = () => {
           <Route path='drafts' element={<DraftBoxList />} />
           <Route path='in-progress' element={<MyReportsList />} />
           <Route path='completed' element={<CompletedBox />} />
+          <Route path='rejected' element={<RejectedBox />} />
           <Route path='cc' element={<CcBox />} />
           <Route path='pending' element={<ApprovalPendingList />} />
           <Route path='reports/:reportId' element={<ApprovalDetail />} />

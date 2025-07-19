@@ -1,164 +1,91 @@
-/* 전체 페이지 래퍼 */
+/* --- 변수 정의 (Variables) --- */
+:root {
+  --primary-color: #007bff;
+  --primary-hover-color: #0056b3;
+  --text-color-primary: #212529;
+  --text-color-secondary: #6c757d;
+  --border-color: #dee2e6;
+  --background-color-light: #f8f9fa;
+  --background-color-page: #f4f6f8;
+  --danger-color: #dc3545;
+  --danger-hover-color: #c82333;
+  --white-color: #ffffff;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --border-radius: 8px;
+}
+
+/* --- 전체 페이지 레이아웃 --- */
 .formBuilderPage {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  background-color: #f4f6f8;
-  padding: 20px;
+  background-color: var(--background-color-page);
   box-sizing: border-box;
 }
 
-/* 메인 컨텐츠 영역 (좌/우 패널 포함) */
 .mainContent {
   display: flex;
   flex-grow: 1;
-  gap: 20px;
+  gap: 24px;
+  padding: 24px;
   overflow: hidden;
 }
 
-/* 좌측 패널 (양식 구조 정의) */
+/* --- 좌/우 패널 공통 스타일 --- */
+.leftPane, .rightPane {
+  background-color: var(--white-color);
+  border-radius: var(--border-radius);
+  padding: 24px;
+  overflow-y: auto;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-color);
+}
+
 .leftPane {
-  flex: 3;
-  background-color: #ffffff;
-  border-radius: 8px;
-  padding: 20px;
-  overflow-y: auto;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-
-  .fieldSection {
-    margin-bottom: 30px;
-
-    .draggableField {
-      margin-bottom: 10px;
-    }
-
-    .fieldItem {
-      background-color: #fff;
-      border: 1px solid #e8e8e8;
-      border-radius: 8px;
-      padding: 15px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      cursor: grab;
-
-      &:hover {
-        border-color: #1890ff;
-      }
-    }
-
-    .fieldHeader {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .fieldName {
-      font-weight: 500;
-      color: #333;
-    }
-
-    .fieldDesc {
-      font-size: 12px;
-      color: #888;
-      margin-top: 4px;
-    }
-
-    .fieldControls {
-      display: flex;
-      gap: 10px;
-
-      .controlButton {
-        background: none;
-        border: 1px solid #d9d9d9;
-        padding: 4px 10px;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 13px;
-        transition: all 0.2s;
-
-        &:hover {
-          background-color: #f5f5f5;
-          border-color: #1890ff;
-          color: #1890ff;
-        }
-
-        &.danger {
-          &:hover {
-            border-color: #ff4d4f;
-            color: #ff4d4f;
-          }
-        }
-      }
-    }
-
-    .addButton {
-      width: 100%;
-      padding: 12px;
-      background-color: #f7f7f7;
-      border: 1px dashed #d9d9d9;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 14px;
-      color: #555;
-      transition: all 0.2s;
-
-      &:hover {
-        background-color: #e6f7ff;
-        border-color: #1890ff;
-        color: #1890ff;
-      }
-    }
-  }
+  flex: 3; // 더 넓게
 }
 
-/* 우측 패널 (설정 및 라이브러리) */
 .rightPane {
-  flex: 1;
-  background-color: #ffffff;
-  border-radius: 8px;
-  padding: 20px;
-  overflow-y: auto;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  flex: 2; // 조금 좁게
 }
 
-/* 섹션 제목 스타일 */
+/* --- 섹션 공통 스타일 --- */
+.fieldSection, .settingSection {
+  margin-bottom: 32px;
+}
+
 .sectionTitle {
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   font-weight: 600;
-  margin-bottom: 15px;
-  padding-bottom: 10px;
-  border-bottom: 2px solid #e9ecef;
-  color: #333;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-color-primary);
 }
 
-/* 필드 섹션 (e.g., 등록된 입력 정보) */
-.fieldSection {
-  margin-bottom: 30px;
+/* --- 필드 아이템 (DraggableField 포함) --- */
+.draggableField {
+  margin-bottom: 12px;
 }
 
-/* 개별 필드 아이템 */
 .fieldItem {
-  background-color: #fdfdfd;
-  border: 1px solid #e9ecef;
+  background-color: var(--white-color);
+  border: 1px solid var(--border-color);
   border-radius: 6px;
-  padding: 15px;
-  margin-bottom: 10px;
+  padding: 16px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   transition: all 0.2s ease-in-out;
+  cursor: grab;
 
-  &.disabled {
-    background-color: #f1f3f5;
-    color: #adb5bd;
+  &:hover {
+    border-color: var(--primary-color);
+    box-shadow: var(--shadow-sm);
   }
 }
 
-.draggableField {
-  cursor: grab;
-}
-
-/* 필드 헤더 (이름, 설명) */
 .fieldHeader {
   display: flex;
   flex-direction: column;
@@ -166,202 +93,152 @@
 
 .fieldName {
   font-weight: 500;
-  color: #495057;
+  color: var(--text-color-primary);
 }
 
 .fieldDesc {
-  font-size: 0.85rem;
-  color: #868e96;
+  font-size: 0.8rem;
+  color: var(--text-color-secondary);
   margin-top: 4px;
 }
 
-/* 필드 컨트롤 (버튼, 토글) */
 .fieldControls {
   display: flex;
-  align-items: center;
-  gap: 15px;
+  gap: 8px;
 }
 
 .controlButton {
-  background-color: #e9ecef;
-  border: none;
+  background: none;
+  border: 1px solid var(--border-color);
+  padding: 5px 12px;
   border-radius: 4px;
-  padding: 6px 12px;
-  font-size: 0.9rem;
   cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-color-secondary);
+  transition: all 0.2s;
+
   &:hover {
-    background-color: #dee2e6;
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    background-color: rgba(0, 123, 255, 0.05);
+  }
+
+  &.danger {
+    &:hover {
+      border-color: var(--danger-color);
+      color: var(--danger-color);
+      background-color: rgba(220, 53, 69, 0.05);
+    }
   }
 }
 
 .addButton {
   width: 100%;
-  padding: 10px;
-  background-color: #007bff;
-  color: white;
-  border: none;
+  padding: 12px;
+  background-color: var(--white-color);
+  border: 1px dashed var(--border-color);
   border-radius: 6px;
   cursor: pointer;
-  font-size: 1rem;
-  margin-top: 10px;
+  font-size: 0.9rem;
+  color: var(--text-color-secondary);
+  transition: all 0.2s;
 
   &:hover {
-    background-color: #0056b3;
+    background-color: rgba(0, 123, 255, 0.05);
+    border-color: var(--primary-color);
+    color: var(--primary-color);
   }
 }
 
-
-/* 토글 그룹 (라벨 + 스위치) */
-.toggleGroup {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.9rem;
-}
-
-/* 커스텀 토글 스위치 */
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 40px;
-  height: 22px;
-
-  input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-  }
-
-  .slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #ccc;
-    transition: .4s;
-    border-radius: 22px;
-
-    &:before {
-      position: absolute;
-      content: "";
-      height: 16px;
-      width: 16px;
-      left: 3px;
-      bottom: 3px;
-      background-color: white;
-      transition: .4s;
-      border-radius: 50%;
-    }
-  }
-
-  input:checked + .slider {
-    background-color: #2196F3;
-  }
-  
-  input:checked + .slider:before {
-    transform: translateX(18px);
-  }
-}
-
-/* 우측 패널 설정 섹션 */
-.settingSection {
-  margin-bottom: 25px;
-}
-
+/* --- 우측 패널 폼 요소 --- */
 .formGroup {
-  margin-bottom: 15px;
+  margin-bottom: 16px;
 
   label {
     display: block;
     font-weight: 500;
-    margin-bottom: 5px;
-    font-size: 0.95rem;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+    color: var(--text-color-primary);
   }
 
   input[type="text"],
   textarea,
   select {
     width: 100%;
-    padding: 8px;
-    border: 1px solid #ced4da;
+    padding: 10px 12px;
+    border: 1px solid var(--border-color);
     border-radius: 4px;
     box-sizing: border-box;
+    font-size: 0.9rem;
+    transition: border-color 0.2s;
+
+    &:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
+    }
   }
   
   textarea {
     resize: vertical;
-    min-height: 80px;
+    min-height: 100px;
   }
 
+  // 라디오 버튼 그룹 스타일
   div {
     display: flex;
-    gap: 10px;
+    gap: 20px;
     align-items: center;
+
+    label {
+      margin-bottom: 0;
+      font-weight: 400;
+      cursor: pointer;
+    }
+
+    input[type="radio"] {
+      margin-right: 5px;
+    }
   }
 }
 
-
-/* 컴포넌트 라이브러리 */
-.componentLibrary {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-}
-
-.componentButton {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 12px;
-  border-radius: 6px;
-  background-color: #f8f9fa;
-  border: 1px solid #dee2e6;
-  cursor: pointer;
-  font-size: 0.9rem;
-  font-weight: 500;
-  transition: all 0.2s ease-in-out;
-
-  &:hover {
-    background-color: #e9ecef;
-    border-color: #adb5bd;
-    color: #007bff;
-  }
-}
-
-/* 페이지 하단 푸터 */
+/* --- 페이지 하단 푸터 --- */
 .footer {
   flex-shrink: 0;
   display: flex;
   justify-content: flex-end;
-  gap: 10px;
-  padding: 15px 20px;
-  background-color: #ffffff;
-  border-top: 1px solid #e9ecef;
-  border-radius: 0 0 8px 8px;
-  margin-top: -8px; /* to align with bottom of panes */
-  box-shadow: 0 -2px 4px rgba(0,0,0,0.05);
+  gap: 12px;
+  padding: 16px 24px;
+  background-color: var(--white-color);
+  border-top: 1px solid var(--border-color);
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.05);
 }
 
 .cancelButton, .saveButton {
-  padding: 10px 20px;
+  padding: 10px 24px;
   border-radius: 6px;
-  border: none;
-  font-size: 1rem;
+  border: 1px solid transparent;
+  font-size: 0.95rem;
   font-weight: 500;
   cursor: pointer;
+  transition: all 0.2s;
 }
 
 .cancelButton {
-  background-color: #6c757d;
-  color: white;
-  &:hover { background-color: #5a6268; }
+  background-color: var(--white-color);
+  color: var(--text-color-secondary);
+  border-color: var(--border-color);
+  &:hover {
+    background-color: var(--background-color-light);
+  }
 }
 
 .saveButton {
-  background-color: #007bff;
-  color: white;
-  &:hover { background-color: #0056b3; }
-} 
+  background-color: var(--primary-color);
+  color: var(--white-color);
+  &:hover {
+    background-color: var(--primary-hover-color);
+  }
+}

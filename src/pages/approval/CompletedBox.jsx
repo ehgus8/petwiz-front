@@ -14,43 +14,25 @@ const CompletedBox = () => {
       setLoading(true);
       setError(null);
       try {
-        // 내가 '기안자' 또는 '결재자'인 모든 완료/반려 문서를 가져오기 위해 4번의 호출을 동시에 실행
+        // 내가 '기안자' 또는 '결재자'인 '승인 완료'된 문서만 가져오도록 수정
         const responses = await Promise.all([
-          // 내가 기안한 문서
+          // 1. 내가 기안한 승인 문서
           axiosInstance.get(`${API_BASE_URL}${APPROVAL_SERVICE}/reports`, {
-            params: { role: 'writer', status: 'APPROVED', page: 0, size: 10 },
+            params: { role: 'writer', status: 'APPROVED', page: 0, size: 20 },
           }),
+          // 2. 내가 결재한 승인 문서
           axiosInstance.get(`${API_BASE_URL}${APPROVAL_SERVICE}/reports`, {
-            params: { role: 'writer', status: 'REJECTED', page: 0, size: 10 },
-          }),
-          // 내가 결재한 문서
-          axiosInstance.get(`${API_BASE_URL}${APPROVAL_SERVICE}/reports`, {
-            params: { role: 'approver', status: 'APPROVED', page: 0, size: 10 },
-          }),
-          axiosInstance.get(`${API_BASE_URL}${APPROVAL_SERVICE}/reports`, {
-            params: { role: 'approver', status: 'REJECTED', page: 0, size: 10 },
+            params: { role: 'approver', status: 'APPROVED', page: 0, size: 20 },
           }),
         ]);
 
-        console.log('--- 완료 문서함 API 원본 응답 ---', responses.map(r => r.data));
-
         const allDocs = responses.flatMap(res => res.data.result?.reports || []);
 
-        // 모든 결과를 합치고 중복을 제거한 뒤, 최신순으로 정렬합니다.
+        // 중복 제거 후 최신순으로 정렬
         const uniqueDocs = Array.from(new Map(allDocs.map(doc => [doc.id, doc])).values());
-        
-        console.log('--- 화면에 표시될 최종 완료 문서 ---', uniqueDocs);
+        uniqueDocs.sort((a, b) => new Date(b.createdAt || b.reportCreatedAt) - new Date(a.createdAt || a.reportCreatedAt));
 
-        // --- 프론트엔드 방어 코드 ---
-        // 백엔드가 status 파라미터를 무시하고 다른 상태의 문서를 보내는 버그에 대한 임시 대응
-        const trulyCompletedDocs = uniqueDocs.filter(
-          doc => doc.reportStatus === 'APPROVED' || doc.reportStatus === 'REJECTED'
-        );
-        console.log('--- 백엔드 버그 필터링 후 최종 문서 ---', trulyCompletedDocs);
-        
-        trulyCompletedDocs.sort((a, b) => new Date(b.createdAt || b.reportCreatedAt) - new Date(a.createdAt || a.reportCreatedAt));
-
-        setCompletedDocs(trulyCompletedDocs);
+        setCompletedDocs(uniqueDocs);
       } catch (err) {
         console.error('완료 문서를 불러오는 중 오류 발생:', err.response?.data || err);
         setError('완료된 문서를 불러오는 데 실패했습니다.');
@@ -63,23 +45,25 @@ const CompletedBox = () => {
   }, []);
 
   return (
-    <div className={styles.reportList}>
+    <div className={styles.reportListContainer}> {/* reportList -> reportListContainer로 변경하여 h3와 list를 감쌈 */}
       <h3 className={styles.sectionTitle}>완료 문서함</h3>
-      {loading && <p>로딩 중...</p>}
-      {error && <p className={styles.error}>{error}</p>}
-      {!loading && !error && completedDocs.length > 0 ? (
-        completedDocs.map((doc) => <DraftBoxCard key={doc.id} draft={doc} />)
-      ) : (
-        !loading &&
-        !error && (
-          <div className={styles.noReports}>
-            <div className={styles.noReportsIcon}>🗂️</div>
-            <p>완료된 문서가 없습니다.</p>
-          </div>
-        )
-      )}
+      <div className={styles.reportList}>
+        {loading && <p>로딩 중...</p>}
+        {error && <p className={styles.error}>{error}</p>}
+        {!loading && !error && completedDocs.length > 0 ? (
+          completedDocs.map((doc) => <DraftBoxCard key={doc.id} draft={doc} />)
+        ) : (
+          !loading &&
+          !error && (
+            <div className={styles.noReports}>
+              <div className={styles.noReportsIcon}>🗂️</div>
+              <p>완료된 문서가 없습니다.</p>
+            </div>
+          )
+        )}
+      </div>
     </div>
   );
 };
 
-export default CompletedBox; 
+export default CompletedBox;

@@ -172,11 +172,15 @@ const TemplateForm = () => {
   };
 
   const handleAddFieldSelection = (type) => {
-    setIsAddFieldModalOpen(false);
+    setIsAddFieldModalOpen(false); // 모달 닫기
+    
     if (type === 'custom') {
-      handleOpenCustomFieldModal(null); // Open custom field modal for creation
+      // '새 항목 직접 만들기'를 선택한 경우, 기존의 커스텀 필드 생성 모달을 엽니다.
+      handleOpenCustomFieldModal(null);
+    } else {
+      // 기본 컴포넌트(text, date 등)를 선택한 경우, 해당 컴포넌트를 바로 필드에 추가합니다.
+      addComponentFromLibrary(type);
     }
-    // Handle 'basic' type later
   };
 
   const handleOpenCustomFieldModal = (field = null) => {
@@ -214,15 +218,18 @@ const TemplateForm = () => {
     });
   }, []);
 
-  const addComponentFromLibrary = (component) => {
+  const addComponentFromLibrary = (componentType) => {
+    // componentLibrary에서 선택된 타입에 맞는 정보를 찾습니다.
+    const component = componentLibrary.find(c => c.id === componentType);
+    if (!component) return;
+
     const newField = { 
       id: `custom_${Date.now()}`, 
-      libraryId: component.id, // Link to library
-      type: component.id.split('_')[0], // text, date etc.
+      libraryId: component.id,
+      type: component.id, // type을 libraryId와 동일하게 설정 (예: 'text', 'date_ymd')
       header: component.name, 
       description: '',
       required: false,
-      // ...other default properties from Modal 3
     };
     setCustomFields(prev => [...prev, newField]);
   };
@@ -358,19 +365,7 @@ const TemplateForm = () => {
               </div>
             <div className={styles.formGroup}><label>양식설명</label><textarea value={description} onChange={e => setDescription(e.target.value)} /></div>
                   </div>
-        
-        {/* C. Component Library */}
-        <div className={styles.settingSection}>
-            <h3 className={styles.sectionTitle}>기본 정보블록 선택</h3>
-            <div className={styles.componentLibrary}>
-            {componentLibrary.map(comp => (
-                <button key={comp.id} className={styles.componentButton} onClick={() => addComponentFromLibrary(comp)}>
-                    {/* Icon can be added here */}
-                    <span>{comp.name}</span>
-                </button>
-                ))}
-              </div>
-            </div>
+      
       </div>
     );
 

@@ -1,169 +1,222 @@
+
 .modalOverlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.6);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-  }
-  
-  .modalContent {
-    background-color: #fff;
-    border-radius: 12px;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-    width: 700px;
-    max-width: 95%;
-    display: flex;
-    flex-direction: column;
-    max-height: 80vh;
-  }
-  
-  .modalHeader {
-    padding: 20px 30px;
-    border-bottom: 1px solid #eee;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  .modalHeader h3 {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modalContent {
+  background: white;
+  border-radius: 8px;
+  width: 900px;
+  max-width: 95vw;
+  height: 80vh;
+  max-height: 700px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.modalHeader {
+  padding: 16px 24px;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  h3 {
     margin: 0;
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 600;
   }
-  
+
   .closeButton {
     background: none;
     border: none;
     font-size: 28px;
+    font-weight: 300;
     cursor: pointer;
-    color: #888;
+    color: #718096;
+    line-height: 1;
   }
-  
-  .modalBody {
-    padding: 20px;
-    max-height: 60vh;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .infoText {
-    margin-bottom: 15px;
+}
+
+.modalBody {
+  padding: 24px;
+  overflow-y: auto;
+  flex-grow: 1;
+
+  .sectionHeader {
+    margin-bottom: 16px;
+    h4 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
     p {
+      font-size: 13px;
+      color: #718096;
       margin: 0;
-      font-size: 14px;
-      color: #666;
     }
   }
-  
-  .searchBar {
-    margin-bottom: 15px;
-    input {
-      width: 100%;
-      padding: 12px 15px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      font-size: 15px;
-    }
-  }
-  
-  .mainContainer {
+}
+
+.selectedSection {
+  margin-bottom: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #e2e8f0;
+
+  .selectedList {
     display: flex;
-    flex-grow: 1;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    overflow: hidden;
-    min-height: 40vh;
+    flex-wrap: wrap;
+    gap: 10px;
+    min-height: 42px;
+    padding: 12px;
+    border: 1px dashed #cbd5e0;
+    border-radius: 6px;
   }
-  
-  .sidebar {
-    width: 180px;
-    background-color: #f9f9f9;
-    border-right: 1px solid #ddd;
-    overflow-y: auto;
-  }
-  
-  .categoryList {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  
-    li {
-      padding: 12px 15px;
+  .selectedItem {
+    display: inline-flex;
+    align-items: center;
+    background-color: #e9ecef;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #495057;
+    
+    button {
+      background: none;
+      border: none;
+      margin-left: 8px;
       cursor: pointer;
-      font-size: 14px;
-      border-bottom: 1px solid #eee;
-  
+      font-size: 16px;
+      color: #868e96;
+      padding: 0;
+      line-height: 1;
       &:hover {
-        background-color: #f0f0f0;
-      }
-  
-      &.active {
-        background-color: #e0eaf6;
-        font-weight: bold;
-        color: #0056b3;
+        color: #343a40;
       }
     }
   }
-  
-  .templateSelection {
-    flex-grow: 1;
-    padding: 15px;
+}
+
+.selectionSection {
+  .sectionHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .searchBar input {
+    width: 280px;
+    padding: 8px 12px;
+    border: 1px solid #cbd5e0;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+
+  .templateGrid {
+    margin-top: 16px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 16px;
+  }
+
+  .templateItem {
     display: flex;
     flex-direction: column;
-  }
-  
-  .templateList {
-    flex-grow: 1;
-    overflow-y: auto;
-    padding-right: 10px; /* For scrollbar */
-  }
-  
-  .templateItem {
-    padding: 8px 0;
-    border-bottom: 1px solid #f0f0f0;
-    
-    label {
+    align-items: center;
+    justify-content: center;
+    padding: 16px 8px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    cursor: pointer;
+    background-color: #f8f9fa;
+    position: relative;
+    transition: all 0.2s ease-in-out;
+    min-height: 100px;
+
+    &:hover {
+      border-color: #4299e1;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+
+    &.selected {
+      border-color: #3182ce;
+      background-color: #ebf8ff;
+      .itemTitle {
+        font-weight: 600;
+        color: #2c5282;
+      }
+      .itemActionIcon .icon {
+        color: #3182ce;
+      }
+      .itemIcon svg path {
+         stroke: #3182ce;
+      }
+    }
+
+    .itemIcon {
+      margin-bottom: 12px;
+    }
+
+    .itemTitle {
+      font-size: 14px;
+      text-align: center;
+      color: #4a5568;
+    }
+
+    .itemActionIcon {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
       display: flex;
       align-items: center;
-      gap: 10px;
-      cursor: pointer;
-      font-size: 15px;
-  
-      input {
-        margin-right: 10px;
-      }
+      justify-content: center;
+      font-weight: bold;
+      color: #a0aec0;
+      background-color: rgba(255,255,255,0.5);
     }
   }
-  
-  .modalFooter {
-    padding: 15px 20px;
-    border-top: 1px solid #eee;
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-  }
-  
-  .cancelButton, .saveButton {
+}
+
+.modalFooter {
+  padding: 16px 24px;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  background-color: #f7fafc;
+
+  button {
     padding: 10px 20px;
     border-radius: 6px;
-    border: none;
-    font-size: 16px;
-    font-weight: 500;
+    border: 1px solid transparent;
     cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
   }
-  
+
   .cancelButton {
-    background-color: #f1f3f5;
-    color: #555;
+    background-color: white;
+    color: #4a5568;
+    border-color: #e2e8f0;
   }
-  
+
   .saveButton {
-    background-color: #007bff;
-    color: #fff;
-  } 
+    background-color: #3182ce;
+    color: white;
+  }
+}

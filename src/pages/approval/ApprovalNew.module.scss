@@ -154,6 +154,21 @@
   }
 }
 
+.formInput {
+  width: 98%;
+  padding: 6px 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  font-family: inherit;
+  
+  &:focus {
+    outline: none;
+    border-color: #4a7ae5;
+    box-shadow: 0 0 0 2px rgba(74, 122, 229, 0.25);
+  }
+}
+
 .approvalFormTable {
   width: 100%;
   border-collapse: collapse;
@@ -197,6 +212,8 @@
   }
 }
 
+
+
 .section {
     margin-top: 2rem;
     h3 {
@@ -239,5 +256,102 @@
 
   &:hover {
     color: #343a40;
+  }
+}
+
+// 파일 업로드 관련 스타일 추가
+.fileUploadArea {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.fileInput {
+  display: none;
+}
+
+.fileUploadButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background-color: #4a7ae5;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #3d6bd9;
+  }
+}
+
+.fileUploadHint {
+  font-size: 12px;
+  color: #666;
+}
+
+.selectedFilesSection,
+.existingFilesSection {
+  margin-top: 16px;
+  padding: 12px;
+  background-color: #f8f9fa;
+  border-radius: 6px;
+  border: 1px solid #e9ecef;
+
+  h4 {
+    margin: 0 0 12px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+  }
+}
+
+.fileList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fileItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background-color: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+.fileName {
+  flex: 1;
+  font-weight: 500;
+  color: #333;
+  margin-right: 8px;
+}
+
+.fileSize {
+  color: #666;
+  font-size: 12px;
+  margin-right: 8px;
+}
+
+.removeFileButton {
+  background: none;
+  border: none;
+  color: #dc3545;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 2px 6px;
+  border-radius: 3px;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #ffe8e8;
   }
 } 

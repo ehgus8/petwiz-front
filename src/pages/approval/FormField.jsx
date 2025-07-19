@@ -64,7 +64,7 @@ const FormField = ({ field, value, onChange }) => {
   return (
     <tr>
       <th>
-        {field.header}
+        {field.header || field.label}
         {field.required && <span className={styles.required}>*</span>}
       </th>
       <td>{renderField()}</td>

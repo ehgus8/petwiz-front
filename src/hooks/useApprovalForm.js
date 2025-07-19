@@ -29,28 +29,58 @@ export const useApprovalForm = (templateId, reportId) => {
       setError(null);
 
       try {
-        const params = {};
+        let url;
+        let params = {};
+        
         if (reportId) {
-          params.reportId = reportId;
-        } else if (templateId) {
-          params.templateId = templateId;
+          // 기존 문서 수정: 상세 조회 API 사용
+          url = `${API_BASE_URL}${APPROVAL_SERVICE}/reports/${reportId}`;
+        } else {
+          // 새 문서 작성: 템플릿 조회 API 사용
+          url = `${API_BASE_URL}${APPROVAL_SERVICE}/form`;
+          if (templateId) {
+            params.templateId = templateId;
+          }
         }
         
-        const res = await axiosInstance.get(
-          `${API_BASE_URL}${APPROVAL_SERVICE}/form`,
-          { params },
-        );
+        const res = await axiosInstance.get(url, { params });
 
         console.log(`%c[3단계: API 응답]`, 'color: orange; font-weight: bold;', res.data.result);
 
         if (res.data && res.data.statusCode === 200) {
-          const { template, formData, approvalLine, attachments, references } = res.data.result; // 'data' -> 'result'
+          const result = res.data.result;
           
-          setTemplate(template);
-          setFormData(formData || {}); 
-          setApprovalLine(approvalLine || []);
-          setReferences(references || []); // 참조자 상태 설정
-          setAttachments(attachments || []);
+          console.log(`%c[3-1단계: 백엔드 응답 데이터]`, 'color: cyan; font-weight: bold;', {
+            template: result.template,
+            formData: result.formData,
+            approvalLine: result.approvalLine,
+            references: result.references,
+            attachments: result.attachments
+          });
+          
+          // 기존 문서 수정 시 데이터 매핑
+          if (reportId) {
+            // 백엔드 응답 구조에 따라 데이터 매핑
+            const mappedFormData = result.formData || {
+              title: result.title || '',
+              content: result.content || '',
+              ...result.reportTemplateData ? JSON.parse(result.reportTemplateData) : {}
+            };
+            
+            setTemplate(result.template || null);
+            setFormData(mappedFormData);
+            setApprovalLine(result.approvalLine || []);
+            setReferences(result.references || []);
+            setAttachments(result.attachments || []);
+          } else {
+            // 새 문서 작성 시 기존 로직
+            const { template, formData, approvalLine, attachments, references } = result;
+            setTemplate(template);
+            setFormData(formData || {});
+            setApprovalLine(approvalLine || []);
+            setReferences(references || []);
+            setAttachments(attachments || []);
+          }
         } else {
           throw new Error(
             res.data.statusMessage || '결재 양식 데이터를 불러오는 데 실패했습니다.', // 'message' -> 'statusMessage'

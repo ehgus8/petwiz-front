@@ -36,6 +36,16 @@
   color: #333;
 }
 
+.attachment-indicator {
+  font-size: 12px;
+  color: #666;
+  background-color: #f8f9fa;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid #e9ecef;
+  white-space: nowrap;
+}
+
 .center-section {
   flex-grow: 1;
   min-width: 0;

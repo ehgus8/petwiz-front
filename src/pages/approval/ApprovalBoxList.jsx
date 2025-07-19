@@ -132,7 +132,15 @@ const ApprovalBoxList = () => {
                     onClick={() => navigate(`/approval/reports/${report.id}`)}
                   >
                     <div className={styles.itemCell} style={{ flex: 3 }}>
-                      {report.title}
+                      <div className={styles.titleContainer}>
+                        <span className={styles.title}>{report.title}</span>
+                        {/* 첨부파일 표시 */}
+                        {report.attachments && report.attachments.length > 0 && (
+                          <span className={styles.attachmentBadge} title={`첨부파일 ${report.attachments.length}개`}>
+                            📎 {report.attachments.length}
+                          </span>
+                        )}
+                      </div>
                     </div>
                     <div className={styles.itemCell} style={{ flex: 1 }}>
                       {report.name || '정보 없음'}

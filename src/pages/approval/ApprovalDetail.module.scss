@@ -198,3 +198,23 @@
   color: #6c757d;
 }
 .error { color: #dc3545; } 
+// ApprovalDetail.module.scss 에 추가할 예시 스타일
+
+.imageGallery {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+}
+
+.imageWrapper {
+  margin-bottom: 15px;
+  max-width: 100%;
+}
+
+.attachedImage {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  background-color: #f9f9f9;
+}
