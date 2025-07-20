@@ -1,3 +1,6 @@
+# DCT(Dreams Come True) - HRHub
+
+> **"DCT(Dreams Come True) 팀의 HRHub 프로젝트는 사내 업무의 혁신과 효율을 목표로 합니다."**
 ## 👥 Team Members
 
 | [<img src="https://avatars.githubusercontent.com/kimjiwon0450" width="70" style="border-radius:50%;">](https://github.com/kimjiwon0450) | [<img src="https://avatars.githubusercontent.com/wlsgh147258" width="70" style="border-radius:50%;">](https://github.com/wlsgh147258) | [<img src="https://avatars.githubusercontent.com/ehgus8" width="70" style="border-radius:50%;">](https://github.com/ehgus8) | [<img src="https://avatars.githubusercontent.com/Petrushhka" width="70" style="border-radius:50%;">](https://github.com/Petrushhka) |
@@ -8,8 +11,9 @@
 
 ## 1.1 목적
 
-본 시스템은 패션 관련 회사의 내부 업무 효율화와 정보 통합을 위해,
-직원, 공지, 전자결재 등 사내 핵심 업무를 디지털화한 ERP 플랫폼이다.
+본 시스템은 DCT(Dreams Come True) 팀이 개발한 사내 ERP 플랫폼, **HRHub**입니다.  
+패션 관련 회사의 내부 업무 효율화와 정보 통합을 위해, 직원, 공지, 전자결재 등  
+사내 핵심 업무를 디지털화하는 것을 목표로 하고 있습니다.
 
 ## 1.2 개발 범위
 
