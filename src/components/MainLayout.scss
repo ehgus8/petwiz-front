@@ -1,0 +1,395 @@
+$accent: #3b82f6; // 메인 포인트 컬러 (초록)
+$sidebar-bg: #fff;
+$sidebar-shadow: 0 2px 16px 0 rgba(44, 62, 80, 0.07);
+$main-bg: #f6f8fb;
+$header-bg: #fff;
+$header-shadow: 0 2px 8px 0 rgba(44, 62, 80, 0.06);
+$border: #eceff3;
+
+.layout {
+  display: flex;
+  min-height: 100vh;
+  background: $main-bg;
+  animation: fadeIn 0.8s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.sidebar {
+  width: 170px;
+  min-width: 170px;
+  max-width: 170px;
+  background: $sidebar-bg;
+  box-shadow: $sidebar-shadow;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem 1rem 1.5rem 1rem;
+  border-right: 1px solid $border;
+  z-index: 100;
+  position: sticky;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  transition: none !important;
+  transform: none !important;
+  margin: 0 !important;
+  animation: slideInLeft 0.6s ease-out;
+
+  .logo {
+    margin-bottom: 0;
+    img {
+      height: 7.5rem;
+      filter: drop-shadow(0 2px 6px rgba(44, 62, 80, 0.1));
+      user-select: none;
+      transition: transform 0.3s ease;
+
+      &:hover {
+        transform: scale(1.05);
+      }
+    }
+  }
+
+  .nav {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    a {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+
+      .menu-icon {
+        font-size: 1.2rem;
+        transition: transform 0.2s ease;
+      }
+
+      padding: 0.85rem 1rem;
+      border-radius: 1rem;
+      color: #384048;
+      font-weight: 500;
+      text-decoration: none;
+      transition:
+        background 0.16s,
+        color 0.16s,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+      letter-spacing: 0.01em;
+
+      &:hover,
+      &.active {
+        background: $accent;
+        color: #fff;
+        font-weight: 700;
+        box-shadow: 0 2px 8px 0 rgba(53, 196, 91, 0.07);
+        transform: translateX(4px);
+
+        .menu-icon {
+          transform: scale(1.1);
+        }
+      }
+    }
+  }
+}
+
+// 사이드바 내부 메뉴/버튼/로고/아이콘도 꿀렁거림 제거
+.sidebar .nav, .sidebar .logo, .sidebar button, .sidebar .menu-icon {
+  transition: none !important;
+  transform: none !important;
+  margin: 0 !important;
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  animation: slideInRight 0.6s ease-out;
+
+  .header {
+    background: $header-bg;
+    box-shadow: $header-shadow;
+    border-bottom: 1px solid $border;
+    // border-radius: 0 0 1.5rem 1.5rem;
+    padding: 1.2rem 2rem 1.2rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    animation: slideInDown 0.8s ease-out;
+
+    .menu {
+      display: flex;
+      gap: 1.7rem;
+
+      a {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #384048;
+        font-weight: 600;
+        font-size: 1.05rem;
+        text-decoration: none;
+        border-radius: 0.8rem;
+        padding: 0.4rem 1rem;
+        transition: all 0.2s ease;
+
+        &:hover {
+          transform: translateY(-2px);
+        }
+
+        &:hover,
+        &.active {
+          background: $accent;
+          color: #fff;
+        }
+      }
+    }
+
+    .logout-btn {
+      background: $accent;
+      color: #fff;
+      border: none;
+      border-radius: 1rem;
+      font-size: 1.04rem;
+      padding: 0.55rem 1.35rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      box-shadow: 0 1px 4px rgba(53, 196, 91, 0.08);
+      cursor: pointer;
+      transition: background 0.16s;
+
+      &:hover {
+        background: darken($accent, 8%);
+      }
+    }
+  }
+
+  .content {
+    flex: 1;
+    padding: 2.2rem 2.6rem 2rem 2.6rem;
+    background: $main-bg;
+    min-height: 0;
+    border-radius: 1.2rem;
+    margin: 1.3rem;
+    box-shadow: 0 2px 12px 0 rgba(44, 62, 80, 0.08);
+    overflow-x: auto;
+
+    // 스크롤바 커스텀(크롬계열)
+    &::-webkit-scrollbar {
+      width: 7px;
+      height: 7px;
+      background: transparent;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: #dbeafe;
+      border-radius: 4px;
+    }
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// 반응형 최소
+@media (max-width: 900px) {
+  .sidebar {
+    width: 60px;
+    .logo {
+      display: none;
+    }
+    .nav a {
+      justify-content: center;
+      padding: 0.85rem 1rem;
+
+      .menu-label {
+        display: none;
+      }
+    }
+  }
+  .main .content {
+    padding: 1rem;
+    margin: 1rem 0.5rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .sidebar {
+    display: none;
+  }
+  .main .header {
+    padding: 0.8rem 1rem;
+    border-radius: 0;
+  }
+  .main .content {
+    padding: 0.7rem;
+    border-radius: 0.7rem;
+    margin: 0.7rem 0.2rem;
+  }
+}
+
+.notice-icon {
+  position: relative;
+  cursor: pointer;
+  padding: 0 10px;
+  font-size: 16px;
+  margin-right: 16px;
+
+  .badge {
+    padding: 2px 6px;
+    font-size: 12px;
+    position: absolute;
+    top: -8px;
+    right: -12px;
+    background-color: red;
+    color: white;
+    font-weight: bold;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 18px;
+  }
+}
+
+// 챗봇 플로팅 버튼
+.chatbot-fab {
+  position: fixed;
+  right: 2.5rem;
+  bottom: 2.5rem;
+  z-index: 1000;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: #2b80ff;
+  color: #fff;
+  border: none;
+  box-shadow: 0 4px 16px rgba(30, 65, 112, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  cursor: pointer;
+  transition: background 0.18s;
+}
+.chatbot-fab:hover {
+  background: #1d5bbf;
+}
+
+// 챗봇 팝업 위치
+.chatbot-popup {
+  position: fixed;
+  right: 2.5rem;
+  bottom: 6.5rem;
+  z-index: 1001;
+  box-shadow: 0 8px 32px rgba(30, 65, 112, 0.18);
+}
+
+@media (max-width: 600px) {
+  .chatbot-fab {
+    right: 1rem;
+    bottom: 1rem;
+    width: 48px;
+    height: 48px;
+    font-size: 1.5rem;
+  }
+  .chatbot-popup {
+    right: 1rem;
+    bottom: 5.5rem;
+    max-width: 95vw;
+  }
+}
+
+@media print {
+  /* 1. 불필요한 모든 UI 요소를 확실하게 숨깁니다. */
+  .sidebar,
+  .main .header,
+  .buttonGroup,
+  .resubmitBtn,
+  .chatbot-fab,
+  .logout-btn,
+  .notice-icon {
+    display: none !important;
+  }
+
+  /* 2. 유령 공간을 만드는 부모 레이아웃의 스타일을 완전히 초기화합니다. */
+  body, html, .layout, .main {
+    display: block !important;
+    width: auto !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    background: #fff !important;
+    overflow: visible !important;
+  }
+  
+  /* 3. 실제 인쇄될 컨텐츠 영역만 보이도록 최종 조정합니다. */
+  .content {
+    margin: 0 !important;
+    padding: 20mm !important;
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    width: 100% !important;
+    float: none !important;
+    position: static !important;
+    overflow: visible !important;
+  }
+
+  /* 4. 이미지, 테이블 등이 페이지를 넘어가지 않도록 설정합니다. */
+  img, table {
+    max-width: 100% !important;
+    page-break-inside: avoid;
+  }
+
+  /* 5. 모든 텍스트 색상을 검은색으로 강제합니다. */
+  * {
+    color: #000 !important;
+  }
+}

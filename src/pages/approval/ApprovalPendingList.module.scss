@@ -1,0 +1,60 @@
+.container {
+  padding: 24px;
+  background-color: #fff;
+  border-radius: 12px;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.sectionTitle {
+    font-size: 24px;
+    font-weight: 700;
+    color: #222;
+    margin-bottom: 28px;
+  }
+
+.filterRow, .filterGroup {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 20px;
+  align-items: center;
+}
+
+.resultInfo {
+  background: #e3f2fd;
+  color: #1976d2;
+  padding: 12px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 16px;
+  border-left: 4px solid #2196f3;
+}
+
+.list, .reportList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.error, .noReports {
+  text-align: center;
+  padding: 40px;
+  color: #888;
+}
+
+.noReports {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 0;
+  text-align: center;
+  color: #888;
+}
+
+.noReportsIcon {
+  font-size: 48px;
+  margin-bottom: 10px;
+  color: #ccc;
+} 

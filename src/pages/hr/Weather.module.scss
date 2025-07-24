@@ -1,0 +1,67 @@
+.weatherWidget {
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  font-family: 'pretendard', sans-serif;
+  color: #333;
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.weatherWidget.error {
+  color: #d32f2f;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 16px;
+}
+
+.header h3 {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.header p {
+  font-size: 16px;
+  font-weight: 500;
+  color: #666;
+  margin: 0;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.weatherIcon {
+  width: 80px;
+  height: 80px;
+}
+
+.temperature {
+  font-size: 48px;
+  font-weight: 700;
+  color: #007bff;
+}
+
+.description {
+  font-size: 16px;
+  font-weight: 500;
+  text-transform: capitalize;
+  color: #555;
+  margin-top: -8px;
+}

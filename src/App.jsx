@@ -1,20 +1,12 @@
-import { useState } from 'react';
-import viteLogo from '/vite.svg';
-import './App.css';
-import { AuthContextProvider } from './context/UserContext.jsx';
-import AppRouter from './router/AppRouter.jsx';
+import React from 'react';
+import { UserContextProvider } from './context/UserContext';
 
-function App() {
-  const [count, setCount] = useState(0);
-
+function App({ children }) {
   return (
-    <AuthContextProvider>
-      <div className='App'>
-        <div className='content-wrapper'>
-          <AppRouter />
-        </div>
-      </div>
-    </AuthContextProvider>
+    <UserContextProvider>
+      {/* 전역 Provider 및 공통 UI(헤더/푸터 등) 추가 가능 */}
+      {children}
+    </UserContextProvider>
   );
 }
 

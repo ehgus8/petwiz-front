@@ -1,0 +1,210 @@
+.container {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 30px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.container h2 {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.formGroup {
+  margin-bottom: 20px;
+}
+
+.formGroup label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #555;
+}
+
+.formGroup input[type='text'],
+.formGroup input[type='number'],
+.formGroup input[type='date'],
+.formGroup textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 16px;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+  font-family: inherit; /* 일관된 폰트 적용 */
+}
+
+.formGroup input[type='text']:focus,
+.formGroup input[type='number']:focus,
+.formGroup input[type='date']:focus,
+.formGroup textarea:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+.buttonGroup {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 30px;
+}
+
+.buttonGroup button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  background-color: #6c757d;
+  color: white;
+}
+
+.buttonGroup button:hover {
+  background-color: #5a6268;
+}
+
+.buttonGroup .submitButton {
+  background-color: #007bff;
+}
+
+.buttonGroup .submitButton:hover {
+  background-color: #0056b3;
+}
+
+.buttonGroup button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.error {
+  color: #d32f2f;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  padding: 15px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+}
+
+.contentFieldContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  padding: 15px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+}
+
+.contentField {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.contentField select,
+.contentField input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.contentField select {
+  flex: 0 0 120px; /* 고정 너비 */
+}
+
+.contentField input {
+  flex: 1; /* 남은 공간 모두 차지 */
+}
+
+.removeButton,
+.addButton {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.removeButton {
+  background-color: #f44336;
+  color: white;
+}
+.removeButton:hover {
+  background-color: #d32f2f;
+}
+
+.addButton {
+  background-color: #4caf50;
+  color: white;
+  margin-top: 15px;
+  align-self: flex-start;
+}
+
+.addButton:hover {
+  background-color: #45a049;
+}
+
+.approverRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.approverInput {
+  flex: 1;
+}
+
+.addEmployeeButton {
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 16px;
+  height: 32px;
+  padding: 0 16px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+.addEmployeeButton:hover {
+  background: #1565c0;
+}
+
+.attachmentRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.fileSelectButton {
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 16px;
+  height: 32px;
+  padding: 0 16px;
+  cursor: pointer;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  transition: background 0.2s;
+}
+.fileSelectButton:hover {
+  background: #1565c0;
+}
+
+.selectedFilesText {
+  font-size: 14px;
+  color: #333;
+  white-space: pre-line;
+}

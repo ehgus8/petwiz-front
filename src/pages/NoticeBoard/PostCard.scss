@@ -1,0 +1,33 @@
+.post-card {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 1.2rem;
+  background-color: #fafafa;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: #f0f0f0;
+  }
+
+  .post-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 0.5rem;
+  }
+
+  .post-meta {
+    font-size: 0.9rem;
+    color: #777;
+    margin-bottom: 0.8rem;
+  }
+
+  .post-content {
+    font-size: 1rem;
+    color: #555;
+  }
+
+  .bold {
+    font-weight: bold;
+  }
+}

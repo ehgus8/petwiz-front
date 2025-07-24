@@ -1,0 +1,406 @@
+.emp-detail-root {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2.2rem 1rem 3rem 1rem;
+  font-family: 'Noto Sans KR', Arial, sans-serif;
+  background: #fff;
+  color: #222;
+}
+
+.emp-detail-topbar {
+  display: flex;
+  justify-content: flex-end;
+  .crumb {
+    font-size: 1rem;
+    color: #222;
+    margin-bottom: 1.1rem;
+  }
+}
+
+.emp-detail-main {
+  display: flex;
+  align-items: flex-start;
+  gap: 2.3rem;
+  margin-bottom: 2.4rem;
+  overflow-x: auto; // 여기 추가
+
+  .emp-profile {
+    flex-shrink: 0;
+    img {
+      width: 130px;
+      height: 130px;
+      border-radius: 50%;
+      border: 2px solid #b6c2cf;
+      background: #f2f4f8;
+      object-fit: cover;
+      margin-right: 1.2rem;
+      cursor: pointer;
+
+      &.disabled {
+        cursor: default;
+      }
+    }
+
+    input {
+      display: none;
+    }
+
+    img:hover:not(.disabled) {
+      opacity: 0.8;
+    }
+  }
+
+  .emp-info-table {
+    border-collapse: collapse;
+    width: 100%; // 추가: 테이블이 컨테이너 안에서 100%만 차지
+    max-width: 100%; // 추가: 더 커지지 않게
+    min-width: 700px; // 기존 (원하면 줄여도 됨)
+    table-layout: auto; // auto로 (혹시 fixed였으면)
+
+    th,
+    td {
+      border: 1px solid #7e9cb0;
+      padding: 0.7em 1em;
+      font-size: 1rem;
+      text-align: left;
+      background: #e2ecf3;
+    }
+    th {
+      font-weight: 500;
+      background: #bdd3e6;
+      min-width: 80px;
+    }
+    td {
+      background: #fff;
+      min-width: 110px;
+    }
+  }
+}
+
+.emp-section {
+  margin-top: 2.2rem;
+
+  .emp-section-title {
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-bottom: 0.7rem;
+    color: #222;
+    letter-spacing: 0.01em;
+  }
+  .emp-summary-table {
+    border-collapse: collapse;
+    width: 100%;
+    th,
+    td {
+      border: 1px solid #b5c6d8;
+      padding: 0.7em 1em;
+      background: #f7fbfe;
+      font-size: 1rem;
+      font-weight: 400;
+    }
+    th {
+      width: 180px;
+      background: #ddeaf4;
+      font-weight: 500;
+      text-align: left;
+    }
+    td {
+      background: #fff;
+    }
+  }
+  .emp-edu-table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 0.8rem;
+    th,
+    td {
+      border: 1px solid #7e9cb0;
+      padding: 0.6em 0.7em;
+      font-size: 1rem;
+      text-align: center;
+    }
+    th {
+      background: #bdd3e6;
+      font-weight: 500;
+    }
+    td {
+      background: #fff;
+    }
+  }
+}
+
+.emp-btns {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.7rem;
+  margin-top: 2.4rem;
+
+  a {
+    text-decoration: none;
+  }
+
+  .btn {
+    min-width: 120px;
+    font-size: 1.05rem;
+    font-weight: 500;
+    padding: 0.7em 1.5em;
+    border: none;
+    border-radius: 8px;
+    margin-left: 0.1rem;
+    cursor: pointer;
+    transition:
+      background 0.13s,
+      color 0.13s;
+    &.blue {
+      background: #2196f3;
+      color: #fff;
+      &:hover {
+        background: #1766ad;
+      }
+    }
+    &.green {
+      background: #41b339;
+      color: #fff;
+      &:hover {
+        background: #248a22;
+      }
+    }
+  }
+}
+
+.emp-detail-card {
+  background: #fff;
+  border-radius: 1.5rem;
+  box-shadow: 0 6px 32px 0 rgba(33, 150, 243, 0.1);
+  padding: 2.2rem 2.2rem 1.7rem 2.2rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+.emp-profile-main {
+  display: flex;
+  gap: 2.2rem;
+  align-items: center;
+  margin-bottom: 1.2rem;
+}
+.emp-profile-img {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 2px 12px 0 rgba(33, 150, 243, 0.13);
+  border: 3px solid #eaf3fa;
+  background: #eaf3fa;
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+.emp-main-info {
+  flex: 1;
+  .emp-name {
+    font-size: 1.45rem;
+    font-weight: 800;
+    color: #1766ad;
+    margin-bottom: 0.3rem;
+  }
+  .emp-meta {
+    display: flex;
+    gap: 0.7rem;
+    font-size: 1.08rem;
+    color: #2196f3;
+    margin-bottom: 0.2rem;
+  }
+  .emp-status {
+    font-size: 1.01rem;
+    color: #fff;
+    background: #2196f3;
+    border-radius: 1em;
+    padding: 0.2em 1em;
+    display: inline-block;
+    margin-bottom: 0.2rem;
+    &.inactive {
+      background: #b0b0b0; /* 회색 배경 */
+      color: #fff; /* 흰색 글자 */
+      /* 필요시 폰트 스타일 등 추가 */
+    }
+  }
+  .emp-contact {
+    font-size: 0.99rem;
+    color: #444;
+    display: flex;
+    gap: 1.1rem;
+  }
+}
+.emp-detail-extra {
+  background: #f8fbff;
+  border-radius: 1rem;
+  padding: 1.1rem 1.2rem;
+  font-size: 1.01rem;
+  color: #666;
+  margin-bottom: 1.2rem;
+  .emp-memo,
+  .emp-address {
+    margin-top: 0.7rem;
+    background: #f3f7fa;
+    border-radius: 0.7em;
+    padding: 0.5em 1em;
+    color: #888;
+    font-size: 0.97rem;
+  }
+}
+.emp-btns.modern {
+  margin-top: 1.2rem;
+  display: flex;
+  gap: 1.1rem;
+  .btn {
+    font-size: 1.09rem;
+    font-weight: 700;
+    border-radius: 0.8em;
+    padding: 0.8em 2.2em;
+    box-shadow: 0 2px 8px 0 rgba(33, 150, 243, 0.08);
+    transition:
+      background 0.15s,
+      color 0.15s,
+      box-shadow 0.15s;
+    &:hover {
+      box-shadow: 0 4px 18px 0 rgba(33, 150, 243, 0.13);
+    }
+  }
+}
+
+.emp-info-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: #f8fbff;
+  border-radius: 1.1rem;
+  overflow: hidden;
+  th,
+  td {
+    background: transparent;
+    border: none;
+    padding: 1em 1.1em;
+    font-size: 1.06rem;
+    transition:
+      background 0.15s,
+      color 0.15s;
+  }
+  th {
+    color: #1766ad;
+    font-weight: 700;
+    background: #eaf3fa;
+    border-right: 1.5px solid #e0e4ea;
+    text-align: left;
+  }
+  td {
+    color: #444;
+    background: #fff;
+    text-align: left;
+  }
+  tr {
+    border-bottom: 1.5px solid #e0e4ea;
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+}
+
+/* 최소 반응형 */
+@media (max-width: 900px) {
+  .emp-detail-main {
+    flex-direction: column;
+    gap: 1.2rem;
+    .emp-info-table {
+      min-width: 0;
+    }
+    .emp-profile {
+      margin-bottom: 0.6rem;
+    }
+  }
+}
+@media (max-width: 600px) {
+  .emp-section .emp-summary-table th,
+  .emp-section .emp-summary-table td,
+  .emp-section .emp-edu-table th,
+  .emp-section .emp-edu-table td,
+  .emp-detail-main .emp-info-table th,
+  .emp-detail-main .emp-info-table td {
+    font-size: 0.93rem;
+    padding: 0.5em 0.5em;
+  }
+}
+@media (max-width: 600px) {
+  .emp-detail-main {
+    flex-direction: column;
+    gap: 0.7rem;
+    align-items: stretch;
+  }
+  .emp-profile {
+    margin-bottom: 0.7rem;
+    display: flex;
+    justify-content: center;
+  }
+  .emp-info-table {
+    min-width: 0;
+    width: 100%;
+    display: block;
+    overflow-x: auto;
+  }
+  .emp-info-table thead,
+  .emp-info-table tbody,
+  .emp-info-table tr {
+    display: block;
+    width: 100%;
+  }
+  .emp-info-table tr {
+    margin-bottom: 0.7rem;
+    display: flex;
+    flex-wrap: wrap;
+    border-bottom: 1px solid #e0e4ea;
+    background: none;
+  }
+  .emp-info-table th,
+  .emp-info-table td {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    font-size: 0.95rem;
+    padding: 0.45em 0.7em;
+    text-align: left;
+    border: none;
+    background: #fff;
+  }
+  .emp-info-table th {
+    background: #eaf3fa;
+    font-weight: 600;
+    color: #1766ad;
+    border-bottom: 1px solid #e0e4ea;
+  }
+  .emp-info-table td {
+    background: #fff;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  .emp-btns {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: stretch;
+  }
+  .emp-btns .btn {
+    width: 100%;
+    min-width: 0;
+    font-size: 1rem;
+    padding: 0.7em 0;
+  }
+}
+.emp-info-table {
+  display: table;
+  width: 100%;
+  th,
+  td {
+    white-space: nowrap;
+    min-width: 90px;
+    font-size: 0.97rem;
+    padding: 0.7em 0.7em;
+  }
+}

@@ -1,0 +1,53 @@
+.mini-table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+
+  th,
+  td {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 6px 8px;
+    border-bottom: 1px solid #e5e7eb;
+    font-size: 14px;
+  }
+  th {
+    background: #f3f6fa;
+    font-weight: 600;
+    color: #2563eb;
+  }
+  td {
+    color: #222;
+  }
+  th:nth-child(1),
+  td:nth-child(1) {
+    width: 120px;
+  }
+  th:nth-child(2),
+  td:nth-child(2) {
+    width: 110px;
+  }
+  th:nth-child(3),
+  td:nth-child(3) {
+    width: 90px;
+  }
+  th:nth-child(4),
+  td:nth-child(4) {
+    width: 90px;
+  }
+
+  // 상태별 색상
+  .status-in_progress {
+    color: #222;
+    font-weight: 600;
+  } // 검은색
+  .status-approved {
+    color: #22c55e;
+    font-weight: 600;
+  } // 초록색
+  .status-rejected {
+    color: #ef4444;
+    font-weight: 600;
+  } // 빨간색
+}

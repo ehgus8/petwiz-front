@@ -1,0 +1,429 @@
+.eval-root {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 2.3rem 2rem 2rem 2rem;
+  font-family: 'Noto Sans KR', Arial, sans-serif;
+  background: #fff;
+  min-height: 95vh;
+}
+
+.eval-header {
+  display: flex;
+  align-items: center;
+  gap: 2.1rem;
+  margin-bottom: 2.3rem;
+  .back-btn {
+    font-size: 2.1rem;
+    background: none;
+    border: none;
+    color: #222;
+    cursor: pointer;
+    margin-right: 0.7rem;
+    margin-top: -0.3rem;
+  }
+  .eval-title {
+    font-size: 2.1rem;
+    font-weight: bold;
+    letter-spacing: -0.01em;
+    color: #222;
+  }
+  .eval-searchbar {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+    gap: 0.4rem;
+    select,
+    input {
+      font-size: 1rem;
+      padding: 0.45em 1em;
+      border: 1px solid #c4c8cd;
+      border-radius: 4px;
+      margin-right: 0.3rem;
+      background: #fff;
+    }
+    input {
+      width: 140px;
+    }
+    .icon-search {
+      background: none;
+      border: none;
+      font-size: 1.23rem;
+      cursor: pointer;
+      margin-left: 0.2rem;
+    }
+  }
+}
+
+.eval-main {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 2.6rem;
+}
+
+/* 평가 입력 폼 */
+.eval-form-box {
+  flex: 1.7;
+  border: 2px solid #888;
+  border-radius: 7px;
+  padding: 2.2rem 2.6rem 2.3rem 2.6rem;
+  background: #fafbfc;
+  min-width: 550px;
+  max-width: 700px;
+  margin: 0 auto;
+  .eval-form-title {
+    font-size: 1.13rem;
+    font-weight: bold;
+    margin-bottom: 0.9rem;
+  }
+  hr {
+    margin: 0.5rem 0 2rem 0;
+    border: none;
+    border-bottom: 2px solid #ccc;
+  }
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+  }
+  .eval-field {
+    display: flex;
+    align-items: center;
+    gap: 1.1rem;
+    margin-bottom: 0.2rem;
+    label {
+      min-width: 90px;
+      font-size: 1.04rem;
+      font-weight: 500;
+      color: #202428;
+    }
+    input[type='text'] {
+      flex: 1;
+      font-size: 1.05rem;
+      padding: 0.6em 1em;
+      border: 1.5px solid #888;
+      border-radius: 6px;
+      background: #fff;
+      color: #444;
+    }
+    textarea {
+      flex: 1;
+      border: 1.5px solid #888;
+      border-radius: 6px;
+      min-height: 45px;
+      font-size: 1.07rem;
+      padding: 0.8em 1em;
+      background: #fff;
+      color: #444;
+    }
+    &.avg {
+      justify-content: flex-end;
+      span {
+        margin-left: 0.9em;
+        font-size: 1.12rem;
+        font-weight: 500;
+      }
+      .avg-score {
+        color: #f5911e;
+        font-weight: 700;
+        font-size: 1.17rem;
+      }
+    }
+    &.stars {
+      label {
+        min-width: 110px;
+      }
+      .star-row {
+        font-size: 1.4em;
+        color: #222;
+        letter-spacing: 0.18em;
+      }
+    }
+  }
+  .eval-date-group {
+    display: flex;
+    align-items: center;
+    gap: 0.45em;
+    input[type='text'] {
+      width: 140px;
+    }
+    .eval-date-clear,
+    .eval-date-picker {
+      background: none;
+      border: none;
+      font-size: 1.4em;
+      cursor: pointer;
+      margin-left: 0.2em;
+      padding: 0 0.2em;
+    }
+    .eval-date-clear {
+      color: #e23e2b;
+    }
+    .eval-date-picker {
+      color: #1c3695;
+    }
+  }
+}
+
+/* 우측 패널 */
+.eval-side-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  min-width: 300px;
+  .side-box {
+    background: #f5f7f9;
+    border: 1.5px solid #b0c7d4;
+    border-radius: 7px;
+    padding: 1.2rem 1.2rem;
+    margin-bottom: 0.3rem;
+    min-height: 50px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    .side-title {
+      font-size: 1.02rem;
+      font-weight: 500;
+      color: #35485a;
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      margin-bottom: 0.5em;
+      .side-view-btn,
+      .side-setting-btn {
+        margin-left: auto;
+        margin-right: 0.5rem;
+        font-size: 0.97rem;
+        background: #2196f3;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        padding: 0.23em 1.1em;
+        font-weight: 500;
+        cursor: pointer;
+      }
+      .side-setting-btn {
+        background: #b0c7d4;
+        color: #222;
+      }
+    }
+    .side-input {
+      border: 1.5px solid #c4c8cd;
+      border-radius: 4px;
+      font-size: 1rem;
+      padding: 0.42em 0.9em;
+      background: #fff;
+      color: #444;
+    }
+    .btn.dark {
+      background: #222;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 0.42em 1.6em;
+      font-size: 1rem;
+      margin-right: 0.7em;
+      font-weight: 600;
+      &.active {
+        background: #555;
+      }
+    }
+    .side-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5em;
+      label {
+        min-width: 40px;
+        font-weight: 500;
+      }
+      .icon-search {
+        background: none;
+        border: none;
+        font-size: 1.13em;
+        cursor: pointer;
+      }
+    }
+  }
+}
+
+/* 하단 버튼 */
+.eval-footer-btns {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1.1rem;
+  margin-top: 2.3rem;
+  border-top: 2px solid #e1e5e9;
+  padding-top: 2.3rem;
+
+  .btn {
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 7px;
+    border: none;
+    padding: 0.82em 2.3em;
+    cursor: pointer;
+    transition: background 0.12s;
+    &.dark {
+      background: #232628;
+      color: #fff;
+      &:hover {
+        background: #484d51;
+      }
+    }
+    &.blue {
+      background: #2196f3;
+      color: #fff;
+      &:hover {
+        background: #1766ad;
+      }
+    }
+  }
+}
+
+/* 반응형 */
+@media (max-width: 1100px) {
+  .eval-root {
+    max-width: 100vw;
+    padding: 1.5rem 0.3rem;
+  }
+  .eval-main {
+    flex-direction: column;
+    gap: 1.7rem;
+  }
+  .eval-side-panel {
+    min-width: 0;
+  }
+}
+
+.approval-table-wrapper {
+  margin-bottom: 1.5rem;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.approval-table {
+  border-collapse: collapse;
+  min-width: 350px;
+  font-size: 1rem;
+  background: #fff;
+}
+
+.approval-table td {
+  border: 1.5px solid #222;
+  padding: 0.7em 1.2em;
+  text-align: center;
+  min-width: 80px;
+}
+
+.approval-title {
+  font-weight: bold;
+  font-size: 1.15em;
+  background: #f7f7f7;
+  min-width: 60px;
+}
+
+.approval-label {
+  font-weight: 500;
+  background: #fafbfc;
+}
+
+/* 모달 스타일 */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: modal-fadein 0.2s;
+}
+@keyframes modal-fadein {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.modal-box {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+  padding: 2.2rem 2.5rem 1.7rem 2.5rem;
+  min-width: 340px;
+  max-width: 92vw;
+  text-align: left;
+  position: relative;
+  animation: modal-pop 0.22s cubic-bezier(0.4, 1.6, 0.6, 1);
+}
+@keyframes modal-pop {
+  from {
+    transform: scale(0.92);
+    opacity: 0.5;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+.modal-box h4 {
+  font-size: 1.18rem;
+  font-weight: bold;
+  margin-bottom: 1.1rem;
+  color: #1c3695;
+  letter-spacing: -0.01em;
+}
+.modal-box input[type='text'] {
+  width: 90%;
+  min-width: 180px;
+  max-width: 320px;
+  margin: 0 auto 0.7rem auto;
+  font-size: 1.08rem;
+  padding: 0.7em 1em;
+  border: 1.5px solid #b0c7d4;
+  border-radius: 7px;
+  background: #f7fafd;
+  color: #222;
+  transition: border 0.2s;
+}
+.modal-box input[type='text']:focus {
+  border: 1.5px solid #1c3695;
+  outline: none;
+  background: #fff;
+}
+.modal-box .modal-btns {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.7em;
+  margin-top: 0.5em;
+}
+.modal-box .btn {
+  min-width: 70px;
+  font-size: 1.01rem;
+  padding: 0.5em 1.1em;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition:
+    background 0.18s,
+    color 0.18s;
+}
+.modal-box .btn.gray {
+  background: #e6e9ef;
+  color: #333;
+}
+.modal-box .btn.blue {
+  background: #1c3695;
+  color: #fff;
+}
+.modal-box .btn.blue:hover {
+  background: #274bb3;
+}
+.modal-box .btn.gray:hover {
+  background: #d1d6e0;
+}

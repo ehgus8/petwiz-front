@@ -1,0 +1,483 @@
+$accent: #2b80ff;
+$accent-light: #eaf2ff;
+$border: #e4e7ec;
+$card-bg: #fff;
+$tab-bg: #f3f7fa;
+$tab-active: $accent;
+$text-main: #1d2630;
+$text-sub: #4a5866;
+$text-muted: #8ca2b3;
+$shadow: 0 2px 14px 0 rgba(30, 65, 112, 0.07);
+
+.hrpage-root {
+  background: #f7fafd;
+  min-height: 100vh;
+  padding-bottom: 3rem;
+  color: $text-main;
+}
+
+/* 네비게이션 */
+.hr-nav {
+  display: flex;
+  background: $card-bg;
+  box-shadow: $shadow;
+  border-radius: 0.9rem;
+  margin: 1.5rem 0 2.2rem 0;
+  overflow: hidden;
+  button {
+    flex: 1;
+    padding: 1rem 0;
+    font-size: 1.13rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    color: $text-sub;
+    transition: background 0.14s;
+    &:hover,
+    &.active {
+      background: $accent-light;
+      color: $accent;
+    }
+    &.active {
+      font-weight: 700;
+      border-bottom: 3px solid $accent;
+    }
+  }
+}
+
+/* 상단 유저카드 + 도구 */
+.hr-top {
+  display: flex;
+  gap: 2.5rem;
+  margin-bottom: 2rem;
+  .hr-usercard {
+    display: flex;
+    background: $card-bg;
+    border-radius: 1.1rem;
+    box-shadow: $shadow;
+    padding: 2.1rem 2.3rem;
+    min-width: 420px;
+    .user-avatar {
+      width: 90px;
+      height: 120px;
+      border: 2px solid $border;
+      border-radius: 1rem;
+      background:
+        url('https://cdn.pixabay.com/photo/2017/01/31/13/14/avatar-2026510_960_720.png')
+          center/70% no-repeat,
+        #f2f5f8;
+      margin-right: 1.8rem;
+    }
+    .user-meta {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 0.45rem;
+      .user-name {
+        font-size: 1.25rem;
+        font-weight: bold;
+        .user-role {
+          font-size: 1rem;
+          color: $accent;
+          margin-left: 0.45em;
+        }
+      }
+      .user-desc {
+        font-size: 1rem;
+        color: $text-sub;
+        margin-bottom: 0.3rem;
+      }
+      .user-edit {
+        font-size: 0.92rem;
+        color: $accent;
+        text-decoration: underline;
+        cursor: pointer;
+        margin-top: 0.2rem;
+      }
+    }
+  }
+  .hr-tools {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.4rem;
+    .search-input {
+      border: 1.5px solid $border;
+      border-radius: 0.6rem;
+      font-size: 1.07rem;
+      padding: 0.5rem 1.1rem;
+      background: #fff;
+      outline: none;
+      margin-right: 0.7rem;
+      transition: border 0.16s;
+      &:focus {
+        border-color: $accent;
+      }
+    }
+    .search-btn {
+      background: $accent;
+      color: #fff;
+      font-size: 1.07rem;
+      border: none;
+      border-radius: 0.6rem;
+      padding: 0.5rem 1.3rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.16s;
+      &:hover {
+        background: darken($accent, 8%);
+      }
+    }
+    .calendar-mock {
+      background: #f6f8fa;
+      border: 1.5px solid $border;
+      border-radius: 0.7rem;
+      padding: 0.6rem 1rem 1rem 1rem;
+      min-width: 100% !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      .calendar-title {
+        font-weight: bold;
+        text-align: center;
+        color: $accent;
+        margin-bottom: 0.4rem;
+        font-size: 1rem;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        th,
+        td {
+          width: 14.2%;
+          text-align: center;
+          padding: 0.17rem 0;
+          font-size: 0.96rem;
+          color: $text-main;
+        }
+        th {
+          color: $accent;
+          font-weight: 600;
+          font-size: 0.99rem;
+        }
+      }
+    }
+  }
+}
+
+/* 메인 카드들 */
+.hr-main-cards {
+  margin-top: 1.2rem;
+  .hr-row {
+    display: flex;
+    gap: 2.3rem;
+    margin-bottom: 1.8rem;
+    @media (max-width: 900px) {
+      flex-direction: column;
+      gap: 1rem;
+    }
+  }
+  .hr-card {
+    background: $card-bg;
+    border-radius: 1rem;
+    box-shadow: $shadow;
+    padding: 1.1rem 1.3rem 1.4rem 1.3rem;
+    flex: 1 1 0;
+    min-width: 220px;
+    display: flex;
+    flex-direction: column;
+    .tabs {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      margin-bottom: 0.95rem;
+      button {
+        background: $tab-bg;
+        color: $accent;
+        font-weight: 600;
+        font-size: 1.07rem;
+        border: none;
+        border-radius: 0.7rem 0.7rem 0 0;
+        padding: 0.34rem 1.1rem 0.41rem 1.1rem;
+        cursor: pointer;
+        margin-right: 0.23rem;
+        &.active {
+          background: $accent;
+          color: #fff;
+          font-weight: 700;
+        }
+      }
+      .menu-icon {
+        margin-left: auto;
+        color: $accent;
+        font-size: 1.2rem;
+        cursor: pointer;
+      }
+    }
+    .mini-table {
+      width: 100%;
+      border-collapse: collapse;
+      th,
+      td {
+        border-bottom: 1px solid $border;
+        padding: 0.48rem 0.5rem;
+        font-size: 0.98rem;
+        text-align: center;
+      }
+      th {
+        color: $accent;
+        font-weight: bold;
+        background: #f7fafd;
+      }
+      td {
+        color: $text-main;
+      }
+      .status-approve {
+        color: #26a03b;
+        font-weight: bold;
+      }
+      .status-pending {
+        color: #ff3c54;
+        font-weight: bold;
+      }
+      .text-accent {
+        color: $accent;
+        font-weight: bold;
+      }
+      .text-error {
+        color: #ff3c54;
+        font-weight: bold;
+      }
+    }
+    .notice-list {
+      padding-left: 1.1rem;
+      color: $text-main;
+      font-size: 1rem;
+      li {
+        margin-bottom: 0.3em;
+        list-style: disc;
+      }
+    }
+    .visit-link {
+      display: flex;
+      align-items: center;
+      font-size: 1.12rem;
+      font-weight: 600;
+      color: $accent;
+      .dollar {
+        font-size: 1.2em;
+        margin-right: 0.4em;
+      }
+      .icon-book {
+        display: inline-block;
+        width: 1.25em;
+        height: 1.25em;
+        background: url('https://img.icons8.com/ios-filled/50/2b80ff/book.png')
+          no-repeat center/contain;
+        margin-right: 0.4em;
+      }
+    }
+    .team-fade {
+      opacity: 0;
+      transition: opacity 0.8s;
+    }
+    .team-fade.team-fade-active {
+      opacity: 1;
+    }
+  }
+}
+
+.employee-of-month-carousel {
+  .eom-card {
+    min-height: 90px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 0.8rem 1.2rem;
+    width: 260px;
+    .eom-avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      margin-right: 18px;
+    }
+    .eom-info {
+      flex: 1;
+      text-align: left;
+    }
+  }
+}
+
+.employee-of-month {
+  .eom-slider {
+    position: relative;
+    width: 100%;
+    min-height: 140px;
+  }
+  .eom-slide {
+    display: none;
+    opacity: 0;
+    transition: opacity 0.5s;
+    &.active {
+      display: block;
+      opacity: 1;
+    }
+  }
+  .eom-avatar {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto;
+    position: relative;
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+  }
+  .eom-info {
+    text-align: center;
+    margin-top: 0.5rem;
+    .eom-name {
+      font-weight: bold;
+      font-size: 1.1em;
+    }
+    .eom-dept {
+      color: #888;
+      font-size: 0.95em;
+    }
+    .eom-comment {
+      margin-top: 0.5rem;
+      font-size: 0.95em;
+    }
+  }
+  .eom-pagination {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    span {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #ccc;
+      cursor: pointer;
+      &.active {
+        background: #2b80ff;
+      }
+    }
+  }
+}
+
+.calendar-horizontal {
+  max-width: 1400px;
+  min-width: 1100px;
+  margin: 0 auto;
+  background: #f6f8fa;
+  border: 1.5px solid $border;
+  border-radius: 1.2rem;
+  padding: 2rem 7vw 2.5rem 7vw;
+  box-shadow: 0 2px 12px 0 rgba(30, 65, 112, 0.06);
+}
+.calendar-title-horizontal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.2rem;
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: $accent;
+  margin-bottom: 0.7rem;
+}
+.calendar-month-label {
+  min-width: 120px;
+  text-align: center;
+  font-size: 1.18rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+.calendar-nav-btn {
+  background: #eaf2ff;
+  color: $accent;
+  border: none;
+  border-radius: 0.7rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  padding: 0.28rem 1.1rem;
+  cursor: pointer;
+  box-shadow: 0 1px 4px 0 rgba(30, 65, 112, 0.06);
+  transition:
+    background 0.16s,
+    color 0.16s;
+}
+.calendar-nav-btn:hover {
+  background: $accent;
+  color: #fff;
+}
+.calendar-table-horizontal {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0.35rem 0.45rem;
+  th,
+  td {
+    width: 13.5%;
+    text-align: center;
+    font-size: 1.13rem;
+    padding: 0.7rem 0;
+    background: #fff;
+    border: 1.5px solid #e3e8ee;
+    box-shadow: 0 1px 4px 0 rgba(30, 65, 112, 0.04);
+    transition:
+      background 0.18s,
+      color 0.18s,
+      box-shadow 0.18s;
+    border-radius: 0;
+  }
+  th {
+    color: $accent;
+    font-weight: 700;
+    background: #f3f7fa;
+    font-size: 1.13rem;
+    border: none;
+  }
+  td {
+    cursor: pointer;
+    &:hover {
+      background: #eaf2ff;
+      box-shadow: 0 2px 8px 0 rgba(30, 65, 112, 0.1);
+    }
+  }
+  td.calendar-today {
+    background: $accent;
+    color: #fff;
+    font-weight: bold;
+    border-radius: 1.2rem;
+    box-shadow: 0 2px 8px 0 rgba(30, 65, 112, 0.18);
+    border: 2.5px solid #1976d2;
+  }
+  td.calendar-sa {
+    color: #64b5f6;
+    font-weight: 600;
+  }
+  td.calendar-su {
+    color: #e57373;
+    font-weight: 600;
+  }
+}
+
+/* 반응형 최소 */
+@media (max-width: 1100px) {
+  .hr-top {
+    flex-direction: column;
+    gap: 1.1rem;
+  }
+  .hr-usercard {
+    min-width: 0 !important;
+  }
+}
+@media (max-width: 700px) {
+  .hr-main-cards .hr-row {
+    flex-direction: column;
+    gap: 1rem;
+  }
+}

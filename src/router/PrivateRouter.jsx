@@ -1,10 +1,10 @@
 import React, { useContext } from 'react';
-import AuthContext from '../context/UserContext';
+import { UserContext } from '../context/UserContext';
 import { Navigate } from 'react-router-dom';
 
 // 라우터 쪽에서 로그인 여부나 권한을 검사하는 기능을 담당하는 PrivateRouter 생성
 const PrivateRouter = ({ element, requiredRole }) => {
-  const { isLoggedIn, userRole, isInit } = useContext(AuthContext);
+  const { isLoggedIn, userRole, isInit } = useContext(UserContext);
 
   // COntext 데이터가 초기화되지 않았다면 밑에 로직이 실행되지 않게끔 로딩 페이지 먼저 리턴.
   // 초기화가 완료되면 PrivateRouter가 다시 렌더링을 시도할 겁니다

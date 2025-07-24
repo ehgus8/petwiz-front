@@ -1,0 +1,173 @@
+/* --- 변수 (기존 TemplateForm.module.scss와 동일하게 사용) --- */
+:root {
+  --primary-color: #007bff;
+  --text-color-primary: #212529;
+  --text-color-secondary: #6c757d;
+  --border-color: #dee2e6;
+  --background-color-light: #f8f9fa;
+  --white-color: #ffffff;
+  --shadow-lg:
+    0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --border-radius: 8px;
+}
+
+/* --- 모달 전체 스타일 --- */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modalContent {
+  background-color: var(--white-color);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-lg);
+  padding: 24px 20px;
+  width: 100%;
+  max-width: 600px;
+  position: relative;
+  animation: fadeIn 0.3s ease-out;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.closeButton {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 1.8rem;
+  color: var(--text-color-secondary);
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+  &:hover {
+    color: var(--text-color-primary);
+  }
+}
+
+.title {
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 24px;
+  color: var(--text-color-primary);
+}
+
+/* --- 섹션 스타일 --- */
+.section {
+  margin-bottom: 24px;
+}
+
+.sectionTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-color-primary);
+  margin-bottom: 4px;
+}
+
+.sectionDesc {
+  font-size: 0.9rem;
+  color: var(--text-color-secondary);
+  margin-bottom: 16px;
+}
+
+/* --- 옵션 카드 그리드 --- */
+.optionGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.optionCard {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    border-color: var(--primary-color);
+    background-color: var(--background-color-light);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  }
+}
+
+.icon {
+  font-size: 1.5rem;
+  color: var(--primary-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background-color: rgba(0, 123, 255, 0.1);
+  border-radius: 50%;
+}
+
+.details {
+  display: flex;
+  flex-direction: column;
+}
+
+.name {
+  font-weight: 500;
+  font-size: 1rem;
+  color: var(--text-color-primary);
+}
+
+.desc {
+  font-size: 0.85rem;
+  color: var(--text-color-secondary);
+}
+
+/* --- 구분선 --- */
+.divider {
+  text-align: center;
+  margin: 24px 0;
+  color: var(--text-color-secondary);
+  font-size: 0.9rem;
+  font-weight: 500;
+  position: relative;
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 40%;
+    height: 1px;
+    background-color: var(--border-color);
+  }
+
+  &::before {
+    left: 0;
+  }
+
+  &::after {
+    right: 0;
+  }
+}

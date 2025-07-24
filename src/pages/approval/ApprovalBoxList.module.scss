@@ -1,0 +1,497 @@
+.reportListSection {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.sectionTitle {
+  font-size: 24px;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 28px;
+}
+
+.approvalContainer {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding-left: 32px;
+  padding-right: 32px;
+  width: 100%;
+}
+
+.reportListContainer {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  min-height: 100vh;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding-left: 32px;
+  padding-right: 32px;
+  width: 100%;
+}
+
+.filterGroup {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+
+  button {
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    border: 1px solid #ced4da;
+    border-radius: 20px;
+    background-color: #fff;
+    cursor: pointer;
+    transition:
+      background-color 0.2s,
+      color 0.2s,
+      border-color 0.2s;
+
+    &:hover {
+      background-color: #f1f3f5;
+    }
+  }
+
+  .activeFilter {
+    background-color: #007bff;
+    color: #fff;
+    border-color: #007bff;
+
+    &:hover {
+      background-color: #0056b3;
+    }
+  }
+}
+
+.reportList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.dateGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.dateHeader {
+  padding: 10px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #666;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.listHeader {
+  display: flex;
+  padding: 12px 20px;
+  background-color: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+  font-weight: 600;
+  color: #4b5563;
+  font-size: 14px;
+}
+
+.reportItem {
+  display: flex;
+  padding: 16px 20px;
+  border-bottom: 1px solid #f0f0f0;
+  transition: background-color 0.2s ease-in-out;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #f9fafb;
+  }
+}
+
+.headerCell,
+.itemCell {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 0 10px;
+
+  &:first-child {
+    padding-left: 0;
+  }
+  &:last-child {
+    padding-right: 0;
+  }
+}
+
+.titleContainer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.title {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.attachmentBadge {
+  font-size: 11px;
+  color: #666;
+  background-color: #f8f9fa;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid #e9ecef;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.status {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+
+  &.processing {
+    background-color: #e0f2fe;
+    color: #0284c7;
+  }
+  &.approved {
+    background-color: #dcfce7;
+    color: #16a34a;
+  }
+  &.rejected {
+    background-color: #fee2e2;
+    color: #dc2626;
+  }
+}
+
+.loading,
+.error,
+.noReports {
+  text-align: center;
+  padding: 40px;
+  color: #888;
+}
+
+.noReports {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 0;
+  text-align: center;
+  color: #888;
+}
+
+.noReportsIcon {
+  font-size: 48px;
+  margin-bottom: 10px;
+  color: #ccc;
+}
+
+.attachmentSection {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid #eee;
+}
+.sectionTitle {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+.fileList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.fileItem {
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+  &:hover { background-color: #f8f9fa; }
+}
+.fileIcon { margin-right: 8px; }
+.fileName { flex-grow: 1; color: #333; }
+.fileSize { font-size: 12px; color: #888; margin-right: 16px; }
+.actions {
+  button {
+    margin-left: 8px;
+    padding: 4px 8px;
+    font-size: 12px;
+    border: 1px solid #ccc;
+    background-color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    &:hover { background-color: #f1f1f1; }
+  }
+}
+
+.resultInfo {
+  background: #e3f2fd;
+  color: #1976d2;
+  padding: 12px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 16px;
+  border-left: 4px solid #2196f3;
+}
+
+/* 스켈레톤 로딩 스타일 */
+.skeletonContainer {
+  padding: 20px;
+}
+
+.skeletonItem {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 1px solid #f0f0f0;
+  gap: 16px;
+}
+
+.skeletonTitle {
+  flex: 3;
+  height: 20px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+  border-radius: 4px;
+}
+
+.skeletonAuthor {
+  flex: 1;
+  height: 16px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+  border-radius: 4px;
+}
+
+.skeletonDate {
+  flex: 1;
+  height: 16px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+  border-radius: 4px;
+}
+
+.skeletonStatus {
+  flex: 1;
+  height: 16px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+  border-radius: 4px;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* 페이지 진입 애니메이션 */
+.reportListContainer {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 탭 전환 애니메이션 */
+.tabHeader {
+  button {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    &.active {
+      animation: tabActive 0.3s ease-out;
+    }
+  }
+}
+
+@keyframes tabActive {
+  0% {
+    transform: scale(0.95);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* 리스트 아이템 애니메이션 */
+.reportItem {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    transition: left 0.5s ease;
+  }
+  
+  &:hover {
+    transform: translateX(4px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    background-color: #f8f9fa;
+    
+    &::before {
+      left: 100%;
+    }
+  }
+  
+  &:active {
+    transform: translateX(2px) scale(0.98);
+  }
+}
+
+/* 상태 배지 애니메이션 */
+.status {
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+}
+
+/* 첨부파일 배지 애니메이션 */
+.attachmentBadge {
+  transition: all 0.2s ease;
+  
+  &:hover {
+    transform: scale(1.1);
+    animation: pulse 0.6s ease-in-out;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.15);
+  }
+}
+
+/* 로딩 상태 애니메이션 */
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  font-size: 16px;
+  color: #666;
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* 에러 상태 애니메이션 */
+.error {
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
+}
+
+@media (max-width: 768px) {
+  .reportListSection {
+    padding: 12px;
+  }
+  .reportListContainer {
+    padding: 8px;
+    min-height: 60vh;
+  }
+  .tabHeader {
+    flex-direction: column;
+    gap: 8px;
+    button {
+      width: 100%;
+      font-size: 16px;
+      padding: 10px 0;
+    }
+  }
+  .listHeader {
+    flex-direction: column;
+    font-size: 13px;
+    padding: 8px 6px;
+  }
+  .reportList {
+    gap: 6px;
+  }
+  .reportItem {
+    flex-direction: column;
+    padding: 10px 8px;
+    font-size: 15px;
+    .itemCell {
+      padding: 4px 0;
+      font-size: 15px;
+    }
+  }
+  .dateHeader {
+    font-size: 13px;
+    padding: 6px 0;
+  }
+  .status {
+    font-size: 14px;
+    padding: 2px 6px;
+  }
+  .attachmentBadge {
+    font-size: 13px;
+    margin-left: 4px;
+  }
+}

@@ -1,0 +1,639 @@
+/* Layout */
+.approvalContainer {
+  position: relative;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding-left: 32px;
+  padding-right: 32px;
+  width: 100%;
+}
+
+.detailContainer {
+  display: flex;
+  gap: 24px;
+  padding: 24px;
+  background-color: #f4f7f9;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding-left: 32px;
+  padding-right: 32px;
+  width: 100%;
+}
+
+.mainContent {
+  flex: 3;
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.sidebar {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e9ecef;
+  margin-bottom: 20px;
+}
+.titleGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.title {
+  font-size: 26px;
+  font-weight: 700;
+  color: #212529;
+}
+.statusBadge {
+  font-size: 13px;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 16px;
+  align-self: flex-start;
+  
+  &.processing { background-color: #e0f2fe; color: #0284c7; }
+  &.approved { background-color: #dcfce7; color: #16a34a; }
+  &.rejected { background-color: #fee2e2; color: #dc2626; }
+  &.recalled { background-color: #e5e7eb; color: #4b5563; }
+}
+
+/* Button Group */
+.buttonGroup {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  margin-bottom: 8px;
+
+  button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  .approveBtn { background-color: #28a745; color: white; &:hover { background-color: #218838; }}
+  .rejectBtn { background-color: #dc3545; color: white; &:hover { background-color: #c82333; }}
+  .recallBtn { background-color: #6c757d; color: white; &:hover { background-color: #5a6268; }}
+  .defaultBtn { background-color: #f8f9fa; border: 1px solid #dee2e6; color: #343a40; &:hover { background-color: #e2e6ea; }}
+}
+
+/* Report Info */
+.reportInfo {
+  display: flex;
+  gap: 32px;
+  padding: 16px;
+  background-color: #f8f9fa;
+  border-radius: 6px;
+  margin-bottom: 24px;
+}
+.infoItem { display: flex; flex-direction: column; gap: 4px; }
+.infoLabel { font-size: 13px; color: #6c757d; }
+.infoValue { font-size: 15px; color: #212529; font-weight: 500; }
+
+/* Content */
+.content {
+  line-height: 1.7;
+  color: #343a40;
+
+  h1,h2,h3,h4,h5,h6 { margin: 24px 0 16px; }
+  p { margin: 8px 0; }
+  ul, ol { padding-left: 20px; }
+  blockquote {
+    border-left: 4px solid #ced4da;
+    padding-left: 16px;
+    margin: 16px 0;
+    color: #6c757d;
+  }
+}
+
+/* History Section */
+.historySection {
+  margin-top: 32px;
+  border-top: 1px solid #e9ecef;
+  padding-top: 24px;
+}
+.sectionTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: #343a40;
+  margin-bottom: 16px;
+}
+.historyList {
+  list-style: none;
+  padding: 0;
+}
+.historyItem {
+  padding: 16px;
+  border: 1px solid #f1f3f5;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  background-color: #f8f9fa;
+}
+.historyInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+.historyApprover {
+  font-weight: 600;
+  color: #212529;
+}
+.historyStatus {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 12px;
+
+  &.approved { background-color: #dcfce7; color: #16a34a; }
+  &.rejected { background-color: #fee2e2; color: #dc2626; }
+}
+.historyComment {
+  font-size: 14px;
+  color: #495057;
+  margin-bottom: 10px;
+}
+.historyTimestamp {
+  font-size: 12px;
+  color: #adb5bd;
+  text-align: right;
+}
+.noHistory {
+  color: #868e96;
+  padding: 20px 0;
+  text-align: center;
+}
+
+/* Sidebar */
+.sidebarSection {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+.sidebarHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+
+  h4 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #343a40;
+    margin: 0;
+  }
+}
+.viewMoreBtn {
+  background: none;
+  border: none;
+  color: #007bff;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  &:hover { text-decoration: underline; }
+}
+
+/* Helpers */
+.loading, .error, .noData {
+  padding: 60px;
+  text-align: center;
+  font-size: 16px;
+  color: #6c757d;
+}
+.error { color: #dc3545; } 
+// ApprovalDetail.module.scss 에 추가할 예시 스타일
+
+.imageGallery {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+}
+
+.imageWrapper {
+  margin-bottom: 15px;
+  max-width: 100%;
+}
+
+.attachedImage {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  background-color: #f9f9f9;
+}
+
+.commonComments {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.commentBtn {
+  background: #e3f2fd;
+  color: #1976d2;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.2s;
+  &:hover {
+    background: #bbdefb;
+  }
+}
+.commentInput {
+  width: 100%;
+  min-height: 48px;
+  border: 1px solid #bdbdbd;
+  border-radius: 4px;
+  padding: 8px;
+  font-size: 14px;
+  margin-bottom: 8px;
+  resize: vertical;
+}
+.commentError {
+  color: #d32f2f;
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+.confirmModalOverlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.3);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.confirmModal {
+  background: #fff;
+  border-radius: 8px;
+  padding: 32px 24px 24px 24px;
+  min-width: 320px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+  text-align: center;
+}
+.confirmComment {
+  margin: 16px 0 24px 0;
+  font-size: 15px;
+  color: #333;
+}
+.confirmModalBtns {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+}
+.confirmBtn {
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 20px;
+  font-size: 15px;
+  cursor: pointer;
+  font-weight: 600;
+}
+.cancelBtn {
+  background: #e0e0e0;
+  color: #333;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 20px;
+  font-size: 15px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+/* 동적 폼 필드 스타일 */
+.dynamicFields {
+  background: #ffffff;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 0;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  overflow: hidden;
+}
+
+.reportTable {
+  width: 100%;
+  border-collapse: collapse;
+  background: #ffffff;
+}
+
+.tableRow {
+  border-bottom: 1px solid #f1f3f4;
+  
+  &:last-child {
+    border-bottom: none;
+  }
+  
+  &:hover {
+    background-color: #f8f9fa;
+  }
+}
+
+.fieldLabel {
+  width: 25%;
+  padding: 16px 20px;
+  background: #f8f9fa;
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 14px;
+  text-align: center;
+  vertical-align: middle;
+  border-right: 1px solid #e9ecef;
+  min-width: 120px;
+}
+
+.fieldValue {
+  padding: 16px 20px;
+  color: #495057;
+  font-size: 14px;
+  line-height: 1.5;
+  word-break: break-word;
+  background: #ffffff;
+  vertical-align: middle;
+}
+
+/* 본문 내용 스타일 */
+.contentBody {
+  background: #ffffff;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  
+  h1, h2, h3, h4, h5, h6 {
+    color: #2c3e50;
+    margin-bottom: 16px;
+  }
+  
+  p {
+    color: #495057;
+    line-height: 1.6;
+    margin-bottom: 12px;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    
+    th, td {
+      border: 1px solid #dee2e6;
+      padding: 8px 12px;
+      text-align: left;
+    }
+    
+    th {
+      background: #f8f9fa;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+  }
+}
+
+.detailMainBox {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  padding: 32px 32px 40px 32px;
+  margin-top: 32px;
+}
+
+.topSection {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 32px;
+  border-bottom: 1.5px solid #e9ecef;
+  padding-bottom: 18px;
+  margin-bottom: 32px;
+}
+
+.titleBox {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.infoBox {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 15px;
+  color: #495057;
+  min-width: 180px;
+  align-items: flex-end;
+}
+
+.contentSection {
+  margin-bottom: 40px;
+}
+
+.bottomSection {
+  display: flex;
+  flex-direction: row;
+  gap: 40px;
+  align-items: flex-start;
+  border-top: 1.5px solid #e9ecef;
+  padding-top: 32px;
+  margin-top: 32px;
+}
+
+.approvalLineBox {
+  flex: 1.2;
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px 18px 18px 18px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+  margin-right: 12px;
+}
+
+.approvalLineHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  h4 {
+    font-size: 17px;
+    font-weight: 700;
+    color: #222;
+    margin: 0;
+  }
+}
+
+.historySection {
+  flex: 2;
+  min-width: 320px;
+  margin-left: 12px;
+}
+
+.resubmitBtn {
+  min-width: 80px;
+  height: 38px;
+  padding: 0 20px;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.buttonGroup {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.buttonGroup > .resubmitBtn:first-child {
+  border-top-left-radius: 6px;
+  border-bottom-left-radius: 6px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.buttonGroup > .resubmitBtn:last-child {
+  border-top-right-radius: 6px;
+  border-bottom-right-radius: 6px;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.resubmitBtn {
+  border-radius: 6px;
+}
+.resubmitBtn + .resubmitBtn {
+  border-radius: 0 6px 6px 0;
+  margin-left: 0;
+}
+.infoBox {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 0;
+}
+.resubmitBtn {
+  margin: 0 0 0 18px;
+  align-self: flex-start;
+  padding: 8px 20px;
+  background: #ffb300;
+  color: #222;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  transition: background 0.2s;
+  height: 38px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  &:hover {
+    background: #ffa000;
+  }
+}
+.printButton {
+  position: absolute;
+  top: 20px;
+  right: 40px;
+  width: 42px;
+  height: 42px;
+  color: white;
+  font-size: 18px;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.2s ease-in-out;
+  background-color: hsl(161, 15%, 57%);
+  &:hover {
+    background-color: hwb(200 42% 7%);
+  }
+}
+
+@page {
+  size: A4 portrait;
+  margin: 15mm 10mm 15mm 10mm;
+}
+
+@media print {
+  /* 1. 불필요한 UI 요소 숨기기 */
+  .sidebar, .header, .buttonGroup, .printButton, .approvalContainer .sidebar {
+    display: none !important;
+  }
+
+  /* 2. 인쇄할 메인 컨텐츠 영역을 전체 화면으로 확장 */
+  .approvalContainer {
+    width: 210mm !important;
+    min-height: 297mm !important;
+    max-width: 210mm !important;
+    margin: 0 auto !important;
+    padding: 20mm 15mm !important;
+    box-sizing: border-box !important;
+    background: #fff !important;
+    position: static !important;
+    border: none !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+    height: auto !important;
+  }
+
+  /* 3. 페이지 나뉨 방지 (결재선, 결재이력 등) */
+  .approvalLineBox, .historySection {
+    page-break-inside: avoid;
+  }
+
+  /* 4. 글자색/배경색 강제 */
+  body, html, .layout, .main, .content, .bottomSection {
+    display: block !important;
+    width: auto !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    background: #fff !important;
+    overflow: visible !important;
+  }
+
+  .content {
+    padding: 20mm !important;
+  }
+
+  .historySection, ._historySection_1s876_180 {
+    display: block !important;
+    visibility: visible !important;
+    overflow: visible !important;
+    page-break-before: auto;
+  }
+
+  img, table {
+    max-width: 100% !important;
+    page-break-inside: avoid;
+  }
+
+  * {
+    color: #000 !important;
+  }
+}

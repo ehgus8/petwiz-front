@@ -1,11 +1,9 @@
 import axios from 'axios';
-import { USER_SERVICE } from './host-config';
+import { HR_SERVICE } from './host-config';
+import { removeLocalStorageForLogout } from '../common/common';
+import Swal from 'sweetalert2';
 
-const axiosInstance = axios.create({
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
+const axiosInstance = axios.create({});
 
 // 요청용 인터셉터
 // 1번째 콜백에는 정상 동작 로직, 2번째 콜백에는 과정 중 에러 발생 시 실행할 함수
@@ -16,24 +14,33 @@ axiosInstance.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+    // Content-Type 조건부 설정
+    if (!(config.data instanceof FormData)) {
+      config.headers['Content-Type'] = 'application/json';
+    }
+    // FormData일 때는 Content-Type을 건드리지 않음
     return config;
   },
 
   (error) => {
-    console.log(error);
-    Promise.reject(error);
+    return Promise.reject(error);
   },
 );
 
 // 응답용 인터셉터
 axiosInstance.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    return response;
+  },
 
   async (error) => {
-    console.log('response interceptor 동작함! 응답에 문제가 발생!');
-    console.log(error);
+    const isLoggingOut = localStorage.getItem('IS_LOGGING_OUT');
+    if (isLoggingOut === 'true') {
+      localStorage.removeItem('IS_LOGGING_OUT'); // Clear the flag
+      return Promise.reject(error); // Abort further error handling
+    }
 
-    if (error.response.data.message === 'NO_LOGIN') {
+    if (error.response?.data.message === 'NO_LOGIN') {
       console.log('아예 로그인을 하지 않아서 재발급 요청 들어갈 수 없음!');
       return Promise.reject(error);
     }
@@ -49,7 +56,7 @@ axiosInstance.interceptors.response.use(
         const id = localStorage.getItem('USER_ID');
 
         const res = await axios.post(
-          `http://localhost:8000${USER_SERVICE}/user/refresh`,
+          `http://localhost:8000${HR_SERVICE}/refresh`,
           {
             id,
           },
@@ -64,12 +71,25 @@ axiosInstance.interceptors.response.use(
         return axiosInstance(originalRequest);
       } catch (error) {
         console.log(error);
+        await Swal.fire({
+          icon: 'warning',
+          title: '로그인 만료',
+          text: '로그인 정보가 만료되었습니다. 다시 로그인을 해주세요.',
+          confirmButtonColor: '#3085d6',
+        });
         // 백엔드에서 401을 보낸거 -> Refresh도 만료된 상황 (로그아웃처럼 처리해줘야 함.)
-        localStorage.clear();
+        // localStorage.clear();
+        removeLocalStorageForLogout();
+        window.location.href = '/';
+        // navigate('/');
         // 재발급 요청도 거절당하면 인스턴스를 호출한 곳으로 에러 정보 리턴.
-        return Promise.reject(error);
+        return Promise.reject(
+          '로그인 정보가 만료되었습니다. 다시 로그인을 해주세요.',
+        );
       }
     }
+    // 여기에 반드시 추가!
+    return Promise.reject(error);
   },
 );
 
