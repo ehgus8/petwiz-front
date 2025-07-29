@@ -1,0 +1,104 @@
+.leave-form-root {
+  margin: 0 auto;
+  width: 800px;
+  min-height: 700px;
+  padding-top: 40px;
+  h2 {
+    text-align: center;
+    margin-bottom: 32px;
+    font-size: 2rem;
+    font-weight: 600;
+    letter-spacing: -1px;
+  }
+}
+
+.leave-form-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+
+  .row {
+    display: flex;
+    border-bottom: 1px solid #bbb;
+    min-height: 56px;
+    align-items: stretch;
+  }
+  .cell {
+    display: flex;
+    align-items: center;
+    border: 1px solid #bbb;
+    padding: 0 16px;
+    font-size: 17px;
+    background: #fff;
+    &.label {
+      width: 160px;
+      background: #f8f8f8;
+      font-weight: 500;
+      justify-content: flex-start;
+    }
+    &.input {
+      flex: 1;
+      background: #fff;
+    }
+  }
+  .text-input {
+    width: 100%;
+    height: 36px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 0 8px;
+  }
+  .select-input {
+    min-width: 180px;
+    height: 36px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-right: 24px;
+    padding: 0 8px;
+  }
+  .checkbox-label {
+    display: inline-flex;
+    align-items: center;
+    margin-left: 8px;
+    font-size: 16px;
+    span {
+      margin-left: 6px;
+    }
+  }
+  .date-input {
+    width: 160px;
+    height: 36px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    margin-right: 8px;
+    padding: 0 8px;
+  }
+  .date-sep {
+    margin-right: 8px;
+    font-size: 16px;
+  }
+  .total-day {
+    margin-left: 8px;
+    font-size: 16px;
+    color: #222;
+    .total-num {
+      display: inline-block;
+      min-width: 20px;
+      text-align: right;
+    }
+  }
+  .reason-row .input {
+    textarea.reason-textarea {
+      width: 100%;
+      min-height: 68px;
+      font-size: 16px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 8px;
+      resize: vertical;
+    }
+  }
+}

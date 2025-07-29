@@ -1,0 +1,180 @@
+$card-radius: 1.2rem;
+$shadow: 0 2px 16px 0 rgba(44, 62, 80, 0.07);
+$border: #e8ecef;
+$accent: #35c45b;
+$dash-title-size: 1.16rem;
+
+.dashboard-root {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  width: 100%;
+  min-height: 100%;
+}
+
+.dash-top {
+  display: flex;
+  gap: 2rem;
+  width: 100%;
+  @media (max-width: 900px) {
+    flex-direction: column;
+    gap: 1.3rem;
+  }
+}
+
+.dash-bottom {
+  display: flex;
+  gap: 2rem;
+  width: 100%;
+  @media (max-width: 900px) {
+    flex-direction: column;
+    gap: 1.3rem;
+  }
+}
+
+.dash-card {
+  background: #fff;
+  border-radius: $card-radius;
+  box-shadow: $shadow;
+  border: 1px solid $border;
+  padding: 1.7rem 2rem 2rem 2rem;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+
+  .dash-title {
+    font-weight: bold;
+    font-size: $dash-title-size;
+    letter-spacing: -0.01em;
+    color: #222;
+    margin-bottom: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.3em;
+
+    &::after {
+      content: '';
+      display: block;
+      flex: 1;
+      margin-left: 1rem;
+      height: 1px;
+      background: linear-gradient(90deg, $accent 10%, transparent 100%);
+      max-width: 100px;
+      min-width: 20px;
+    }
+  }
+}
+
+.notice {
+  flex: 2.5;
+  min-width: 300px;
+  min-height: 240px;
+  .dash-notice-list {
+    border: 1px solid $border;
+    border-radius: 0.9rem;
+    background: #fafbfc;
+    padding: 1.1rem 1.4rem;
+    min-height: 180px;
+    .dash-notice-item {
+      color: #57606a;
+      font-size: 1.08rem;
+      margin-bottom: 0.6rem;
+      .dash-notice-title {
+        color: #6b7280;
+        font-weight: 500;
+      }
+    }
+  }
+}
+
+.events {
+  flex: 1;
+  min-width: 180px;
+  .dash-event-list {
+    border: 2.5px dashed $accent;
+    border-radius: 0.7rem;
+    background: #f4fef7;
+    padding: 1.2rem 1.2rem 1.2rem 1.3rem;
+    color: #374151;
+    font-size: 1.06rem;
+    li {
+      margin-bottom: 0.7rem;
+      &:first-child {
+        font-weight: 600;
+        color: $accent;
+      }
+    }
+  }
+}
+
+.news {
+  flex: 3;
+  min-width: 250px;
+  .dash-news-list {
+    border: 2px solid #bcd9cb;
+    border-radius: 0.8rem;
+    background: #f8fafb;
+    padding: 1rem 1.2rem;
+    min-height: 70px;
+    .dash-news-item {
+      margin-bottom: 0.8rem;
+      a {
+        color: #2d5d7b;
+        word-break: break-all;
+        font-size: 0.97rem;
+        &:hover {
+          text-decoration: underline;
+          color: $accent;
+        }
+      }
+    }
+  }
+}
+
+.link {
+  flex: 1.2;
+  min-width: 180px;
+  .dash-link-list {
+    border: 2.5px dashed #a8b9cc;
+    border-radius: 0.8rem;
+    background: #f5f8fa;
+    padding: 1.1rem 1.1rem 0.7rem 1.2rem;
+    .dash-link-group {
+      margin-bottom: 1.2rem;
+      .dash-link-label {
+        font-weight: 600;
+        margin-bottom: 0.15rem;
+        color: #1b3946;
+      }
+      a {
+        color: #3888e9;
+        font-size: 0.97rem;
+        word-break: break-all;
+        &:hover {
+          color: #0eaf61;
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+}
+
+/* 반응형 모바일 최소 대응 */
+@media (max-width: 600px) {
+  .dashboard-root {
+    gap: 1rem;
+  }
+  .dash-card {
+    padding: 1rem 0.7rem 1.2rem 0.7rem;
+    .dash-title {
+      font-size: 1rem;
+      margin-bottom: 0.6rem;
+    }
+  }
+  .notice,
+  .events,
+  .news,
+  .link {
+    min-width: 0;
+  }
+}

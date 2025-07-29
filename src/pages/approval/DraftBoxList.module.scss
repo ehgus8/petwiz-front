@@ -1,0 +1,149 @@
+.approvalContainer {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding-left: 32px;
+  padding-right: 32px;
+  width: 100%;
+}
+
+.container {
+  padding: 24px;
+  background-color: #fff;
+  border-radius: 12px;
+  min-height: 100vh;
+  width: 100%;
+  animation: fadeInUp 0.6s ease-out;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding-left: 32px;
+  padding-right: 32px;
+  width: 100%;
+}
+
+.sectionTitle {
+  font-size: 24px;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 28px;
+  animation: slideInLeft 0.8s ease-out;
+}
+
+.filterRow, .filterGroup {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 20px;
+  align-items: center;
+}
+
+.resultInfo {
+  background: #e3f2fd;
+  color: #1976d2;
+  padding: 12px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 16px;
+  border-left: 4px solid #2196f3;
+  animation: fadeInScale 0.5s ease-out;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  > * {
+    animation: fadeInUp 0.6s ease-out;
+    
+    &:nth-child(1) { animation-delay: 0.1s; }
+    &:nth-child(2) { animation-delay: 0.2s; }
+    &:nth-child(3) { animation-delay: 0.3s; }
+    &:nth-child(4) { animation-delay: 0.4s; }
+    &:nth-child(5) { animation-delay: 0.5s; }
+  }
+}
+
+.reportItem {
+  display: flex;
+  padding: 16px 20px;
+  border-bottom: 1px solid #f0f0f0;
+  transition: background-color 0.2s ease-in-out;
+  cursor: pointer;
+  background-color: #fff;
+  border-radius: 8px;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+  &:hover {
+    background-color: #f9fafb;
+  }
+}
+
+.error, .noReports {
+  text-align: center;
+  padding: 40px;
+  color: #888;
+}
+
+.noReports {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 0;
+  text-align: center;
+  color: #888;
+}
+
+.noReportsIcon {
+  font-size: 48px;
+  margin-bottom: 10px;
+  color: #ccc;
+} 
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
+} 

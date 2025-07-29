@@ -1,0 +1,332 @@
+.register-root {
+  max-width: 960px; // 더 넓게
+  margin: 0 auto;
+  padding: 3rem 2.5rem 4rem 2.5rem; // 넓은 패딩
+  background: #fff;
+}
+
+.register-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 2.1rem;
+  color: #222;
+  letter-spacing: -0.01em;
+}
+
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 2.2rem; // 섹션간 넉넉한 간격
+}
+
+.reg-label {
+  font-size: 1.09rem;
+  font-weight: 500;
+  margin-bottom: 0.6rem; // 라벨-인풋 간격 넉넉히
+  color: #222;
+  display: block;
+}
+
+.reg-email-group {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.5rem; // 아래쪽 여백 추가
+  .reg-input {
+    border-radius: 0.4em;
+    flex: 1;
+  }
+  .reg-email-addon {
+    background: #f0f3f6;
+    border: 1px solid #ced4da;
+    border-left: none;
+    border-radius: 0 0.4em 0.4em 0;
+    padding: 0.43em 1.1em;
+    color: #888;
+    font-size: 1.03em;
+    height: 45px;
+    display: flex;
+    align-items: center;
+  }
+}
+
+.reg-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2.1rem 3rem; // 행/열 모두 넓게
+  margin-bottom: 2rem;
+  > div {
+    display: flex;
+    flex-direction: column;
+  }
+  @media (max-width: 700px) {
+    grid-template-columns: 1fr;
+    gap: 1.1rem;
+  }
+}
+
+.reg-input {
+  background: #e9ecef;
+  border: 1px solid #ced4da;
+  border-radius: 0.4em;
+  padding: 1.1em 1.1em;
+  font-size: 1.08rem;
+  margin-bottom: 0; // 내부 div가 간격을 잡으니 여기선 margin 0
+  color: #606c76;
+  width: 90%;
+  resize: none;
+}
+
+.reg-input--readonly {
+  border: 1.5px solid #e53935 !important;
+  color: #e53935 !important;
+  background: #fff0f0 !important;
+  cursor: default !important;
+}
+.reg-input--readonly:focus,
+.reg-input--readonly:hover,
+.reg-input--readonly:active {
+  border: 1.5px solid #e53935 !important;
+  color: #e53935 !important;
+  background: #fff0f0 !important;
+  outline: none !important;
+  box-shadow: none !important;
+  cursor: default !important;
+}
+
+.reg-textarea {
+  min-height: 90px;
+  margin-top: 0.4rem;
+  width: 95%;
+}
+
+.reg-btns {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1.5rem;
+  margin-top: 2.6rem;
+  border-top: 1px solid #e0e4ea;
+  padding-top: 2.4rem;
+
+  .btn {
+    font-size: 1.12rem;
+    font-weight: 600;
+    padding: 0.9em 2.5em;
+    border-radius: 7px;
+    border: none;
+    cursor: pointer;
+    transition: background 0.13s;
+    &.gray {
+      background: #f3f3f3;
+      color: #222;
+      border: 1.5px solid #bbb;
+      &:hover {
+        background: #e9ecef;
+      }
+    }
+    &.blue {
+      background: #2196f3;
+      color: #fff;
+      &:hover {
+        background: #146cb8;
+      }
+    }
+  }
+}
+
+.reg-grid select.reg-input {
+  width: 100%;
+  min-width: 0;
+}
+
+.reg-input + .btn.blue {
+  background: #2196f3;
+  color: #fff;
+  font-weight: 700;
+  border-radius: 0.7em;
+  box-shadow: 0 2px 8px 0 rgba(33, 150, 243, 0.1);
+  border: none;
+  margin-left: 0.5em;
+  transition:
+    background 0.15s,
+    box-shadow 0.15s,
+    color 0.15s;
+  padding: 0.55em 1em;
+  font-size: 0.97rem;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+}
+.reg-input + .btn.blue:hover {
+  background: #1766ad;
+  color: #fff;
+  box-shadow: 0 4px 18px 0 rgba(33, 150, 243, 0.18);
+}
+
+/* 전체 반응형 개선 */
+@media (max-width: 1100px) {
+  .register-root {
+    max-width: 100%;
+    padding: 2rem 1.2rem;
+  }
+}
+@media (max-width: 700px) {
+  .register-title {
+    font-size: 1.4rem;
+  }
+  .reg-btns {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+}
+
+/* 부서 등록 모달 오버레이 */
+.dept-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.dept-modal {
+  background: #fff;
+  padding: 2.2rem 2.2rem 1.5rem 2.2rem;
+  border-radius: 12px;
+  min-width: 320px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.13);
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  max-width: 92vw;
+}
+
+.dept-modal h3 {
+  font-size: 1.18rem;
+  font-weight: 700;
+  margin: 0 0 0.7rem 0;
+  color: #222;
+}
+
+.dept-modal .reg-input {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  margin-bottom: 0.2rem;
+}
+
+.dept-modal-btns {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.7rem;
+  margin-top: 0.2rem;
+}
+
+.dept-modal-btns .btn {
+  font-size: 1.05rem;
+  font-weight: 600;
+  padding: 0.7em 2em;
+  border-radius: 7px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.13s;
+}
+
+.dept-modal-btns .btn.gray {
+  background: #f3f3f3;
+  color: #222;
+  border: 1.5px solid #bbb;
+}
+.dept-modal-btns .btn.gray:hover {
+  background: #e9ecef;
+}
+.dept-modal-btns .btn.blue {
+  background: #2196f3;
+  color: #fff;
+}
+.dept-modal-btns .btn.blue:hover {
+  background: #146cb8;
+}
+
+@media (max-width: 500px) {
+  .dept-modal {
+    min-width: 0;
+    padding: 1.1rem 0.7rem 1rem 0.7rem;
+  }
+}
+
+// 주소 입력란만 길이 제한
+.reg-input[type='text'][readonly][placeholder='주소'] {
+  max-width: 340px;
+}
+
+.input-lock-indicator {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 8px;
+  font-size: 0.98rem;
+  color: #e53935;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  user-select: none;
+}
+
+.excel-upload-row {
+  display: flex;
+  align-items: stretch;
+  margin-bottom: 20px;
+}
+
+.excel-upload-btn,
+.employee-select-btn,
+.excel-upload-success {
+  height: 44px;
+  line-height: 44px;
+  font-size: 1rem;
+  font-family: inherit;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  padding: 0 18px;
+  border-radius: 4px;
+}
+
+.excel-upload-btn,
+.employee-select-btn {
+  background: #4a90e2;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s;
+}
+
+.employee-select-btn.disabled,
+.employee-select-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  color: #fff;
+}
+
+.excel-upload-btn:hover:not(:disabled),
+.employee-select-btn:hover:not(.disabled):not(:disabled) {
+  background: #357abd;
+}
+
+.employee-select-btn {
+  margin-left: 12px;
+}
+
+.excel-upload-success {
+  margin-left: 12px;
+  background: none;
+  color: #4a90e2;
+  font-weight: 500;
+  border: none;
+  cursor: default;
+  padding: 0;
+}

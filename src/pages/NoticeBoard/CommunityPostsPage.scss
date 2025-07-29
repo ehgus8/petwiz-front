@@ -1,0 +1,390 @@
+.community-posts-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+
+  .page-title {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid #ddd;
+    padding-bottom: 0.5rem;
+  }
+
+  .posts-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .pagination-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+}
+
+.notice-board {
+  max-width: 1000px;
+  margin: 40px auto;
+  background: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  .header {
+    position: relative;
+    display: flex;
+    padding-bottom: 0px;
+    padding-left: 15px;
+    padding-right: 15px;
+
+    .admin-controls {
+      position: absolute;
+      text-align: right;
+      margin-top: 0.3rem;
+      top: -40px; // ✅ 제목보다 위로 올림
+      right: 0;
+
+      .manage-button {
+        position: relative;
+        padding: 4px 10px 4px 10px;
+        font-size: 0.8rem;
+        border: none;
+        background-color: #f9fafb;
+        color: #333;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+
+        &:hover {
+          background-color: #e2e8f0;
+          color: #000;
+        }
+        .report-badge {
+          position: absolute;
+          top: -6px;
+          right: -6px;
+          background-color: red;
+          color: white;
+          font-size: 0.7rem;
+          padding: 2px 6px;
+          border-radius: 10px;
+          font-weight: bold;
+          animation: pulse 1.5s infinite;
+        }
+      }
+    }
+
+    h2 {
+      width: 150px;
+      font-size: 25px;
+      margin-bottom: 30px;
+      margin-right: 10px;
+      font-weight: bold;
+      flex-wrap: wrap;
+    }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
+      margin-bottom: 1rem;
+
+      input[type='date'],
+      input[type='text'],
+      select,
+      button {
+        padding: 0.4rem 0.6rem;
+        font-size: 0.95rem;
+      }
+
+      input,
+      select {
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 14px;
+      }
+
+      .write-button {
+        margin-left: auto;
+        background-color: #4a7ae5;
+        color: white;
+        border: none;
+        padding: 8px;
+        border-radius: 6px;
+        cursor: pointer;
+
+        &:hover {
+          background-color: #3a63c9;
+        }
+      }
+    }
+
+    .view-mode-buttons {
+      margin-right: 10px;
+      display: flex;
+      gap: 0.5rem;
+
+      button {
+        border-radius: 50%;
+        margin-right: 5px;
+        padding: 6px 12px;
+        border: 0px solid #ccc;
+        background-color: white;
+        cursor: pointer;
+        &.active {
+          // background-color: #007bff;
+          color: blue;
+          font-weight: 700;
+        }
+      }
+    }
+
+    .write-button-wrapper {
+      display: flex;
+      justify-content: right;
+      // margin-left: 55%;
+      margin-left: auto; // ✅ 오른쪽 끝으로 정렬
+    }
+    .write-button {
+      padding: 0.5rem 1.2rem;
+      background-color: #4e73df;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+
+      &:hover {
+        background-color: #395bb6;
+      }
+    }
+    .reset-button {
+      background-color: #e0e0e0;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+
+      &:hover {
+        background-color: #d5d5d5;
+      }
+    }
+
+    .post-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+
+      li {
+        display: grid;
+        grid-template-columns: 80px 1fr 120px 120px 80px;
+        padding: 12px;
+        border-bottom: 1px solid #eee;
+        font-size: 14px;
+        align-items: center;
+        cursor: pointer;
+
+        &.notice {
+          background: #f9f9f9;
+          font-weight: bold;
+        }
+
+        &.notice-header {
+          background: #ececec;
+          font-weight: bold;
+        }
+
+        &:hover {
+          background-color: #f1f4ff;
+        }
+
+        &.no-post {
+          grid-column: span 5;
+          text-align: center;
+          color: #999;
+        }
+
+        span:nth-child(2) {
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+        }
+      }
+    }
+
+    .pagination {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+      gap: 6px;
+
+      button {
+        padding: 6px 12px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        background: white;
+        cursor: pointer;
+
+        &.active {
+          background-color: #4a7ae5;
+          color: white;
+        }
+
+        &:disabled {
+          background: #eee;
+          cursor: not-allowed;
+        }
+      }
+    }
+
+    .title-input {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 10px;
+    }
+
+    .content-textarea {
+      width: 100%;
+      height: 200px;
+      padding: 8px;
+      margin-bottom: 10px;
+    }
+
+    .options,
+    .attachments,
+    .buttons {
+      margin-top: 10px;
+    }
+
+    .buttons button {
+      margin-right: 10px;
+      padding: 6px 12px;
+      background-color: blue;
+      color: black;
+      border: none;
+      cursor: pointer;
+    }
+  }
+}
+
+.notice-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+
+  thead {
+    border-bottom: 1px solid #ccc; // ✅ 컬럼명 아래 실선
+  }
+
+  th,
+  td {
+    padding: 10px;
+    border: none;
+    text-align: center;
+  }
+
+  td:nth-child(3) {
+    text-align: left; // ✅ 제목만 왼쪽 정렬
+  }
+
+  // zebra striping 적용
+  tbody tr:nth-child(odd) {
+    background-color: #ffffff;
+  }
+
+  tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+
+  .notice-row {
+    background-color: #eef3ff;
+    // font-weight: bold;
+    // color: #21429e;
+  }
+
+  .divider-row td {
+    padding: 0;
+    border: none;
+
+    hr {
+      border: none;
+      border-top: 2px solid #999;
+      margin: 8px 0;
+    }
+  }
+
+  tr:hover {
+    background-color: #f0f0f0;
+    cursor: pointer;
+  }
+
+  .no-post {
+    text-align: center;
+    padding: 20px;
+    color: #888;
+  }
+}
+
+.pagination {
+  display: flex;
+  justify-content: center; // ✅ 가운데 정렬
+  margin-top: 20px;
+  gap: 5px;
+
+  button {
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    background: white;
+    cursor: pointer;
+
+    &.active {
+      font-weight: bold;
+      background: #f0f0f0;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+}
+
+.page-size-selector {
+  display: flex;
+  justify-content: right; // ✅ 가운데 정렬
+  align-items: center;
+  margin-top: 10px;
+
+  label {
+    margin-right: 8px;
+  }
+
+  select {
+    padding: 5px;
+  }
+}
+
+.bold-row {
+  font-weight: bold;
+}

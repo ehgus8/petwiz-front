@@ -1,0 +1,135 @@
+.filterContainer {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  border: 1px solid #e9ecef;
+}
+
+.filterHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  
+  h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+  }
+}
+
+.clearButton {
+  background: #6c757d;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  
+  &:hover {
+    background: #5a6268;
+  }
+}
+
+.filterContent {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.filterRow {
+  display: flex;
+  align-items: center;
+}
+
+.filterItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  
+  label {
+    font-weight: 500;
+    color: #495057;
+    min-width: 60px;
+    font-size: 14px;
+  }
+  
+  input, select {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: border-color 0.2s;
+    
+    &:focus {
+      outline: none;
+      border-color: #4a7ae5;
+      box-shadow: 0 0 0 2px rgba(74, 122, 229, 0.25);
+    }
+  }
+}
+
+.dateInputs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  
+  input[type="date"] {
+    width: 140px;
+  }
+}
+
+.dateSeparator {
+  color: #6c757d;
+  font-weight: 500;
+}
+
+.titleInput {
+  width: 250px;
+}
+
+.categorySelect {
+  width: 120px;
+}
+
+@media (max-width: 768px) {
+  .filterContent {
+    gap: 12px;
+  }
+  
+  .filterItem {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    
+    label {
+      min-width: auto;
+    }
+    
+    input, select {
+      width: 100%;
+    }
+  }
+  
+  .dateInputs {
+    flex-direction: column;
+    gap: 6px;
+    
+    input[type="date"] {
+      width: 100%;
+    }
+  }
+  
+  .titleInput {
+    width: 100%;
+  }
+  
+  .categorySelect {
+    width: 100%;
+  }
+} 

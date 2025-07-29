@@ -1,0 +1,106 @@
+.community-report-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 2rem;
+  background-color: #f8f9fa;
+}
+
+.report-box {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  padding: 2rem;
+  width: 600px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+
+  h2 {
+    text-align: center; // 중앙 정렬
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #e0e0e0; // 연한 실선
+    padding-bottom: 0.8rem;
+  }
+}
+
+.report-meta {
+  font-size: 0.9rem;
+  color: #333;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #e0e0e0; // 연한 실선
+
+  p {
+    margin: 0.3rem 0;
+    margin-bottom: 15px;
+    margin-left: 10px;
+  }
+}
+
+.reason-section {
+  margin-bottom: 1.5rem;
+
+  ul {
+    list-style: none;
+    padding: 0;
+
+    li {
+      margin: 0.5rem 0;
+      margin-bottom: 15px;
+
+      label {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+      }
+
+      input[type='radio'] {
+        accent-color: hsl(247, 71%, 45%);
+      }
+    }
+  }
+}
+
+textarea {
+  width: 100%;
+  height: 100px;
+  margin-top: 1rem;
+  padding: 0.8rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  resize: none;
+  font-size: 0.95rem;
+}
+
+.submit-button {
+  margin-top: 1.5rem;
+  width: 100%;
+  background-color: hsl(226, 69%, 55%);
+  color: white;
+  padding: 0.8rem;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+
+  &:hover {
+    background-color: hsl(207, 72%, 61%);
+  }
+}
+
+.cancel-button {
+  margin-top: 1rem;
+  background: none;
+  color: #888;
+  font-size: 0.9rem;
+  border: none;
+  cursor: pointer;
+  display: block;
+  margin-left: auto;
+  text-decoration: underline;
+
+  &:hover {
+    color: #000;
+  }
+}

@@ -1,0 +1,213 @@
+.contact-root {
+  display: flex;
+  height: 100%;
+  background: #f7fafd;
+}
+.contact-org {
+  width: 220px;
+  border-right: 1px solid #e3e8ee;
+  padding: 32px 16px;
+  background: #f4f7fb;
+}
+.contact-org h3 {
+  font-size: 1.15rem;
+  margin-bottom: 18px;
+  color: #1976d2;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+.contact-org ul {
+  list-style: none;
+  padding: 0;
+}
+.contact-org li {
+  padding: 10px 16px;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    color 0.2s;
+  color: #333;
+}
+.contact-org li.selected,
+.contact-org li:hover {
+  background: #e3f0ff;
+  color: #1766ad;
+  font-weight: bold;
+}
+.contact-main {
+  flex: 1;
+  padding: 40px 48px;
+  display: flex;
+  flex-direction: column;
+}
+.contact-search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 24px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.06);
+  padding: 18px 20px;
+}
+.contact-search select,
+.contact-search input {
+  padding: 8px 12px;
+  border: 1px solid #b6c2cf;
+  border-radius: 6px;
+  font-size: 1rem;
+  background: #f8fafc;
+  transition: border 0.2s;
+}
+.contact-search input:focus,
+.contact-search select:focus {
+  border: 1.5px solid #1976d2;
+  outline: none;
+}
+.contact-search button {
+  padding: 8px 20px;
+  background: linear-gradient(90deg, #1976d2 60%, #42a5f5 100%);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition:
+    background 0.18s,
+    box-shadow 0.18s;
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.08);
+}
+.contact-search button:hover {
+  background: linear-gradient(90deg, #1766ad 60%, #1976d2 100%);
+}
+.contact-search button[type='button'] {
+  background: #e3e8ee;
+  color: #1976d2;
+  margin-left: 4px;
+}
+.contact-search button[type='button']:hover {
+  background: #d0e3fa;
+}
+.contact-sort {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.contact-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 28px;
+  margin-bottom: 24px;
+}
+.contact-card {
+  display: flex;
+  align-items: center;
+  border: none;
+  border-radius: 18px;
+  padding: 28px 28px 28px 24px;
+  background: #fff;
+  min-height: 130px;
+  box-shadow:
+    0 4px 18px rgba(25, 118, 210, 0.1),
+    0 1.5px 4px rgba(0, 0, 0, 0.04);
+  transition:
+    box-shadow 0.18s,
+    transform 0.18s;
+  position: relative;
+}
+.contact-card:hover {
+  box-shadow:
+    0 8px 32px rgba(25, 118, 210, 0.16),
+    0 2px 8px rgba(0, 0, 0, 0.06);
+  transform: translateY(-2px) scale(1.012);
+}
+.contact-profile {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: #f0f4fa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  margin-right: 24px;
+  overflow: hidden;
+  border: 2.5px solid #b6c2cf;
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.1);
+}
+.contact-profile img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  background: #f2f4f8;
+  display: block;
+}
+.contact-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.contact-info b {
+  font-size: 1.18rem;
+  display: block;
+  margin-bottom: 2px;
+  color: #222;
+  font-weight: 600;
+}
+.contact-info span {
+  font-size: 1rem;
+  color: #1976d2;
+  margin-left: 8px;
+  font-weight: 500;
+}
+.contact-info div {
+  font-size: 1.01rem;
+  color: #444;
+  margin-top: 1px;
+}
+.no-result {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: #888;
+  padding: 40px 0;
+  font-size: 1.1rem;
+  background: #f8fafc;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.06);
+}
+.contact-pagination {
+  text-align: center;
+  margin-top: 8px;
+}
+.contact-pagination button {
+  margin: 0 5px;
+  padding: 7px 16px;
+  border: 1.5px solid #b6c2cf;
+  background: #fff;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  color: #1976d2;
+  font-weight: 500;
+  transition:
+    background 0.16s,
+    color 0.16s,
+    border 0.16s;
+}
+.contact-pagination button.active,
+.contact-pagination button:focus {
+  background: #1976d2;
+  color: #fff;
+  border-color: #1976d2;
+}
+.contact-pagination button:disabled {
+  background: #e3e8ee;
+  color: #aaa;
+  border-color: #e3e8ee;
+  cursor: not-allowed;
+}

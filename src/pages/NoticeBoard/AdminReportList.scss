@@ -1,0 +1,152 @@
+main.content {
+  // max-width: 960px; // 기존보다 좁게
+  margin: 0 auto; // 수평 가운데 정렬
+  padding: 2rem 1rem;
+}
+
+.admin-report-wrapper {
+  padding-bottom: 15px;
+
+  margin: 40px auto;
+  background: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  max-width: 800px; // ✅ 작게 조정
+  margin: 0 auto; // ✅ 수평 가운데 정렬
+  width: 100%; // ✅ 반응형 고려
+
+  h2 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    font-size: 1.6rem;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 0.5rem;
+  }
+
+  .empty {
+    text-align: center;
+    color: #666;
+    font-size: 1rem;
+    margin-top: 2rem;
+  }
+
+  .report-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.05);
+
+    th,
+    td {
+      padding: 0.9rem;
+      border-bottom: 1px solid #eee;
+      text-align: center;
+      font-size: 0.95rem;
+      white-space: nowrap; // 내용 줄바꿈 방지
+      overflow: hidden; // 넘치는 텍스트 숨김
+      text-overflow: ellipsis; // ... 표시
+    }
+
+    th {
+      background: #f1f1f1;
+    }
+
+    td {
+      word-break: break-word;
+    }
+
+    th:nth-child(3),
+    td:nth-child(3) {
+      width: 200px; // ✳ 원하는 고정 너비로 지정 (예: 200px)
+      max-width: 200px;
+    }
+
+    .btn {
+      padding: 0.4rem 0.7rem;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      margin: 0 3px;
+      cursor: pointer;
+
+      &.delete {
+        background-color: #ef4444;
+        color: white;
+
+        &:hover {
+          background-color: #dc2626;
+        }
+      }
+
+      &.recover {
+        background-color: #22c55e;
+        color: white;
+
+        &:hover {
+          background-color: #16a34a;
+        }
+      }
+    }
+  }
+}
+
+.buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 15px;
+
+  button {
+    padding: 10px 18px;
+    font-size: 15px;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+    margin-right: 10px;
+    background-color: #3b82f6;
+    color: white;
+
+    &:nth-child(1) {
+      background-color: #007bff;
+      color: #fff;
+
+      &:hover {
+        background-color: #0056b3;
+      }
+    }
+
+    &:nth-child(2) {
+      background-color: #dc3545;
+      color: #fff;
+
+      &:hover {
+        background-color: #a71d2a;
+      }
+    }
+
+    &:last-child {
+      background-color: #e0e0e0;
+      color: #333;
+
+      &:hover {
+        background-color: #c6c6c6;
+      }
+    }
+  }
+}
+
+.clickable-row {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: #f9f9f9;
+  }
+}

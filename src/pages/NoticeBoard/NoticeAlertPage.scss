@@ -1,0 +1,95 @@
+.alert-page {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  font-family: 'Noto Sans KR', sans-serif;
+
+  h2 {
+    font-size: 1.6rem;
+    margin-bottom: 2.1rem;
+    text-align: justify;
+    color: #333;
+  }
+
+  section {
+    margin-bottom: 2rem;
+
+    h3 {
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+      border-left: 5px solid #4e73df;
+      padding-left: 0.75rem;
+      color: #333;
+    }
+
+    p {
+      font-size: 16px;
+      color: #777;
+      font-style: italic;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+
+      li {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid #eee;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+
+        &:hover {
+          background-color: #f9f9fc;
+        }
+
+        .title {
+          font-size: 1rem;
+          color: #333;
+          flex: 1;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .date {
+          font-size: 0.85rem;
+          color: #999;
+          margin-left: 1rem;
+          flex-shrink: 0;
+        }
+      }
+    }
+    p {
+      font-size: 0.95rem;
+      color: #777;
+      padding-left: 1rem;
+    }
+  }
+  .buttons {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+
+    button {
+      padding: 0.5rem 1.25rem;
+      background-color: #4e73df;
+      border: none;
+      border-radius: 6px;
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+
+      &:hover {
+        background-color: #395bb6;
+      }
+    }
+  }
+}
