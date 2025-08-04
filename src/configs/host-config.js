@@ -13,8 +13,9 @@ let backendHostName;
 
 if (clientHostName === 'localhost') {
   // 개발 중
-  backendHostName = 'http://localhost:8000';
+  // backendHostName = 'http://localhost:8000';
   // backendHostName = 'http://3.37.254.91:8000';
+  backendHostName = 'https://3.37.254.91/api';
 } else if (clientHostName === 'playdatashop.com') {
   // 배포해서 현재 서비스 중
   backendHostName = 'https://api.playdatashop.com';
