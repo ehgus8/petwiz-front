@@ -91,15 +91,13 @@ export default function EmployeeViewList() {
         employees.map(async (emp) => {
           const empKey = emp.employeeId || emp.id;
           try {
-            // 평가 내역 조회: 결과 content 배열이 있으면 평가 존재
-            const res = await axiosInstance.get(
-              `${API_BASE_URL}${HR_SERVICE}/evaluations/${empKey}`,
+            // "이번달 평가가 없으면 에러(404/500)"를 반환한다는 가정
+            await axiosInstance.get(
+              `${API_BASE_URL}${HR_SERVICE}/evaluation/${empKey}`,
             );
-            statusObj[empKey] =
-              Array.isArray(res.data.result.content) &&
-              res.data.result.content.length > 0;
+            statusObj[empKey] = true; // 평가가 있으면 true
           } catch {
-            statusObj[empKey] = false;
+            statusObj[empKey] = false; // 평가가 없으면 false
           }
         }),
       );

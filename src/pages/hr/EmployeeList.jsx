@@ -6,106 +6,36 @@ import HRHeader from './HRHeader';
 import './EmployeeList.scss';
 import axiosInstance from '../../configs/axios-config';
 import { API_BASE_URL, HR_SERVICE } from '../../configs/host-config';
-import { getDepartmentNameById, getEmployeeList } from '../../common/hr';
+import { getDepartmentNameById } from '../../common/hr';
 import { warn } from '../../common/common';
 import ModalPortal from '../../components/approval/ModalPortal';
 import styles from '../../components/approval/CategoryModal.module.scss';
 import pin from '../../assets/pin.jpg';
 
-// 부서 목록을 서버에서 받아옴
-
 export default function EmployeeList() {
-  // 'list', 'edit', 'eval' 중 하나
-  const [mode, setMode] = useState('list');
+  const [mode, setMode] = useState('list'); // 'list', 'edit', 'eval'
   const [selectedId, setSelectedId] = useState(null);
   const [selectedDetail, setSelectedDetail] = useState({});
   const [employees, setEmployees] = useState([]);
   const [departments, setDepartments] = useState([]);
   const [evaluationStatus, setEvaluationStatus] = useState({});
-
-  // 검색/필터 state
   const [searchField, setSearchField] = useState('name');
   const [searchText, setSearchText] = useState('');
   const [searchDept, setSearchDept] = useState('전체');
-  const [showInactive, setShowInactive] = useState(false); // 퇴직자만 체크박스
-  // 실제 검색에 사용되는 state
+  const [showInactive, setShowInactive] = useState(false);
   const [appliedSearch, setAppliedSearch] = useState({
     field: 'name',
     keyword: '',
     department: '전체',
-    isActive: true, // 기본값: 재직자만
+    isActive: true,
   });
-
-  // '퇴직자만' 체크박스가 변경될 때마다 바로 검색
-  React.useEffect(() => {
-    setAppliedSearch((prev) => ({
-      ...prev,
-      isActive: !showInactive,
-    }));
-    setPage(0); // 첫 페이지로 이동
-    setSelectedId(null); // 상세 닫기
-  }, [showInactive]);
-
-  // 페이징 state
   const [page, setPage] = useState(0);
   const [size, setSize] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
-
-  // 정렬 state
   const [sortField, setSortField] = useState(null);
-  const [sortOrder, setSortOrder] = useState('asc'); // 'asc' or 'desc'
+  const [sortOrder, setSortOrder] = useState('asc');
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
 
-  // 정렬 핸들러
-  const handleSort = (field) => {
-    let nextSortOrder = 'asc';
-    if (sortField === field) {
-      nextSortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
-    }
-    setSortField(field);
-    setSortOrder(nextSortOrder);
-    setPage(0);
-    // 정렬 시에도 현재 검색 조건을 반영해서 getEmployeeList 호출
-    getEmployeeList({
-      field: appliedSearch.field,
-      keyword: appliedSearch.keyword,
-      department: appliedSearch.department,
-      sortField: field,
-      sortOrder: nextSortOrder,
-      setEmployees,
-      setTotalPages,
-    });
-  };
-  const getEmployeeList = async ({
-    field = 'name',
-    keyword = '',
-    department = '전체',
-    page: reqPage = 0,
-    size: reqSize = 10,
-    sortField: reqSortField = null,
-    sortOrder: reqSortOrder = 'asc',
-    setEmployees,
-    setTotalPages,
-    isActive, // 추가
-  } = {}) => {
-    try {
-      let params = `?page=${reqPage}&size=${reqSize}`;
-      if (keyword.trim())
-        params += `&field=${field}&keyword=${encodeURIComponent(keyword)}`;
-      if (department !== '전체')
-        params += `&department=${encodeURIComponent(department)}`;
-      if (reqSortField) params += `&sort=${reqSortField},${reqSortOrder}`;
-      if (typeof isActive === 'boolean') params += `&isActive=${isActive}`; // 추가
-      const res = await axiosInstance.get(
-        `${API_BASE_URL}${HR_SERVICE}/employees${params}`,
-      );
-      setEmployees(res.data.result.content);
-      setTotalPages(res.data.result.totalPages || 1);
-    } catch (error) {
-      console.log(error + 'from getEmployeeList');
-      alert(error?.response?.data?.statusMessage || error.message);
-    }
-  };
-  // 정렬, 페이지, 페이지 크기 변화 시 목록 재요청 (검색 조건은 appliedSearch 기준)
   useEffect(() => {
     getEmployeeList({
       field: appliedSearch.field,
@@ -117,127 +47,19 @@ export default function EmployeeList() {
       sortOrder,
       setEmployees,
       setTotalPages,
-      isActive: appliedSearch.isActive, // 추가
+      isActive: appliedSearch.isActive,
     });
     // eslint-disable-next-line
   }, [page, size, sortField, sortOrder, appliedSearch]);
 
-  // Modal open/close state
-  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
-
-  // 직원 선택시 상세 조회 및 모달 오픈
   useEffect(() => {
-    if (selectedId == null) return;
-    getEmployeeDetail(selectedId);
-    setIsDetailModalOpen(true);
-    // eslint-disable-next-line
-  }, [selectedId]);
-
-  // 직원 상세정보 조회
-  const getEmployeeDetail = async (id) => {
-    try {
-      const res = await axiosInstance.get(
-        `${API_BASE_URL}${HR_SERVICE}/employees/${id}`,
-      );
-      setSelectedDetail({
-        ...res.data.result,
-        department: employees.find((e) => e.id === id)?.department,
-      });
-    } catch (error) {
-      alert(error.response?.data || '시스템에러');
-    }
-  };
-
-  // 인사평가 존재 여부 확인 후 평가화면 이동
-  const handleEvalWithCheck = async () => {
-    if (!selectedDetail || !selectedDetail.employeeId) return;
-    try {
-      await axiosInstance.get(
-        `${API_BASE_URL}${HR_SERVICE}/evaluation/${selectedDetail.employeeId}`,
-      );
-      // 평가가 이미 존재하면 alert만 띄우고 이동하지 않음
-      warn('이미 인사평가가 존재합니다.');
-    } catch (error) {
-      // 평가가 없으면 평가화면으로 이동
-      setMode('eval');
-    }
-  };
-
-  // Edit/Eval 화면 종료 시 목록+상세 복귀
-  const handleClose = (updatedEmployee) => {
-    setMode('list');
-    if (updatedEmployee) {
-      setSelectedDetail({ ...updatedEmployee });
-      const employees2 = employees.map((employee) => {
-        if (employee.id === updatedEmployee.employeeId) {
-          employee.name = updatedEmployee.name;
-          employee.department = getDepartmentNameById(
-            updatedEmployee.departmentId,
-          );
-          employee.position = updatedEmployee.position;
-          employee.role = updatedEmployee.role;
-          employee.phone = updatedEmployee.phone;
-        }
-        return employee;
-      });
-      console.log(employees2);
-      setEmployees(employees2);
-    }
-  };
-
-  const handleEdit = () => setMode('edit');
-  const handleEval = () => setMode('eval');
-
-  // 검색 버튼 or 폼 submit시
-  const handleSearch = (e) => {
-    e.preventDefault();
-    setAppliedSearch({
-      field: searchField,
-      keyword: searchText,
-      department: searchDept,
-      isActive: !showInactive, // 체크 시 false(퇴사자), 아니면 true(재직자)
-    });
-    setPage(0); // 검색 시 첫 페이지로
-    setSelectedId(null); // 검색하면 상세 닫기
-  };
-
-  // 퇴직자만 체크박스 변경 시 바로 필터링
-  const handleShowInactiveChange = (e) => {
-    const checked = e.target.checked;
-    setShowInactive(checked);
-    setAppliedSearch({
-      field: searchField,
-      keyword: searchText,
-      department: searchDept,
-      isActive: !checked, // checked=true면 isActive=false(퇴직자만)
-    });
+    setAppliedSearch((prev) => ({
+      ...prev,
+      isActive: !showInactive,
+    }));
     setPage(0);
     setSelectedId(null);
-  };
-
-  // 초기화
-  const handleReset = () => {
-    setSearchField('name');
-    setSearchText('');
-    setSearchDept('전체');
-    setSortField(null); // 정렬 초기화
-    setSortOrder('asc'); // 정렬 초기화
-    setShowInactive(false); // 체크박스도 해제
-    setAppliedSearch({
-      field: 'name',
-      keyword: '',
-      department: '전체',
-    });
-    setPage(0);
-    setSelectedId(null);
-    setShowInactive(false); // 체크박스도 해제
-  };
-
-  const handlePageChange = (newPage) => {
-    if (newPage >= 0 && newPage < totalPages) {
-      setPage(newPage);
-    }
-  };
+  }, [showInactive]);
 
   // 부서 목록 불러오기
   useEffect(() => {
@@ -254,15 +76,16 @@ export default function EmployeeList() {
     fetchDepartments();
   }, []);
 
-  // 수정/평가 화면 분기
-  if (mode === 'edit')
-    return <EmployeeEdit employee={selectedDetail} onClose={handleClose} />;
-  if (mode === 'eval')
-    return <EvaluationForm employee={selectedDetail} onClose={handleClose} />;
-
-  // 기본(리스트/상세)
+  // 직원상세 조회시 상세 정보 가져옴
   useEffect(() => {
-    // 직원별 인사평가 존재 여부 확인
+    if (selectedId == null) return;
+    getEmployeeDetail(selectedId);
+    setIsDetailModalOpen(true);
+    // eslint-disable-next-line
+  }, [selectedId]);
+
+  // 직원별 평가 상태 가져오기
+  useEffect(() => {
     const fetchEvaluationStatus = async () => {
       const statusObj = {};
       await Promise.all(
@@ -270,11 +93,9 @@ export default function EmployeeList() {
           const empKey = emp.employeeId || emp.id;
           try {
             const res = await axiosInstance.get(
-              `${API_BASE_URL}${HR_SERVICE}/evaluations/${empKey}`,
+              `${API_BASE_URL}${HR_SERVICE}/evaluation/${empKey}`,
             );
-            statusObj[empKey] =
-              Array.isArray(res.data.result.content) &&
-              res.data.result.content.length > 0;
+            statusObj[empKey] = !!res.data.result;
           } catch {
             statusObj[empKey] = false;
           }
@@ -285,12 +106,177 @@ export default function EmployeeList() {
     if (employees.length > 0) fetchEvaluationStatus();
   }, [employees]);
 
+  // 직원 목록 가져오기
+  const getEmployeeList = async ({
+    field = 'name',
+    keyword = '',
+    department = '전체',
+    page: reqPage = 0,
+    size: reqSize = 10,
+    sortField: reqSortField = null,
+    sortOrder: reqSortOrder = 'asc',
+    setEmployees,
+    setTotalPages,
+    isActive,
+  } = {}) => {
+    try {
+      let params = `?page=${reqPage}&size=${reqSize}`;
+      if (keyword.trim())
+        params += `&field=${field}&keyword=${encodeURIComponent(keyword)}`;
+      if (department !== '전체')
+        params += `&department=${encodeURIComponent(department)}`;
+      if (reqSortField) params += `&sort=${reqSortField},${reqSortOrder}`;
+      if (typeof isActive === 'boolean') params += `&isActive=${isActive}`;
+      const res = await axiosInstance.get(
+        `${API_BASE_URL}${HR_SERVICE}/employees${params}`,
+      );
+      setEmployees(res.data.result.content);
+      setTotalPages(res.data.result.totalPages || 1);
+    } catch (error) {
+      alert(error?.response?.data?.statusMessage || error.message);
+    }
+  };
+
+  const getEmployeeDetail = async (id) => {
+    try {
+      const res = await axiosInstance.get(
+        `${API_BASE_URL}${HR_SERVICE}/employees/${id}`,
+      );
+      setSelectedDetail({
+        ...res.data.result,
+        department: employees.find((e) => e.id === id)?.department,
+      });
+    } catch (error) {
+      alert(error.response?.data || '시스템에러');
+    }
+  };
+
+  const handleSort = (field) => {
+    let nextSortOrder = 'asc';
+    if (sortField === field) {
+      nextSortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
+    }
+    setSortField(field);
+    setSortOrder(nextSortOrder);
+    setPage(0);
+    getEmployeeList({
+      field: appliedSearch.field,
+      keyword: appliedSearch.keyword,
+      department: appliedSearch.department,
+      sortField: field,
+      sortOrder: nextSortOrder,
+      setEmployees,
+      setTotalPages,
+    });
+  };
+
+  const handleEvalWithCheck = async () => {
+    if (!selectedDetail || !selectedDetail.employeeId) return;
+    try {
+      await axiosInstance.get(
+        `${API_BASE_URL}${HR_SERVICE}/evaluation/${selectedDetail.employeeId}`,
+      );
+      warn('이미 인사평가가 존재합니다.');
+    } catch (error) {
+      setMode('eval');
+      setIsDetailModalOpen(false);
+    }
+  };
+
+  const handleEdit = () => {
+    setMode('edit');
+    setIsDetailModalOpen(false);
+  };
+
+  const handleEval = () => {
+    setMode('eval');
+    setIsDetailModalOpen(false);
+  };
+
+  const handleClose = (updatedEmployee) => {
+    setMode('list');
+    if (updatedEmployee) {
+      setSelectedDetail({ ...updatedEmployee });
+      const employees2 = employees.map((employee) => {
+        if (employee.id === updatedEmployee.employeeId) {
+          employee.name = updatedEmployee.name;
+          employee.department = getDepartmentNameById(
+            updatedEmployee.departmentId,
+          );
+          employee.position = updatedEmployee.position;
+          employee.role = updatedEmployee.role;
+          employee.phone = updatedEmployee.phone;
+        }
+        return employee;
+      });
+      setEmployees(employees2);
+    }
+  };
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    setAppliedSearch({
+      field: searchField,
+      keyword: searchText,
+      department: searchDept,
+      isActive: !showInactive,
+    });
+    setPage(0);
+    setSelectedId(null);
+  };
+
+  const handleShowInactiveChange = (e) => {
+    const checked = e.target.checked;
+    setShowInactive(checked);
+    setAppliedSearch({
+      field: searchField,
+      keyword: searchText,
+      department: searchDept,
+      isActive: !checked,
+    });
+    setPage(0);
+    setSelectedId(null);
+  };
+
+  const handleReset = () => {
+    setSearchField('name');
+    setSearchText('');
+    setSearchDept('전체');
+    setSortField(null);
+    setSortOrder('asc');
+    setShowInactive(false);
+    setAppliedSearch({
+      field: 'name',
+      keyword: '',
+      department: '전체',
+    });
+    setPage(0);
+    setSelectedId(null);
+  };
+
+  const handlePageChange = (newPage) => {
+    if (newPage >= 0 && newPage < totalPages) {
+      setPage(newPage);
+    }
+  };
+
+  // 모달 닫기 핸들러
+  const handleModalClose = () => {
+    setIsDetailModalOpen(false);
+    setSelectedId(null);
+  };
+
+  // 전체 페이지 전환 분기
+  if (mode === 'edit')
+    return <EmployeeEdit employee={selectedDetail} onClose={handleClose} />;
+  if (mode === 'eval')
+    return <EvaluationForm employee={selectedDetail} onClose={handleClose} />;
+
   return (
     <>
       <HRHeader />
       <div className='emp-list-root'>
         <h2 className='emp-list-title'>직원 목록</h2>
-        {/* 검색/필터 영역 */}
         <form className='emp-search-bar' onSubmit={handleSearch}>
           <select
             value={searchField}
@@ -392,7 +378,14 @@ export default function EmployeeList() {
             {employees.map((emp) => (
               <tr
                 key={emp.id}
-                onClick={() => setSelectedId(emp.id)}
+                onClick={() => {
+                  if (selectedId === emp.id) {
+                    setSelectedId(null);
+                    setTimeout(() => setSelectedId(emp.id), 0);
+                  } else {
+                    setSelectedId(emp.id);
+                  }
+                }}
                 className={selectedId === emp.id ? 'selected' : ''}
                 style={{ cursor: 'pointer' }}
               >
@@ -409,8 +402,8 @@ export default function EmployeeList() {
                       src={emp.profileImageUri || pin}
                       alt='profile'
                       style={{
-                        width: '24px',
-                        height: '24px',
+                        width: '40px',
+                        height: '40px',
                         borderRadius: '50%',
                         objectFit: 'cover',
                       }}
@@ -447,15 +440,12 @@ export default function EmployeeList() {
                 </td>
                 <td style={{ textAlign: 'center' }}>{emp.department}</td>
                 <td style={{ textAlign: 'center' }}>{emp.position}</td>
-                <td style={{ textAlign: 'center' }}>{emp.role}</td>{' '}
-                {/* 직책 컬럼에 role 값 표시 */}
-                <td style={{ textAlign: 'center' }}>{emp.phone}</td>{' '}
-                {/* 연락처 컬럼에 phone 값 표시 */}
+                <td style={{ textAlign: 'center' }}>{emp.role}</td>
+                <td style={{ textAlign: 'center' }}>{emp.phone}</td>
               </tr>
             ))}
           </tbody>
         </table>
-        {/* 페이징 UI */}
         <div
           className='pagination'
           style={{ margin: '1rem 0', textAlign: 'center' }}
@@ -483,12 +473,12 @@ export default function EmployeeList() {
           </button>
         </div>
       </div>
-      {/* 상세 정보는 선택 시 하단에만 노출 */}
-      {selectedId && (
+      {/* 상세정보 모달 */}
+      {isDetailModalOpen && selectedId && (
         <ModalPortal>
           <div
             className={styles.modalOverlay}
-            onClick={() => setSelectedId(null)}
+            onClick={handleModalClose}
             style={{ zIndex: 1000 }}
           >
             <div
@@ -503,7 +493,7 @@ export default function EmployeeList() {
               onClick={(e) => e.stopPropagation()}
             >
               <button
-                onClick={() => setSelectedId(null)}
+                onClick={handleModalClose}
                 style={{
                   position: 'absolute',
                   top: 18,
@@ -523,7 +513,7 @@ export default function EmployeeList() {
                 employee={selectedDetail}
                 onEdit={handleEdit}
                 onEval={handleEvalWithCheck}
-                onClose={() => setSelectedId(null)}
+                onTransferHistory={() => {}}
               />
             </div>
           </div>

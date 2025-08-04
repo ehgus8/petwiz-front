@@ -218,7 +218,7 @@ export default function EvaluationForm({
             updateMemo,
           },
         );
-        succeed('평가 수정 완료');
+        await succeed('평가 수정 완료'); // ← 확인 후 새로고침
       } else {
         await axiosInstance.post(
           `${API_BASE_URL}${HR_SERVICE}/evaluation/${employee.employeeId}`,
@@ -236,16 +236,16 @@ export default function EvaluationForm({
             interviewDate: form.date,
           },
         );
-        succeed('평가등록 완료');
+        await succeed('평가등록 완료'); // ← 확인 후 새로고침
       }
-      if (onSubmitSuccess) onSubmitSuccess();
-      if (onClose) onClose();
+      window.location.reload(); // 알림 OK 누른 후 새로고침!
     } catch (error) {
       swalError(
         '제출 실패: ' + (error.response?.data?.message || error.message),
       );
     }
   };
+
   const handleCancel = async () => {
     const result = await swalConfirm('취소하시겠습니까?');
     if (result.isConfirmed) {
