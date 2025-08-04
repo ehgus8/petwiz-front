@@ -14,6 +14,8 @@ const CommunityPostsPage = () => {
     const { isInit, userId, accessToken, departmentId, userRole, userPosition } = useContext(UserContext);
     const [viewMode, setViewMode] = useState('ALL'); // ALL | MY | DEPT
     const [posts, setPosts] = useState([]);
+    const [hideReported, setHideReported] = useState(false);
+
     const [filters, setFilters] = useState({
         startDate: '',
         endDate: '',
@@ -42,6 +44,7 @@ const CommunityPostsPage = () => {
                     sortDir,
                     page,
                     pageSize,
+                    // ✅ 여기에 추가
                 });
 
                 let url;
@@ -203,6 +206,18 @@ const CommunityPostsPage = () => {
                         초기화
                     </button>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginLeft: 'auto' }}>
+                        <div className="hide-reported" style={{ display: 'flex', alignItems: 'left', marginRight: '1rem' }}>
+                            <input
+                                type="checkbox"
+                                id="hideReported"
+                                checked={hideReported}
+                                onChange={(e) => setHideReported(e.target.checked)}
+                                style={{ marginRight: '6px' }}
+                            />
+                            <label htmlFor="hideReported" className='hideReported' style={{ fontSize: '0.95rem', color: '#333' }}>
+                                신고된 게시글 제외
+                            </label>
+                        </div>
                         <div className="view-mode-buttons">
                             <button className={viewMode === 'ALL' ? 'active' : ''} onClick={() => { setViewMode('ALL'); setPage(0); navigate('/community') }}>
                                 전체
@@ -239,26 +254,25 @@ const CommunityPostsPage = () => {
                         </thead>
                         <tbody>
 
-                            {posts.length > 0 ? (
-                                posts.map(post => (
+                            {(hideReported ? posts.filter(post => !post.hidden) : posts).length > 0 ? (
+                                (hideReported ? posts.filter(post => !post.hidden) : posts).map(post => (
                                     <tr
                                         key={`post-${post.communityId}`}
                                         onClick={() => navigate(`/community/${post.communityId}`)}
-                                        style={{ fontWeight: post.notice ? 'bold' : 'normal' }} // ✅ 여기가 핵심
+                                        style={{
+                                            color: post.hidden ? 'rgba(171, 26, 26, 1)' : 'black',
+                                            background: post.hidden ? '#f4d7d7' : 'white'
+                                        }}
                                         className={post.notice ? 'bold-row' : ''}
                                     >
                                         <td>{post.communityId}</td>
-                                        <td>{post.attachmentUri && post.attachmentUri.length > 0 && post.attachmentUri != '[]' ? '📎' : ''}</td>
-                                        <td>{post.title}</td>
-                                        <td>
-                                            {post.employStatus === 'INACTIVE' ? (
-                                                <span style={{ color: '#aaa', fontStyle: 'italic', marginLeft: '4px' }}>
-                                                    {post.name}(퇴사)
-                                                </span>
-                                            ) : (
-                                                post.name
-                                            )}
-                                        </td>
+                                        <td>{post.attachmentUri && post.attachmentUri.length > 0 && post.attachmentUri !== '[]' ? '📎' : ''}</td>
+                                        <td>{post.hidden ? <span>🚨{post.title}</span> : post.title}</td>
+                                        <td>{post.employStatus === 'INACTIVE' ? (
+                                            <span style={{ color: '#aaa', fontStyle: 'italic', marginLeft: '4px' }}>
+                                                {post.name}(퇴사)
+                                            </span>
+                                        ) : post.name}</td>
                                         <td>{new Date(post.createdAt).toLocaleDateString()}</td>
                                         <td>{post.viewCount}</td>
                                     </tr>
@@ -273,13 +287,13 @@ const CommunityPostsPage = () => {
                     </table>
 
                     <div className="pagination">
-                        <button onClick={() => setPage(p => Math.max(p - 1, 0))} disabled={page === 0}>Previous</button>
+                        <button onClick={() => setPage(p => Math.max(p - 1, 0))} disabled={page === 0}>이전</button>
                         {Array.from({ length: totalPages }, (_, i) => (
                             <button key={i} className={page === i ? 'active' : ''} onClick={() => setPage(i)}>
                                 {i + 1}
                             </button>
                         ))}
-                        <button onClick={() => setPage(p => Math.min(p + 1, totalPages - 1))} disabled={page === totalPages - 1}>Next</button>
+                        <button onClick={() => setPage(p => Math.min(p + 1, totalPages - 1))} disabled={page === totalPages - 1}>다음</button>
                     </div>
 
                     <div className="page-size-selector">

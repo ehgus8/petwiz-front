@@ -1,0 +1,58 @@
+/* /src/pages/approval/ApprovalBottomNav.module.scss */
+
+.bottomNav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    background-color: #ffffff;
+    border-top: 1px solid #e9ecef;
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.06);
+    z-index: 100;
+  
+    /* ★★★ 여기가 핵심 수정 부분입니다 ★★★ */
+    display: flex;
+    align-items: center;
+    overflow-y: hidden;          // 세로 스크롤 방지
+    overflow-x: auto;            // 가로 스크롤 활성화
+    -webkit-overflow-scrolling: touch; // iOS에서 부드러운 스크롤 효과
+  
+    // 스크롤바를 시각적으로 숨깁니다. (기능은 유지)
+    &::-webkit-scrollbar {
+      display: none; // Chrome, Safari
+    }
+    scrollbar-width: none; /* Firefox */
+  }
+  
+  .navItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: #868e96;
+    height: 100%;
+    transition: color 0.2s;
+  
+    /* ★★★ 각 탭의 너비와 간격을 지정합니다 ★★★ */
+    flex-shrink: 0;      // 아이템이 찌그러지지 않도록 설정
+    padding: 0 12px;     // 좌우 여백 추가
+    min-width: 75px;     // 각 탭의 최소 너비 지정
+    
+    .icon {
+      font-size: 22px;
+      margin-bottom: 3px;
+    }
+    
+    .label {
+      font-size: 11px;
+      font-weight: 500;
+      white-space: nowrap; // 라벨이 두 줄로 나뉘지 않도록
+    }
+  
+    &.active {
+      color: #007bff;
+      font-weight: 600;
+    }
+  }

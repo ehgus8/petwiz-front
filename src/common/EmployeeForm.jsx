@@ -37,6 +37,7 @@ const EmployeeForm = ({ selectedEmployee, onChange, onSubmit }) => {
         onChange={handleChange}
         placeholder='부서'
       />
+
       <button type='submit'>등록</button>
     </form>
   );

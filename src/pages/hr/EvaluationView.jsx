@@ -46,12 +46,14 @@ export default function EvaluationView({
   const [employeeDept, setEmployeeDept] = useState('');
   const [approverName, setApproverName] = useState('');
   const [evaluatorName, setEvaluatorName] = useState('');
+  const [evaluatorDept, setEvaluatorDept] = useState('');
 
   useEffect(() => {
     getEmployeeName();
     getEmployeeDept();
     getApproverName();
     fetchEvaluatorName();
+    fetchEvaluatorDept();
   }, []);
 
   const getEmployeeName = async () => {
@@ -100,6 +102,18 @@ export default function EvaluationView({
     }
   };
 
+  const fetchEvaluatorDept = async () => {
+    if (!evaluation.evaluatorId) return;
+    try {
+      const res = await axiosInstance.get(
+        `${API_BASE_URL}${HR_SERVICE}/employees/${evaluation.evaluatorId}/name/department`,
+      );
+      setEvaluatorDept(res.data.result);
+    } catch (error) {
+      setEvaluatorDept('');
+    }
+  };
+
   return (
     <div className='eval-root'>
       <div className='eval-header'>
@@ -128,7 +142,10 @@ export default function EvaluationView({
             </div>
             <div className='eval-field'>
               <label>평가자</label>
-              <div className='eval-plain'>{evaluatorName || ''}</div>
+              <div className='eval-plain'>
+                {evaluatorName || ''}
+                {evaluatorName && evaluatorDept && ` (${evaluatorDept})`}
+              </div>
             </div>
             {/* 평가 항목 동적 렌더링 */}
             {Object.entries(evaluation.template).map(([key, value]) => {

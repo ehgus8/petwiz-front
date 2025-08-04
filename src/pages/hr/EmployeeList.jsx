@@ -10,6 +10,7 @@ import { getDepartmentNameById, getEmployeeList } from '../../common/hr';
 import { warn } from '../../common/common';
 import ModalPortal from '../../components/approval/ModalPortal';
 import styles from '../../components/approval/CategoryModal.module.scss';
+import pin from '../../assets/pin.jpg';
 
 // 부서 목록을 서버에서 받아옴
 
@@ -20,6 +21,7 @@ export default function EmployeeList() {
   const [selectedDetail, setSelectedDetail] = useState({});
   const [employees, setEmployees] = useState([]);
   const [departments, setDepartments] = useState([]);
+  const [evaluationStatus, setEvaluationStatus] = useState({});
 
   // 검색/필터 state
   const [searchField, setSearchField] = useState('name');
@@ -259,6 +261,30 @@ export default function EmployeeList() {
     return <EvaluationForm employee={selectedDetail} onClose={handleClose} />;
 
   // 기본(리스트/상세)
+  useEffect(() => {
+    // 직원별 인사평가 존재 여부 확인
+    const fetchEvaluationStatus = async () => {
+      const statusObj = {};
+      await Promise.all(
+        employees.map(async (emp) => {
+          const empKey = emp.employeeId || emp.id;
+          try {
+            const res = await axiosInstance.get(
+              `${API_BASE_URL}${HR_SERVICE}/evaluations/${empKey}`,
+            );
+            statusObj[empKey] =
+              Array.isArray(res.data.result.content) &&
+              res.data.result.content.length > 0;
+          } catch {
+            statusObj[empKey] = false;
+          }
+        }),
+      );
+      setEvaluationStatus(statusObj);
+    };
+    if (employees.length > 0) fetchEvaluationStatus();
+  }, [employees]);
+
   return (
     <>
       <HRHeader />
@@ -319,14 +345,14 @@ export default function EmployeeList() {
             <tr>
               <th
                 onClick={() => handleSort('name')}
-                style={{ cursor: 'pointer' }}
+                style={{ cursor: 'pointer', textAlign: 'center' }}
               >
                 이름{' '}
                 {sortField === 'name' ? (sortOrder === 'asc' ? '▲' : '▼') : ''}
               </th>
               <th
                 onClick={() => handleSort('department')}
-                style={{ cursor: 'pointer' }}
+                style={{ cursor: 'pointer', textAlign: 'center' }}
               >
                 부서{' '}
                 {sortField === 'department'
@@ -337,7 +363,7 @@ export default function EmployeeList() {
               </th>
               <th
                 onClick={() => handleSort('position')}
-                style={{ cursor: 'pointer' }}
+                style={{ cursor: 'pointer', textAlign: 'center' }}
               >
                 직급{' '}
                 {sortField === 'position'
@@ -348,14 +374,14 @@ export default function EmployeeList() {
               </th>
               <th
                 onClick={() => handleSort('role')}
-                style={{ cursor: 'pointer' }}
+                style={{ cursor: 'pointer', textAlign: 'center' }}
               >
                 직책{' '}
                 {sortField === 'role' ? (sortOrder === 'asc' ? '▲' : '▼') : ''}
               </th>
               <th
                 onClick={() => handleSort('phone')}
-                style={{ cursor: 'pointer' }}
+                style={{ cursor: 'pointer', textAlign: 'center' }}
               >
                 연락처{' '}
                 {sortField === 'phone' ? (sortOrder === 'asc' ? '▲' : '▼') : ''}
@@ -370,11 +396,61 @@ export default function EmployeeList() {
                 className={selectedId === emp.id ? 'selected' : ''}
                 style={{ cursor: 'pointer' }}
               >
-                <td>{emp.name}</td>
-                <td>{emp.department}</td>
-                <td>{emp.position}</td>
-                <td>{emp.role}</td> {/* 직책 컬럼에 role 값 표시 */}
-                <td>{emp.phone}</td> {/* 연락처 컬럼에 phone 값 표시 */}
+                <td style={{ textAlign: 'center' }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px',
+                    }}
+                  >
+                    <img
+                      src={emp.profileImageUri || pin}
+                      alt='profile'
+                      style={{
+                        width: '24px',
+                        height: '24px',
+                        borderRadius: '50%',
+                        objectFit: 'cover',
+                      }}
+                    />
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                      }}
+                    >
+                      <span>{emp.name}</span>
+                      {evaluationStatus[emp.employeeId || emp.id] === false && (
+                        <span
+                          style={{
+                            background: '#ff5252',
+                            color: '#fff',
+                            borderRadius: '10px',
+                            fontSize: '0.62em',
+                            padding: '0 5px',
+                            marginTop: '3px',
+                            fontWeight: 600,
+                            letterSpacing: '0.01em',
+                            height: '16px',
+                            lineHeight: '16px',
+                            display: 'inline-block',
+                          }}
+                        >
+                          평가 필요
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </td>
+                <td style={{ textAlign: 'center' }}>{emp.department}</td>
+                <td style={{ textAlign: 'center' }}>{emp.position}</td>
+                <td style={{ textAlign: 'center' }}>{emp.role}</td>{' '}
+                {/* 직책 컬럼에 role 값 표시 */}
+                <td style={{ textAlign: 'center' }}>{emp.phone}</td>{' '}
+                {/* 연락처 컬럼에 phone 값 표시 */}
               </tr>
             ))}
           </tbody>

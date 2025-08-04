@@ -30,6 +30,11 @@ const NoticeBoardWrite = ({ isEdit = false }) => {
     const [publishType, setPublishType] = useState('now'); // 'now' or 'scheduled'
     const [showModal, setShowModal] = useState(false);
 
+    const [titleError, setTitleError] = useState(false);
+    const [contentError, setContentError] = useState(false);
+    const [positionError, setPositionError] = useState(false);
+
+
 
     const { accessToken, userId, isInit, userRole } = useContext(UserContext); // ✅ 한 번에 구조 분해
 
@@ -130,23 +135,44 @@ const NoticeBoardWrite = ({ isEdit = false }) => {
 
 
     const handleSubmit = async (scheduledAt = null) => {
+        let hasError = false;
         // ✅ 제목 또는 내용이 비어있을 경우 알림
         if (!title.trim()) {
+            setTitleError(true);
             Swal.fire({
                 icon: 'warning',
                 title: '제목을 입력해주세요.',
                 confirmButtonText: '확인',
             });
+
+
             return;
+        } else {
+            setTitleError(false);
         }
 
         if (!content.trim()) {
+            setContentError(true);
             Swal.fire({
                 icon: 'warning',
                 title: '내용을 입력해주세요.',
                 confirmButtonText: '확인',
             });
             return;
+        } else {
+            setContentError(false);
+        }
+
+        if (!position.trim()) {
+            setPositionError(true);
+            Swal.fire({
+                icon: 'warning',
+                title: '대상 직급을 선택해주세요.',
+                confirmButtonText: '확인',
+            });
+            return;
+        } else {
+            setPositionError(false);
         }
 
         const uploadedFileUrls = [];
@@ -266,10 +292,12 @@ const NoticeBoardWrite = ({ isEdit = false }) => {
             <input
                 type="text"
                 placeholder="제목을 입력하세요"
-                className="title-input"
-
+                className={`title-input ${titleError ? 'error-input' : ''}`}
                 value={title}
-                onChange={(e) => setTitle(e.target.value)}
+                onChange={(e) => {
+                    setTitle(e.target.value);
+                    setTitleError(false);
+                }}
             />
             {/* <textarea
                 placeholder="내용을 입력하세요"
@@ -278,8 +306,13 @@ const NoticeBoardWrite = ({ isEdit = false }) => {
                 onChange={(e) => setContent(e.target.value)}
             /> */}
 
-            <div className="editor-wrapper">
-                <Editor content={content} onChange={setContent} />
+            <div className={`editor-wrapper ${contentError ? 'error-input' : ''}`}>
+                {/* <Editor content={content} onChange={setContent} />
+                 */}
+                <Editor content={content} onChange={(value) => {
+                    setContent(value);
+                    setContentError(false);
+                }} />
             </div>
 
 
@@ -304,15 +337,19 @@ const NoticeBoardWrite = ({ isEdit = false }) => {
                 <select
                     id="department"
                     value={position}
-                    onChange={(e) => setPosition(e.target.value)}
+                    onChange={(e) => {
+                        setPosition(e.target.value);
+                        setPositionError(false);
+                    }}
+                    className={positionError ? 'error-input' : ''}
                 >
                     <option value="">-- 선택하세요 --</option>
-                    <option value="INTERN">INTERN</option>
-                    <option value="JUNIOR">JUNIOR</option>
-                    <option value="SENIOR">SENIOR</option>
-                    <option value="MANAGER">MANAGER</option>
-                    <option value="DIRECTOR">DIRECTOR</option>
-                    <option value="CEO">CEO</option>
+                    <option value="INTERN">INTERN ⬆️</option>
+                    <option value="JUNIOR">JUNIOR ⬆️</option>
+                    <option value="SENIOR">SENIOR ⬆️</option>
+                    <option value="MANAGER">MANAGER ⬆️</option>
+                    <option value="DIRECTOR">DIRECTOR ⬆️</option>
+                    {/* <option value="CEO">CEO</option> */}
                 </select>
             </div>
 

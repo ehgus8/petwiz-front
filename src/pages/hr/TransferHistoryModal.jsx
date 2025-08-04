@@ -107,24 +107,42 @@ export default function TransferHistoryModal({ employeeId, onClose }) {
           <div style={{ color: 'red' }}>{deptError}</div>
         ) : (
           <table className='emp-list-table' style={{ marginTop: '1rem' }}>
+            <style>
+              {`
+                .emp-list-table tbody tr:hover {
+                  background: #fff !important;
+                  box-shadow: 0 2px 10px 0 rgba(40, 60, 120, 0.08) !important;
+                  color: inherit !important;
+                  font-weight: normal !important;
+                }
+              `}
+            </style>
             <thead>
               <tr>
-                <th>순번</th>
-                <th>부서</th>
-                <th>직급</th>
+                <th style={{ textAlign: 'center' }}>순번</th>
+                <th style={{ textAlign: 'center' }}>부서</th>
+                <th style={{ textAlign: 'center' }}>직급</th>
               </tr>
             </thead>
             <tbody>
               {histories.length === 0 ? (
                 <tr>
-                  <td colSpan={3}>이력이 없습니다.</td>
+                  <td colSpan={3} style={{ textAlign: 'center' }}>
+                    이력이 없습니다.
+                  </td>
                 </tr>
               ) : (
                 histories.map((history) => (
-                  <tr key={history.sequenceId}>
-                    <td>{history.sequenceId}</td>
-                    <td>{getDeptName(history.departmentId)}</td>
-                    <td>{history.positionName}</td>
+                  <tr key={history.sequenceId} style={{ cursor: 'default' }}>
+                    <td style={{ textAlign: 'center' }}>
+                      {history.sequenceId}
+                    </td>
+                    <td style={{ textAlign: 'center' }}>
+                      {getDeptName(history.departmentId)}
+                    </td>
+                    <td style={{ textAlign: 'center' }}>
+                      {history.positionName}
+                    </td>
                   </tr>
                 ))
               )}

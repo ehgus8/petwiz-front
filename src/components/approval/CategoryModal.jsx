@@ -38,20 +38,7 @@ const CategoryModal = ({ open, onClose, onSubmit, category }) => {
   };
 
   const handleDelete = async () => {
-    const result = await Swal.fire({
-      title: '정말로 이 카테고리를 삭제하시겠습니까?',
-      text: '연관된 모든 템플릿의 카테고리 정보가 초기화됩니다.',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: '예',
-      cancelButtonText: '아니요',
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6',
-    });
-
-    if (result.isConfirmed) {
-      onSubmit(null, true);
-    }
+    onSubmit(null, true); 
   };
 
   if (!open) {

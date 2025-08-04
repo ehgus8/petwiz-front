@@ -19,7 +19,7 @@ export default function UserCard({
             width: '100%',
             height: '100%',
             objectFit: 'cover',
-            borderRadius: '1rem',
+            borderRadius: '50%',
           }}
         />
       </div>

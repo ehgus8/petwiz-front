@@ -209,7 +209,7 @@ $border: #eceff3;
       }
       .user-position {
         color: #7b8794;
-        font-style: italic;
+        // font-style: italic;
         font-size: 0.98em;
         margin: 0 0.4em 0 0.2em;
         font-weight: 500;
@@ -233,7 +233,7 @@ $border: #eceff3;
       background: $accent;
       color: #fff;
       border: none;
-      border-radius: 1rem;
+      border-radius: 6px;
       font-size: 1.04rem;
       padding: 0.55rem 1.35rem;
       font-weight: 600;
@@ -327,6 +327,42 @@ $border: #eceff3;
     padding: 0.7rem;
     border-radius: 0.7rem;
     margin: 0.7rem 0.2rem;
+  }
+}
+
+@media (max-width: 431px) {
+  .main .header {
+    padding: 0.7rem 0.5rem;
+    .menu {
+      gap: 0.5rem;
+      flex-wrap: nowrap;
+      a {
+        font-size: 0.95rem;
+        padding: 0.25rem 0.5rem;
+        white-space: nowrap;
+        min-width: 0;
+        max-width: 90px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    }
+  }
+}
+
+@media (max-width: 360px) {
+  .main .header {
+    padding: 0.4rem 0.1rem;
+    .menu {
+      gap: 0.2rem;
+      a {
+        font-size: 0.88rem;
+        padding: 0.15rem 0.2rem;
+        max-width: 70px;
+      }
+    }
   }
 }
 
@@ -468,85 +504,190 @@ $border: #eceff3;
 /* ==========================================================================
    ★★★ 인쇄 전용 스타일 (이 코드 하나로 모든 것을 해결합니다) ★★★
    ========================================================================== */
-   @media print {
+@media print {
+  /* --- 1단계: 기본 준비 --- */
+  // 모든 요소의 불필요한 효과(애니메이션, 그림자 등)를 제거하고
+  // 인쇄를 위한 기본 배경과 글자색을 설정합니다.
+  * {
+    transition: none !important;
+    animation: none !important;
+    text-shadow: none !important;
+    box-shadow: none !important;
+    -webkit-print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
 
-    /* --- 1단계: 기본 준비 --- */
-    // 모든 요소의 불필요한 효과(애니메이션, 그림자 등)를 제거하고
-    // 인쇄를 위한 기본 배경과 글자색을 설정합니다.
-    * {
-      transition: none !important;
-      animation: none !important;
-      text-shadow: none !important;
-      box-shadow: none !important;
-      -webkit-print-color-adjust: exact !important;
-      color-adjust: exact !important;
-    }
-    
-    html, body {
-      width: 100%;
-      height: auto;
-      background: #fff !important;
-      color: #000 !important;
-    }
-  
-    /* --- 2단계: 무대 위의 모든 요소 숨기기 --- */
-    // 인쇄할 내용 외에 화면에 보이는 모든 UI 요소를 숨깁니다.
-    // CSS Modules로 생성된 동적 클래스명에도 대응할 수 있도록 속성 선택자([class*="..."])를 사용합니다.
-    .sidebar,                                 // 메인 레이아웃 사이드바
+  html,
+  body {
+    width: 100%;
+    height: auto;
+    background: #fff !important;
+    color: #000 !important;
+    overflow-x: hidden;
+  }
+
+  /* --- 2단계: 무대 위의 모든 요소 숨기기 --- */
+  // 인쇄할 내용 외에 화면에 보이는 모든 UI 요소를 숨깁니다.
+  // CSS Modules로 생성된 동적 클래스명에도 대응할 수 있도록 속성 선택자([class*="..."])를 사용합니다.
+  .sidebar,                                 // 메인 레이아웃 사이드바
     .main > .header,                          // 메인 레이아웃 헤더
     .chatbot-fab,                             // 챗봇 버튼
     .hamburger-btn,
     .sidebar-overlay,
     aside[class*="_sidebar"],                 // 결재 페이지 내부 사이드바
     button[class*="_printButton"],            // 인쇄 버튼
-    button[class*="_viewMoreBtn"] {           // '전체보기' 같은 버튼
-      display: none !important;
-    }
-  
-    /* --- 3단계: 레이아웃의 모든 힘 무력화시키기 --- */
-    // 인쇄할 내용을 감싸고 있는 모든 부모 컨테이너들을 '평범한 div'로 만듭니다.
-    // Flex, Grid, Position, Overflow 등 레이아웃에 영향을 주는 모든 속성을 초기화합니다.
-    #root,
-    .layout,
-    .main,
-    .content,
-    div[class*="_approvalPageContainer"],
-    main[class*="_content"] {
-      display: block !important;
-      width: 100% !important;
-      height: auto !important;
-      position: static !important;
-      overflow: visible !important;
-      margin: 0 !important;
-      padding: 0 !important;
-      border: none !important;
-      background: transparent !important;
-      min-height: unset !important;
-    }
-  
-    /* --- 4단계: 진짜 주인공(인쇄할 내용)에게 스포트라이트 --- */
-    // 이제 모든 방해물이 사라졌으니, 인쇄할 컨테이너만 페이지 전체를 차지하도록 설정합니다.
-    div[class*="_approvalContainer"] {
-      width: 100% !important;
-      height: auto !important;
-      margin: 0 !important;
-      padding: 20mm !important; /* A4 용지에 적절한 여백 */
-      border: 1px solid #dee2e6 !important;
-      box-sizing: border-box !important;
-      background: white !important;
-    }
-    
-    /* --- 5단계: 내용물 다듬기 --- */
-    // 페이지가 넘어갈 때 내용이 잘리는 것을 방지합니다.
-    table,
-    img,
-    div[class*="_approvalLineBox"],
-    div[class*="_historySection"] {
-      page-break-inside: avoid;
-    }
-    
-    // 이미지가 용지 밖으로 나가지 않도록 합니다.
-    img {
-      max-width: 100% !important;
+    button[class*="_viewMoreBtn"] {
+    // '전체보기' 같은 버튼
+    display: none !important;
+  }
+
+  /* --- 3단계: 레이아웃의 모든 힘 무력화시키기 --- */
+  // 인쇄할 내용을 감싸고 있는 모든 부모 컨테이너들을 '평범한 div'로 만듭니다.
+  // Flex, Grid, Position, Overflow 등 레이아웃에 영향을 주는 모든 속성을 초기화합니다.
+  #root,
+  .layout,
+  .main,
+  .content,
+  div[class*='_approvalPageContainer'],
+  main[class*='_content'] {
+    display: block !important;
+    width: 100% !important;
+    height: auto !important;
+    position: static !important;
+    overflow: visible !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    min-height: unset !important;
+  }
+
+  /* --- 4단계: 진짜 주인공(인쇄할 내용)에게 스포트라이트 --- */
+  // 이제 모든 방해물이 사라졌으니, 인쇄할 컨테이너만 페이지 전체를 차지하도록 설정합니다.
+  div[class*='_approvalContainer'] {
+    width: 100% !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 20mm !important; /* A4 용지에 적절한 여백 */
+    border: 1px solid #dee2e6 !important;
+    box-sizing: border-box !important;
+    background: white !important;
+  }
+
+  /* --- 5단계: 내용물 다듬기 --- */
+  // 페이지가 넘어갈 때 내용이 잘리는 것을 방지합니다.
+  table,
+  img,
+  div[class*='_approvalLineBox'],
+  div[class*='_historySection'] {
+    page-break-inside: avoid;
+  }
+
+  // 이미지가 용지 밖으로 나가지 않도록 합니다.
+  img {
+    max-width: 100% !important;
+  }
+}
+
+.header-user-desktop {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+}
+.sidebar-logout-mobile {
+  display: none;
+  width: 100%;
+  text-align: center;
+  margin-top: 2rem;
+}
+
+@media (max-width: 431px) {
+  .header-user-desktop {
+    display: none !important;
+  }
+  .sidebar.sidebar--mobile-open .sidebar-logout-mobile {
+    display: block;
+  }
+}
+
+html,
+body {
+  overflow-x: hidden;
+}
+
+@media (max-width: 431px) {
+  .layout,
+  .main,
+  .main .content,
+  .main .header {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+    overflow-x: hidden !important;
+    margin: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    justify-content: center;
+    .menu {
+      margin-left: 3rem;
     }
   }
+
+  .header {
+    .hamburger-btn {
+      left: 0.1rem;
+      top: 0.1rem;
+    }
+  }
+
+  body {
+    overflow-x: hidden !important;
+  }
+}
+
+@media (max-width: 360px) {
+  .layout,
+  .main,
+  .main .content,
+  .main .header {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+    overflow-x: hidden !important;
+    margin: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+  body {
+    overflow-x: hidden !important;
+  }
+}
+.fab-container.fab-raised {
+  // 하단 탭 메뉴 높이(60px) + 기본 여백(2.5rem) 만큼 위로 올림
+  bottom: calc(70px + 2.5rem);
+}
+
+.nav a {
+  // Link 태그는 a 태그로 렌더링됩니다.
+  display: flex;
+  align-items: center;
+  gap: 12px; // 아이콘과 라벨 사이 간격
+}
+
+.menu-label {
+  flex-grow: 1; // 라벨이 남은 공간을 차지하도록
+}
+
+// 사이드바용 뱃지 스타일
+.sidebar-badge {
+  background-color: #dc3545;
+  color: white;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 7px;
+  border-radius: 10px;
+  line-height: 1;
+  margin-left: auto; // 오른쪽 끝으로 밀어냄
+}

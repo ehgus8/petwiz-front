@@ -280,3 +280,32 @@
     }
   }
 }
+
+// NoticeBoardWrite.scss
+
+.error-input {
+  border: 1px solid #e57373 !important;
+  background-color: #ffecec !important;
+}
+
+.editor-wrapper.error-input .tiptap-editor {
+  border: 1px solid #e57373 !important;
+  background-color: #ffecec !important;
+}
+
+/* SweetAlert2 커스텀 스타일 */
+.swal2-popup.hrhub-swal-popup {
+  border-radius: 12px;
+  padding: 1.8rem;
+  font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.swal2-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.swal2-html-container {
+  font-size: 1rem;
+}

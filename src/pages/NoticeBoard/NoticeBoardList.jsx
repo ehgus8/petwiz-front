@@ -236,9 +236,11 @@ const NoticeBoardList = () => {
                     </div>
 
                     <div className="write-button-wrapper">
-                        <button className="write-button" onClick={() => navigate('/notice/write')}>
-                            작성하기
-                        </button>
+                        {(userRole === 'ADMIN' && ['MANAGER', 'DIRECTOR', 'CEO'].includes(userPosition)) && (
+                            <button className="write-button" onClick={() => navigate('/notice/write')}>
+                                작성하기
+                            </button>
+                        )}
                     </div>
 
                 </div>
@@ -409,13 +411,13 @@ const NoticeBoardList = () => {
                     </table>
 
                     <div className="pagination">
-                        <button onClick={() => setPage(p => Math.max(p - 1, 0))} disabled={page === 0}>Previous</button>
+                        <button onClick={() => setPage(p => Math.max(p - 1, 0))} disabled={page === 0}>이전</button>
                         {Array.from({ length: totalPages }, (_, i) => (
                             <button key={i} className={page === i ? 'active' : ''} onClick={() => setPage(i)}>
                                 {i + 1}
                             </button>
                         ))}
-                        <button onClick={() => setPage(p => Math.min(p + 1, totalPages - 1))} disabled={page === totalPages - 1}>Next</button>
+                        <button onClick={() => setPage(p => Math.min(p + 1, totalPages - 1))} disabled={page === totalPages - 1}>다음</button>
                     </div>
 
                     <div className="page-size-selector">

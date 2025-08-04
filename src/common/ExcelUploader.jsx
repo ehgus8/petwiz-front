@@ -22,24 +22,22 @@ const ExcelUploader = ({ onDataParsed }) => {
   };
 
   return (
-    <div className="excel-upload-row">
+    <div className='excel-upload-row'>
       <input
-        type="file"
-        accept=".xlsx, .xls"
+        type='file'
+        accept='.xlsx, .xls'
         ref={fileInputRef}
         onChange={handleFileUpload}
         style={{ display: 'none' }}
       />
       <button
-        type="button"
-        className="excel-upload-btn"
+        type='button'
+        className='excel-upload-btn'
         onClick={() => fileInputRef.current && fileInputRef.current.click()}
       >
         엑셀 파일 선택
       </button>
-      {file && (
-        <span className="excel-upload-success">업로드 완료</span>
-      )}
+      {file && <span className='excel-upload-success'>{file.name}</span>}
     </div>
   );
 };

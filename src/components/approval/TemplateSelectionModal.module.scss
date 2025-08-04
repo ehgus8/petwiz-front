@@ -201,3 +201,37 @@
     cursor: not-allowed;
   }
 }
+
+@media (max-width: 768px) {
+  .modalContent {
+    width: 90vw;
+    padding: 16px;
+    max-height: 80vh;
+  }
+
+  .header h2 {
+    font-size: 20px;
+  }
+
+  .searchBar {
+    flex-direction: column; // 검색창과 카테고리 선택을 세로로
+    align-items: stretch; // 양쪽으로 꽉 채움
+    gap: 8px;
+  }
+
+  .templateGrid {
+    // 템플릿 카드를 한 줄에 2개씩
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 10px;
+  }
+
+  .footer {
+    flex-direction: column; // 하단 버튼을 세로로
+    align-items: stretch; // 버튼 너비 100%
+    gap: 8px;
+
+    .defaultButton, .primaryButton {
+      width: 100%;
+    }
+  }
+}

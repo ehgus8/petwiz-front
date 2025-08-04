@@ -25,6 +25,9 @@ const TemplateAdminPage = () => {
 
   const [editingCategory, setEditingCategory] = useState(null);
 
+  const { width } = useWindowDimensions(); // 화면 너비 가져오기
+  const isMobile = width < 768;
+
   const fetchCategories = useCallback(async () => {
     try {
       setLoading(true);
@@ -211,6 +214,7 @@ const TemplateAdminPage = () => {
 
   return (
     <div className={styles.pageContainer}>
+      {!isMobile && (
       <aside className={styles.sidebar}>
         <div className={styles.sidebarHeader}>
           <h4>카테고리</h4>
@@ -220,11 +224,27 @@ const TemplateAdminPage = () => {
         </ul>
         <button onClick={handleOpenCreateModal} className={styles.addCategoryButton}>+ 카테고리 추가</button>
       </aside>
+      )}
+
       <main className={styles.mainContent}>
         <div className={styles.mainHeader}>
           <h2>문서양식관리</h2>
           {/* <p>결재양식을 생성하고 관리합니다.</p> */}
         </div>
+        {isMobile && (
+          <div className={styles.mobileCategoryFilter}>
+            <select
+              value={selectedCategory || 'all'}
+              onChange={(e) => handleCategoryClick(e.target.value === 'all' ? null : Number(e.target.value))}
+            >
+              <option value="all">전체 카테고리</option>
+              {categories.map(cat => (
+                <option key={cat.id} value={cat.id}>{cat.categoryName}</option>
+              ))}
+            </select>
+          </div>
+        )}
+        
         <div className={styles.controls}>
           <div className={styles.searchBar}>
             <input

@@ -5,7 +5,7 @@ import axios from 'axios';
 import { API_BASE_URL, HR_SERVICE } from '../../configs/host-config';
 import axiosInstance from '../../configs/axios-config';
 import { useNavigate } from 'react-router-dom';
-import { warn } from '../../common/common';
+import { succeed, swalError, warn } from '../../common/common';
 import EmployeeSelectorModal from '../../common/EmployeeSelectorModal';
 import ExcelUploader from '../../common/ExcelUploader';
 
@@ -96,10 +96,10 @@ export default function EmployeeRegister() {
         hireDate,
         position, // 추가
       });
-      alert('등록 성공!');
+      succeed('등록 성공!');
       navigate('/hr/employee-list');
     } catch (error) {
-      alert(error.response?.data?.statusMessage || '등록 실패');
+      swalError(error.response?.data?.statusMessage || '등록 실패');
     } finally {
       setIsLoading(false); // 로딩 종료
     }
@@ -128,12 +128,12 @@ export default function EmployeeRegister() {
           name: newDeptName,
         },
       );
-      alert('부서 등록 성공!');
+      succeed('부서 등록 성공!');
       setNewDeptName('');
       setShowDeptModal(false);
       fetchDepartments();
     } catch (err) {
-      alert(
+      swalError(
         err.response?.data?.statusMessage ||
           err.response?.data?.message ||
           '부서 등록 실패',
@@ -227,6 +227,9 @@ export default function EmployeeRegister() {
             className={`employee-select-btn${excelEmployees.length === 0 ? ' disabled' : ''}`}
             onClick={() => setShowEmployeeModal(true)}
             disabled={excelEmployees.length === 0}
+            style={{
+              display: excelEmployees.length === 0 ? 'none' : 'block',
+            }}
           >
             직원 불러오기
           </button>

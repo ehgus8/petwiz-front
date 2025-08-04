@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
 import { API_BASE_URL } from '../configs/host-config';
 import { removeLocalStorageForLogout } from '../common/common';
@@ -18,6 +18,7 @@ export const UserContext = React.createContext({
   setUserImage: () => { },
   isInit: false,
   accessToken: '',
+  counts: {},      
 });
 
 export const UserContextProvider = (props) => {
@@ -32,6 +33,39 @@ export const UserContextProvider = (props) => {
   const [departmentId, setDepartmentId] = useState(null);
   const [accessToken, setAccessToken] = useState(null);
   const [user, setUser] = useState(null); // user 객체 상태 추가
+
+  const [counts, setCounts] = useState({
+    pending: 0,
+    inProgress: 0,
+    completed: 0,
+    rejected: 0,
+    drafts: 0,
+    scheduled: 0,
+    cc: 0,
+  });
+    useEffect(() => {
+    // 로그인 했을 때만 API 호출
+    if (accessToken) {
+      const fetchCounts = async () => {
+        try {
+          const res = await axiosInstance.get(
+            `${API_BASE_URL}${APPROVAL_SERVICE}/reports/counts`
+          );
+          if (res.data?.statusCode === 200) {
+            setCounts(res.data.result);
+          }
+        } catch (err) {
+          console.error("문서함 개수 조회 실패:", err);
+        }
+      };
+
+      fetchCounts();
+
+      // (선택사항) 1분마다 폴링
+      const intervalId = setInterval(fetchCounts, 60000);
+      return () => clearInterval(intervalId); // 컴포넌트 언마운트 시 인터벌 정리
+    }
+  }, [accessToken]); // accessToken이 생기거나 바뀔 때 실행
 
   // 사용자 정보가 변경될 때마다 user 객체를 업데이트하는 useEffect
   useEffect(() => {
@@ -161,6 +195,7 @@ export const UserContextProvider = (props) => {
         isInit,
         accessToken,
         user, // Provider value에 user 객체 추가
+        counts,
       }}
     >
       {props.children}

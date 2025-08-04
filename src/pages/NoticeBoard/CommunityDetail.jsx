@@ -339,6 +339,14 @@ const CommunityDetail = () => {
 
     return (
         <div className="notice-detail">
+            <div>{posts.hidden ? (
+                <span style={{ color: 'rgba(171, 26, 26, 1)', fontWeight: 'bold' }}>
+                    🚨이 글은 신고된 글입니다.
+                </span>
+            ) : (
+                <span></span>
+            )}
+            </div>
             <h2>{posts.notice ? '[공지] ' : ''}{posts.title}</h2>
             <div className="meta-with-attachment">
                 <div className="meta">
@@ -402,7 +410,12 @@ const CommunityDetail = () => {
             )}
 
             <div className="buttons">
-                <button onClick={handleReportClick}>🚨 게시글 신고</button>
+                {posts.hidden ? (
+                    <span></span>
+                ) : (
+                    <button onClick={handleReportClick}>🚨 게시글 신고</button>
+                )}
+                {/* <button onClick={handleReportClick}>🚨 게시글 신고</button> */}
                 <button onClick={handleBack}>뒤로가기</button>
             </div>
 

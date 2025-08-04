@@ -309,3 +309,85 @@
     color: #868e96;
     font-size: 1rem;
 } 
+/* --- 📱 모바일 반응형 스타일 (768px 미만일 때 적용) --- */
+@media (max-width: 768px) {
+    .pageContainer {
+      // 1. 레이아웃을 수직으로 변경
+      flex-direction: column;
+    }
+  
+    // 2. 데스크탑용 사이드바 숨기기
+    .sidebar {
+      display: none;
+    }
+  
+    .mainContent {
+      padding: 16px; // 모바일용 여백으로 조정
+      border-top: 1px solid #e9e9e9;
+    }
+  
+    .mainHeader h2 {
+      font-size: 22px; // 제목 크기 조정
+    }
+  
+    // 3. 컨트롤 영역을 수직으로 쌓기
+    .controls {
+      flex-direction: column;
+      align-items: stretch; // 요소들을 꽉 채움
+      gap: 12px;
+    }
+  
+    .searchBar input {
+      max-width: none; // 너비 제한 해제
+    }
+    
+    .actions {
+      // '양식 추가하기' 버튼도 꽉 채움
+      .addButton {
+        width: 100%;
+      }
+    }
+  
+    // 4. 템플릿 목록 아이템 스타일 조정
+    .templateItem {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 16px;
+    }
+  
+    .checkboxContainer {
+      display: none; // 모바일에서는 체크박스 숨김 (선택사항)
+    }
+  
+    .templateDetails {
+      width: 100%;
+    }
+  
+    .templateTitle {
+      font-size: 16px;
+    }
+  
+    .templateDescription {
+      font-size: 13px;
+    }
+  
+    .templateActions {
+      width: 100%;
+      display: flex;
+      justify-content: flex-end; // 버튼을 오른쪽으로 정렬
+      gap: 8px;
+    }
+  }
+  .mobileCategoryFilter {
+    margin-bottom: 16px;
+  
+    select {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      border: 1px solid #dee2e6;
+      border-radius: 6px;
+      background-color: #fff;
+    }
+  }

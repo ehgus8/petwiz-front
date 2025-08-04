@@ -28,10 +28,10 @@ const DraftBoxCard = ({ draft, showScheduleInfo = false, onCancelSchedule }) => 
   const attachmentCount = draft.attachments?.length || 0;
 
   // 예약 시간 포맷팅 함수
-  const formatScheduledTime = (scheduledAt) => {
-    if (!scheduledAt) return '';
+  const formatScheduledTime = (utcDateString) => {
+    if (!utcDateString) return '';
     try {
-      const date = new Date(scheduledAt);
+      const date = new Date(utcDateString);
       return date.toLocaleString('ko-KR', {
         year: 'numeric',
         month: '2-digit',
@@ -41,7 +41,8 @@ const DraftBoxCard = ({ draft, showScheduleInfo = false, onCancelSchedule }) => 
         timeZone: 'Asia/Seoul'
       });
     } catch (error) {
-      return scheduledAt;
+      console.error("날짜 변환 오류", error);
+      return utcDateString;
     }
   };
 
@@ -86,7 +87,7 @@ const DraftBoxCard = ({ draft, showScheduleInfo = false, onCancelSchedule }) => 
         {/* 예약 정보 표시 */}
         {showScheduleInfo && draft.reportStatus === 'SCHEDULED' && (
           <div className={styles['schedule-info']}>
-            <span className={styles['schedule-indicator']} title={`예약 시간: ${draft.currentApprover}`}>
+            <span className={styles['schedule-indicator']} title={`예약 시간: ${formatScheduledTime(draft.scheduledAt)}`}>
               ⏰ {draft.currentApprover}
             </span>
             {draft.scheduledAt && (
@@ -124,20 +125,6 @@ const DraftBoxCard = ({ draft, showScheduleInfo = false, onCancelSchedule }) => 
             mode='summary'
           />
         </div>
-        
-        {/* 예약 취소 버튼 */}
-        {showScheduleInfo && draft.reportStatus === 'SCHEDULED' && onCancelSchedule && (
-          <button
-            className={styles['cancel-schedule-btn']}
-            onClick={(e) => {
-              e.stopPropagation();
-              onCancelSchedule(draft.id);
-            }}
-            title="예약 취소"
-          >
-            ❌
-          </button>
-        )}
       </div>
       {isModalOpen && (
         <ModalPortal>

@@ -94,6 +94,7 @@ const AppRouter = [
           { path: 'cc', element: <CcBox /> },
           { path: 'pending', element: <ApprovalPendingList /> },
           { path: 'reports/:reportId', element: <ApprovalDetail /> },
+          { path: 'scheduled', element: <ApprovalScheduled /> },
           {
             element: <AdminRoute />,
             children: [

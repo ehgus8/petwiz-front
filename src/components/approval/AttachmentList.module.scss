@@ -157,3 +157,17 @@
     font-size: 14px;
   }
 } 
+@media (max-width: 768px) {
+  .fileItem {
+    padding: 10px;
+  }
+
+  .fileName {
+    font-size: 13px;
+    max-width: 150px; /* 모바일 화면에 맞게 최대 너비 조정 */
+  }
+
+  .fileSize {
+    font-size: 11px;
+  }
+}

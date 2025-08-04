@@ -1,12 +1,24 @@
+/* /src/pages/approval/ApprovalPage.module.scss */
+
 .approvalPageContainer {
   display: flex;
-  height: calc(100vh - 70px); /* 헤더 높이를 뺀 나머지 전체 높이 */
-  background-color: #f4f6f8;
+  min-height: 100vh;
+  width: 100%; // ★ 컨테이너 너비가 화면을 넘지 않도록
+  overflow: hidden; // ★ 내부 요소가 넘쳐도 숨김
 }
+
 
 .content {
   flex-grow: 1;
-  padding: 24px;
-  overflow-y: auto; /* 내용이 길어지면 스크롤 */
-  height: 100%;
-} 
+  background-color: #f4f6f8;
+  width: 100%; // ★ 너비를 명시
+  min-width: 0; // ★ flex 아이템이 줄어들 수 있도록 허용
+}
+
+/* --- 📱 모바일 레이아웃 스타일 --- */
+.mobileLayout {
+  .content {
+    // 하단 탭 메뉴(높이 60px)에 콘텐츠가 가려지지 않도록 아래쪽에 여백 추가
+    padding-bottom: 60px;
+  }
+}

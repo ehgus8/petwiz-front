@@ -142,3 +142,47 @@
   .addButton:hover {
     background-color: #0056b3;
   } 
+  /* --- 📱 모바일 반응형 스타일 (768px 미만일 때 적용) --- */
+@media (max-width: 768px) {
+  .approvalHomeContainer {
+    padding: 16px; // 전체 여백 줄이기
+    gap: 20px;
+  }
+
+  .frequentTemplatesSection,
+  .reportListContainer {
+    padding: 20px 16px; // 섹션 내부 여백 줄이기
+  }
+
+  .sectionTitle {
+    font-size: 16px; // 제목 폰트 크기 조정
+  }
+
+  .summarySection {
+    // 요약 카드를 한 줄에 2개씩 보이도록 변경
+    grid-template-columns: 1fr 1fr; 
+    gap: 12px;
+  }
+
+  /* 자주 쓰는 양식: 2열 그리드로 변경 */
+  .templatesGrid {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .templateCard {
+    padding: 16px;
+    gap: 8px;
+
+    span {
+      font-size: 13px;
+    }
+  }
+
+  .noTemplates {
+    flex-direction: column; // '추가하기' 버튼을 아래로 내림
+    gap: 16px;
+    text-align: center;
+    padding: 24px 16px;
+  }
+}

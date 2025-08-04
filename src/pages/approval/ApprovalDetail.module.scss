@@ -392,18 +392,34 @@
 .confirmBtn { background-color: #007bff; color: white; }
 .cancelBtn { background-color: #6c757d; color: white; }
 
-/* 인쇄 시 불필요한 UI 숨기기 */
+/* ========== 인쇄 전용 스타일 (공지사항 방식 적용) ========== */
 @media print {
+  body * {
+    visibility: hidden;
+  }
+
+  .approvalContainer,
+  .approvalContainer * {
+    visibility: visible;
+  }
+
   .approvalContainer {
-    padding: 0;
-    background-color: #fff;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    background: white;
   }
-  .printButton, .buttonGroup, .viewMoreBtn {
+
+  .resubmitBtn,
+  .buttonGroup,
+  .printButton {
+    display: none !important;
+  }
+}
+
+@media print {
+  .printButton {
     display: none;
-  }
-  .detailMainBox {
-    box-shadow: none;
-    border: none;
-    padding: 0;
   }
 }

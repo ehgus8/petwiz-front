@@ -211,3 +211,161 @@
   border-color: #e3e8ee;
   cursor: not-allowed;
 }
+
+@media (max-width: 430px) {
+  .contact-root {
+    flex-direction: column;
+    width: 100vw;
+    min-width: 0;
+    overflow-x: hidden;
+  }
+  .contact-org {
+    width: 100vw;
+    min-width: 0;
+    border-right: none;
+    border-bottom: 1px solid #e3e8ee;
+    padding: 16px 8px;
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    background: #f4f7fb;
+    h3 {
+      font-size: 1rem;
+      margin-bottom: 0;
+      margin-right: 12px;
+      white-space: nowrap;
+    }
+    ul {
+      display: flex;
+      flex-direction: row;
+      gap: 6px;
+      margin: 0;
+      padding: 0;
+      li {
+        padding: 6px 10px;
+        font-size: 0.98rem;
+        margin-bottom: 0;
+        margin-right: 4px;
+        white-space: nowrap;
+      }
+    }
+  }
+  .contact-main {
+    padding: 12px 4px;
+  }
+  .contact-search {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    padding: 10px 6px;
+    font-size: 0.98rem;
+  }
+  .contact-search select,
+  .contact-search input {
+    font-size: 0.98rem;
+    padding: 6px 8px;
+  }
+  .contact-search button {
+    padding: 7px 10px;
+    font-size: 0.98rem;
+  }
+  .contact-sort {
+    margin-left: 0;
+    justify-content: flex-end;
+    font-size: 0.97rem;
+  }
+  .contact-list {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+  .contact-card {
+    flex-direction: row;
+    padding: 14px 10px 14px 10px;
+    min-height: 90px;
+  }
+  .contact-profile {
+    width: 54px;
+    height: 54px;
+    margin-right: 10px;
+  }
+  .contact-info b {
+    font-size: 1rem;
+  }
+  .contact-info span {
+    font-size: 0.92rem;
+    margin-left: 4px;
+  }
+  .contact-info div {
+    font-size: 0.95rem;
+  }
+  .contact-pagination button {
+    padding: 6px 8px;
+    font-size: 0.95rem;
+    margin: 0 2px;
+  }
+  .no-result {
+    font-size: 0.98rem;
+    padding: 18px 0;
+  }
+}
+
+@media (max-width: 360px) {
+  .contact-org {
+    padding: 8px 2px;
+    h3 {
+      font-size: 0.92rem;
+      margin-right: 6px;
+    }
+    ul li {
+      font-size: 0.9rem;
+      padding: 4px 6px;
+    }
+  }
+  .contact-main {
+    padding: 4px 2px;
+  }
+  .contact-search {
+    font-size: 0.92rem;
+    padding: 6px 2px;
+  }
+  .contact-search select,
+  .contact-search input {
+    font-size: 0.92rem;
+    padding: 4px 5px;
+  }
+  .contact-search button {
+    font-size: 0.92rem;
+    padding: 5px 6px;
+  }
+  .contact-list {
+    gap: 7px;
+  }
+  .contact-card {
+    padding: 7px 2px 7px 2px;
+    min-height: 60px;
+  }
+  .contact-profile {
+    width: 36px;
+    height: 36px;
+    margin-right: 5px;
+  }
+  .contact-info b {
+    font-size: 0.92rem;
+  }
+  .contact-info span {
+    font-size: 0.85rem;
+    margin-left: 2px;
+  }
+  .contact-info div {
+    font-size: 0.9rem;
+  }
+  .contact-pagination button {
+    font-size: 0.9rem;
+    padding: 4px 4px;
+  }
+  .no-result {
+    font-size: 0.92rem;
+    padding: 10px 0;
+  }
+}

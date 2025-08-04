@@ -1,108 +1,4 @@
-.sidebar-container {
-  display: flex;
-  border: 1px solid #bbb;
-  background: #fff;
-  height: 100%; // 부모(LeavePage) 높이에 맞춤
-  min-width: 540px;
-}
-
-/* 왼쪽 */
-.sidebar-left {
-  width: 180px;
-  border-right: 1px solid #bbb;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  background: #fff;
-}
-
-.draft-btn {
-  width: 90%;
-  margin: 20px auto 12px auto;
-  padding: 10px 0;
-  background: #ffc845;
-  border: none;
-  border-radius: 6px;
-  font-size: 18px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: filter 0.15s;
-  &:hover {
-    filter: brightness(0.95);
-  }
-}
-
-.approve-status {
-  margin: 0 0 8px 0;
-  padding: 0 18px;
-  font-size: 15px;
-  color: #484848;
-  > div {
-    margin: 1px 0;
-    display: flex;
-    justify-content: space-between;
-    span {
-      color: #0e0e0e;
-      font-weight: 600;
-    }
-  }
-}
-
-.menu-section {
-  margin-top: 12px;
-  border-top: 1px solid #eee;
-  padding: 8px 18px 2px 18px;
-  .menu-title {
-    font-weight: 600;
-    font-size: 15px;
-    color: #195fb0;
-    margin-bottom: 4px;
-    margin-top: 8px;
-    cursor: pointer;
-  }
-  .menu-item {
-    margin-left: 8px;
-    margin-top: 2px;
-    color: #222;
-    font-size: 15px;
-    cursor: pointer;
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-}
-
-/* 오른쪽 */
-.sidebar-right {
-  flex: 1;
-  padding: 12px 16px;
-  background: #fff;
-}
-
-.doc-list {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  margin-top: 2px;
-}
-
-.doc-item {
-  padding: 2px 0;
-  font-size: 16px;
-  color: #222;
-  cursor: pointer;
-  &.selected {
-    font-weight: bold;
-    color: #000;
-    background: none;
-    border: none;
-    text-decoration: underline;
-  }
-  &:hover {
-    background: #faf6ea;
-  }
-}
+/* /src/pages/approval/Sidebar.module.scss (최종 완성본) */
 
 .sidebar {
   width: 240px;
@@ -133,7 +29,6 @@
   font-weight: 600;
   cursor: pointer;
   transition: background-color 0.2s;
-
   &:hover {
     background-color: #0056b3;
   }
@@ -144,7 +39,7 @@
   padding: 12px 15px;
   margin: 10px 0 20px 0;
   border-radius: 6px;
-  background-color: #6c757d; // A neutral, admin-like color
+  background-color: #6c757d;
   color: white;
   font-size: 1rem;
   font-weight: bold;
@@ -156,7 +51,6 @@
   justify-content: center;
   gap: 8px;
   transition: background-color 0.2s;
-
   &:hover {
     background-color: #5a6268;
   }
@@ -177,14 +71,19 @@
 .menuList {
   list-style: none;
   padding: 0;
-  margin: 0 0 20px 0; // Add bottom margin to separate from the button
+  margin: 0;
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
+/* ★★★ 여기가 핵심 수정 부분입니다 ★★★ */
+/* 중복된 menuItem 정의를 하나로 합치고, active 클래스에도 flex를 적용합니다. */
 .menuItem {
-  display: block;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  
   padding: 10px 15px;
   color: #495057;
   text-decoration: none;
@@ -197,14 +96,24 @@
   &:hover {
     background-color: #e9ecef;
   }
+
+  &.active {
+    background-color: #007bff;
+    color: white !important;
+    font-weight: 600;
+
+    &:hover {
+      background-color: #007bff;
+    }
+  }
 }
 
-.active {
-  background-color: #007bff;
-  color: white !important;
+.countBadge {
+  margin-left: 8px;
+  background-color: #dc3545;
+  color: white;
+  border-radius: 10px;
+  padding: 2px 7px;
+  font-size: 11px;
   font-weight: 600;
-
-  &:hover {
-    background-color: #007bff;
-  }
 }

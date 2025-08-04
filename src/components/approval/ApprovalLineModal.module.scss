@@ -166,3 +166,19 @@
   white-space: pre-wrap; // 줄바꿈 적용
   word-break: break-all; // 긴 단어 줄바꿈
 }
+
+@media (max-width: 768px) {
+  .modalContent {
+    width: 90vw; // 화면 너비의 90%
+    padding: 16px;
+    max-height: 85vh; // 화면 높이의 85%
+  }
+
+  .modalHeader h3 {
+    font-size: 18px;
+  }
+  
+  .visualLineWrapper {
+    padding: 12px;
+  }
+}

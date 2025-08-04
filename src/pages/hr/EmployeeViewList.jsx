@@ -11,6 +11,7 @@ import { warn } from '../../common/common';
 import ModalPortal from '../../components/approval/ModalPortal';
 import styles from '../../components/approval/CategoryModal.module.scss';
 import { UserContext } from '../../context/UserContext';
+import pin from '../../assets/pin.jpg';
 
 export default function EmployeeViewList() {
   const { userId } = useContext(UserContext);
@@ -36,6 +37,7 @@ export default function EmployeeViewList() {
   const [totalPages, setTotalPages] = useState(1);
   const [editMode, setEditMode] = useState(false);
   const [editEvaluation, setEditEvaluation] = useState(null);
+  const [evaluationStatus, setEvaluationStatus] = useState({});
   const navigate = useNavigate();
 
   // 정렬 state
@@ -80,6 +82,33 @@ export default function EmployeeViewList() {
     // eslint-disable-next-line
   }, [page, size, sortField, sortOrder, appliedSearch]);
 
+  // 직원별 평가 여부 전체 조회
+  useEffect(() => {
+    if (!employees.length) return;
+    const fetchAllEvaluationStatus = async () => {
+      const statusObj = {};
+      await Promise.all(
+        employees.map(async (emp) => {
+          const empKey = emp.employeeId || emp.id;
+          try {
+            // 평가 내역 조회: 결과 content 배열이 있으면 평가 존재
+            const res = await axiosInstance.get(
+              `${API_BASE_URL}${HR_SERVICE}/evaluations/${empKey}`,
+            );
+            statusObj[empKey] =
+              Array.isArray(res.data.result.content) &&
+              res.data.result.content.length > 0;
+          } catch {
+            statusObj[empKey] = false;
+          }
+        }),
+      );
+      setEvaluationStatus(statusObj);
+    };
+    fetchAllEvaluationStatus();
+    // eslint-disable-next-line
+  }, [employees]);
+
   useEffect(() => {
     if (selectedId == null) return;
     getLatestEvaluation(selectedId);
@@ -100,7 +129,7 @@ export default function EmployeeViewList() {
     fetchDepartments();
   }, []);
 
-  // 최신 인사평가 불러오기 (예시: /hr-service/evaluations/latest/{employeeId})
+  // 최신 인사평가 불러오기 (예시: /hr-service/evaluation/{employeeId})
   const getLatestEvaluation = async (id) => {
     try {
       const res = await axiosInstance.get(
@@ -137,7 +166,7 @@ export default function EmployeeViewList() {
   };
 
   // '퇴직자만' 체크박스가 변경될 때마다 바로 검색
-  React.useEffect(() => {
+  useEffect(() => {
     setAppliedSearch((prev) => ({
       ...prev,
       isActive: !showInactive,
@@ -252,7 +281,7 @@ export default function EmployeeViewList() {
                 <tr>
                   <th
                     onClick={() => handleSort('name')}
-                    style={{ cursor: 'pointer' }}
+                    style={{ cursor: 'pointer', textAlign: 'center' }}
                   >
                     이름{' '}
                     {sortField === 'name'
@@ -263,7 +292,7 @@ export default function EmployeeViewList() {
                   </th>
                   <th
                     onClick={() => handleSort('department')}
-                    style={{ cursor: 'pointer' }}
+                    style={{ cursor: 'pointer', textAlign: 'center' }}
                   >
                     부서{' '}
                     {sortField === 'department'
@@ -274,7 +303,7 @@ export default function EmployeeViewList() {
                   </th>
                   <th
                     onClick={() => handleSort('position')}
-                    style={{ cursor: 'pointer' }}
+                    style={{ cursor: 'pointer', textAlign: 'center' }}
                   >
                     직급{' '}
                     {sortField === 'position'
@@ -285,7 +314,7 @@ export default function EmployeeViewList() {
                   </th>
                   <th
                     onClick={() => handleSort('role')}
-                    style={{ cursor: 'pointer' }}
+                    style={{ cursor: 'pointer', textAlign: 'center' }}
                   >
                     직책{' '}
                     {sortField === 'role'
@@ -296,7 +325,7 @@ export default function EmployeeViewList() {
                   </th>
                   <th
                     onClick={() => handleSort('phone')}
-                    style={{ cursor: 'pointer' }}
+                    style={{ cursor: 'pointer', textAlign: 'center' }}
                   >
                     연락처{' '}
                     {sortField === 'phone'
@@ -315,11 +344,60 @@ export default function EmployeeViewList() {
                     className={selectedId === emp.id ? 'selected' : ''}
                     style={{ cursor: 'pointer' }}
                   >
-                    <td>{emp.name}</td>
-                    <td>{emp.department}</td>
-                    <td>{emp.position}</td>
-                    <td>{emp.role}</td>
-                    <td>{emp.phone}</td>
+                    <td style={{ textAlign: 'center' }}>
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '8px',
+                        }}
+                      >
+                        <img
+                          src={emp.profileImageUri || pin}
+                          alt='profile'
+                          style={{
+                            width: '24px',
+                            height: '24px',
+                            borderRadius: '50%',
+                            objectFit: 'cover',
+                          }}
+                        />
+                        <div
+                          style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                          }}
+                        >
+                          <span>{emp.name}</span>
+                          {evaluationStatus[emp.employeeId || emp.id] ===
+                            false && (
+                            <span
+                              style={{
+                                background: '#ff5252',
+                                color: '#fff',
+                                borderRadius: '10px',
+                                fontSize: '0.62em',
+                                padding: '0 5px',
+                                marginTop: '3px',
+                                fontWeight: 600,
+                                letterSpacing: '0.01em',
+                                height: '16px',
+                                lineHeight: '16px',
+                                display: 'inline-block',
+                              }}
+                            >
+                              평가 필요
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </td>
+                    <td style={{ textAlign: 'center' }}>{emp.department}</td>
+                    <td style={{ textAlign: 'center' }}>{emp.position}</td>
+                    <td style={{ textAlign: 'center' }}>{emp.role}</td>
+                    <td style={{ textAlign: 'center' }}>{emp.phone}</td>
                   </tr>
                 ))}
               </tbody>

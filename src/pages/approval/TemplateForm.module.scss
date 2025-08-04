@@ -338,3 +338,27 @@
   font-size: 0.98rem;
   word-break: break-all;
 }
+/* --- 📱 모바일 반응형 스타일 --- */
+@media (max-width: 768px) {
+  .mainContent {
+    /* 데스크탑의 좌우 패널 구조 대신, 하나의 패널이 꽉 차도록 변경 */
+    flex-direction: column;
+    padding: 16px;
+  }
+
+  .leftPane, .rightPane {
+    /* flex 값 초기화 */
+    flex: none;
+    width: 100%;
+  }
+  
+  .footer {
+    flex-direction: column-reverse; /* 저장 버튼이 위로 오도록 */
+    align-items: stretch; /* 버튼 너비 100% */
+    gap: 10px;
+
+    .saveButton, .cancelButton {
+      width: 100%;
+    }
+  }
+}

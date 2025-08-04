@@ -126,3 +126,11 @@
     opacity: 1;
   }
 } 
+@media (max-width: 768px) {
+  .modalContainer {
+    width: 90vw;
+    padding: 20px;
+    max-height: 85vh;
+    overflow-y: auto;
+  }
+}

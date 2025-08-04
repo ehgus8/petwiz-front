@@ -281,3 +281,20 @@
   background: #1976d2;
   border-radius: 6px;
 }
+
+@media (max-width: 768px) {
+  .modalContainer {
+    width: 95vw; // 화면 너비의 95%
+    height: 80vh; // 화면 높이의 80% (좀 더 크게)
+    padding: 16px;
+  }
+
+  .modalTitle {
+    font-size: 20px;
+    margin-bottom: 12px;
+  }
+
+  .employeeList, .departmentList {
+    max-height: calc(100% - 150px); // 전체 높이에서 다른 요소들 높이를 뺀 만큼
+  }
+}

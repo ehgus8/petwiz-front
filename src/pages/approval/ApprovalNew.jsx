@@ -10,6 +10,9 @@ import VisualApprovalLine from '../../components/approval/VisualApprovalLine';
 import { warn, swalConfirm, swalError } from '../../common/common';
 import styles from './ApprovalNew.module.scss';
 import FormField from './FormField';
+import ModalPortal from '../../components/approval/ModalPortal';
+import Swal from 'sweetalert2'; // MySwal 대신 Swal을 직접 import
+
 // 불필요한 기본값들을 필터링하는 함수
 const sanitizeValue = (val) => {
   if (!val) return '';
@@ -77,7 +80,7 @@ function ApprovalNew() {
       return;
     }
     if (isSubmit && (!approvalLine || approvalLine.length === 0)) {
-      await MySwal.fire({
+      await Swal.fire({
         icon: 'warning',
         title: '결재선을 한 명 이상 지정해야 합니다.',
         confirmButtonText: '확인',
@@ -190,7 +193,7 @@ function ApprovalNew() {
       if (res.data && (res.data.statusCode === 201 || res.data.statusCode === 200)) {
         setIsDirty(false); // dirty 해제
         await Promise.resolve(); // 상태 반영 보장
-        await MySwal.fire({
+        await Swal.fire({
           icon: 'success',
           title: successMessage,
           confirmButtonText: '확인',
@@ -229,7 +232,7 @@ function ApprovalNew() {
         const res = await axiosInstance.get(`${API_BASE_URL}${APPROVAL_SERVICE}/reports/${effectiveReportId}`);
         const report = res.data?.result;
         if (!report || !report.writer || !user || report.writer.id !== user.id) {
-          await MySwal.fire({
+          await Swal.fire({
             icon: 'error',
             title: '접근 권한이 없습니다.',
             text: '해당 문서는 작성자만 수정할 수 있습니다.',
@@ -238,7 +241,7 @@ function ApprovalNew() {
           navigate('/approval/home');
         }
       } catch (err) {
-        await MySwal.fire({
+        await Swal.fire({
           icon: 'error',
           title: '문서 정보를 불러올 수 없습니다.',
           text: err.response?.data?.statusMessage || err.message,
@@ -250,8 +253,19 @@ function ApprovalNew() {
   }, [effectiveReportId, user, navigate]);
 
   useEffect(() => {
+    if(isDirty){
+      const handleBeforeUnload = (e) => {
+        e.preventDefault();
+        e.returnValue = '작성중인 내용이 있습니다.';
+      };
+      window.addEventListener('beforeunload', handleBeforeUnload);
+      return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+    }
+    console.log('blocker', blocker);
+  }, [blocker]);
+  useEffect(() => {
     if (blocker.state === 'blocked') {
-      MySwal.fire({
+      Swal.fire({
         title: '작성중인 내용이 있습니다.',
         text: "페이지를 떠나기 전에 임시저장 하시겠습니까?",
         icon: 'question',
@@ -263,7 +277,7 @@ function ApprovalNew() {
       }).then(async (result) => {
         if (result.isConfirmed) {
           await handleFinalSubmit(false, true);
-          await MySwal.fire({
+          await Swal.fire({
             icon: 'success',
             title: '임시 저장되었습니다.',
             confirmButtonText: '확인',
@@ -308,7 +322,7 @@ function ApprovalNew() {
   };
 
   const handleCancel = () => {
-    MySwal.fire({
+    Swal.fire({
       title: '취소하시겠습니까?',
       text: '작성 중인 내용이 모두 사라집니다.',
       icon: 'warning',
@@ -328,7 +342,7 @@ function ApprovalNew() {
 
   // 상신/임시저장 전 사용자 확인 모달
   const handleSubmitWithConfirm = async (isSubmit) => {
-    const result = await swalConfirm({
+    const result = await Swal.fire({
       title: isSubmit ? '정말 상신하시겠습니까?' : '임시 저장하시겠습니까?',
       icon: 'question',
       showCancelButton: true,
@@ -357,7 +371,7 @@ function ApprovalNew() {
   const handleScheduleSubmit = async (scheduledAt) => {
     // 필수값 유효성 검사
     if (!formData.title || formData.title.trim() === '') {
-      await MySwal.fire({
+      await Swal.fire({
         icon: 'warning',
         title: '제목은 필수 입력 항목입니다.',
         confirmButtonText: '확인',
@@ -366,7 +380,7 @@ function ApprovalNew() {
       return;
     }
     if (!approvalLine || approvalLine.length === 0) {
-      await MySwal.fire({
+      await Swal.fire({
         icon: 'warning',
         title: '결재선을 한 명 이상 지정해야 합니다.',
         confirmButtonText: '확인',
@@ -386,7 +400,7 @@ function ApprovalNew() {
     }
     
     if (!contentValue || contentValue.trim() === '') {
-      await MySwal.fire({
+      await Swal.fire({
         icon: 'warning',
         title: '내용은 필수 입력 항목입니다.',
         confirmButtonText: '확인',
@@ -445,7 +459,7 @@ function ApprovalNew() {
 
       if (res.data && res.data.statusCode === 201) {
         setIsDirty(false);
-        await MySwal.fire({
+        await Swal.fire({
           icon: 'success',
           title: '문서가 성공적으로 예약되었습니다.',
           text: `예약 시간: ${new Date(scheduledAt).toLocaleString()}`,
@@ -467,7 +481,7 @@ function ApprovalNew() {
         console.error('[ApprovalNew] 디버깅 정보 출력 중 오류:', debugErr);
       }
       
-      await MySwal.fire({
+      await Swal.fire({
         icon: 'error',
         title: '예약 상신 실패',
         text: err.response?.data?.statusMessage || err.message,
@@ -573,7 +587,7 @@ function ApprovalNew() {
 
     const handleScheduleConfirm = () => {
       if (!selectedDate || !selectedHour || !selectedMinute) {
-        MySwal.fire({
+        Swal.fire({
           icon: 'warning',
           title: '예약 시간을 선택해주세요.',
           confirmButtonText: '확인',
@@ -590,7 +604,7 @@ function ApprovalNew() {
 
       // 현재 시간과 선택된 시간을 직접 비교 (10분 단위 고려)
       if (selectedTime <= currentTimeObj) {
-        MySwal.fire({
+        Swal.fire({
           icon: 'warning',
           title: '이미 지나간 시간은 선택할 수 없습니다.',
           text: '10분 단위로 현재 시간 이후의 시간을 선택해주세요.',
@@ -598,16 +612,17 @@ function ApprovalNew() {
         });
         return;
       }
-
+      const selectedKstDateTimeString = `${selectedDate}T${selectedHour}:${selectedMinute}:00`;
+      const scheduledAtWithOffset = selectedKstDateTimeString + '+09:00';
       // KST 시간을 UTC로 변환하여 서버에 전송
       // selectedDateTime은 KST 시간이므로, UTC로 변환
       const kstTime = new Date(selectedDateTime + '+09:00'); // KST 시간으로 명시
       const scheduledAt = kstTime.toISOString(); // 이미 UTC로 변환됨
       
-      console.log('[ApprovalNew] 선택된 KST 시간:', selectedDateTime);
-      console.log('[ApprovalNew] 변환된 UTC 시간:', scheduledAt);
+      console.log('[ApprovalNew] 선택된 KST 시간:', selectedKstDateTimeString);
+      console.log('[ApprovalNew] 변환된 UTC 시간:', scheduledAtWithOffset);
       
-      handleScheduleSubmit(scheduledAt);
+      handleScheduleSubmit(scheduledAtWithOffset);
     };
 
     const minTime = getMinimumTime();

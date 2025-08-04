@@ -1,215 +1,128 @@
+
+/* --- 💻 데스크탑 기본 스타일 (Grid 레이아웃 사용) --- */
 .reportItem {
-  display: flex;
-  padding: 16px 20px;
-  border-bottom: 1px solid #f0f0f0;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  cursor: pointer;
-  background-color: #fff;
-  border-radius: 8px;
+  display: grid;
+  // 각 열의 너비를 지정 (왼쪽, 중앙, 오른쪽)
+  grid-template-columns: 200px 1fr auto; 
   align-items: center;
+  gap: 16px;
+  padding: 16px 24px;
+  border-bottom: 1px solid #f0f0f0;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
   &:hover {
-    background-color: #f9fafb;
+    background-color: #f8f9fa;
   }
 }
 
+/* --- 각 그리드 영역 스타일 --- */
 .left-section {
   display: flex;
   align-items: center;
-  gap: 16px;
-  flex-shrink: 0;
-  width: 200px; /* 양식명 영역 너비 고정 */
+  gap: 8px;
+  min-width: 0; // 내용이 길어질 때 ... 처리를 위해
 }
 
 .doc-icon {
   font-size: 24px;
-  color: #868e96;
-  transition: all 0.3s ease;
+  color: #adb5bd;
 }
 
 .template-name {
-  font-size: 15px;
-  font-weight: 500;
-  color: #333;
-}
-
-.attachment-indicator {
-  font-size: 12px;
-  color: #666;
-  background-color: #f8f9fa;
-  padding: 2px 6px;
-  border-radius: 4px;
-  border: 1px solid #e9ecef;
-  white-space: nowrap;
-  transition: all 0.2s ease;
-}
-
-.schedule-info {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.schedule-indicator {
-  font-size: 12px;
-  color: #ff9800;
-  background-color: #fff3e0;
-  padding: 2px 6px;
-  border-radius: 4px;
-  border: 1px solid #ffcc80;
-  white-space: nowrap;
-  transition: all 0.2s ease;
-  font-weight: 500;
-}
-
-.time-until {
-  font-size: 11px;
-  color: #ff6b35;
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-.center-section {
-  flex-grow: 1;
-  min-width: 0;
-  padding: 0 24px;
-}
-
-.card-title {
-  font-size: 17px;
-  font-weight: 600;
-  margin-bottom: 6px;
+  font-size: 14px;
+  color: #495057;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  transition: color 0.2s ease;
+}
+
+.attachment-indicator {
+  font-size: 13px;
+  color: #868e96;
+}
+
+.schedule-info {
+  /* 예약 정보 스타일 */
+}
+
+.center-section {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.card-title {
+  font-size: 16px;
+  font-weight: 500;
+  color: #212529;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .card-info {
   font-size: 13px;
-  color: #888;
-  display: flex;
-  flex-wrap: nowrap;
-  gap: 8px;
-  min-width: 0;
-}
-
-.card-info span {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 120px;
-  display: inline-block;
-}
-
-@media (max-width: 700px) {
-  .center-section {
-    padding: 0 8px;
-  }
-  .card-title,
-  .card-info {
-    max-width: 100%;
-  }
-  .card-title {
-    font-size: 15px;
-  }
-  .card-info span {
-    max-width: 60px;
-  }
+  color: #868e96;
 }
 
 .right-section {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-  flex-shrink: 0;
-  width: 140px;
+  justify-content: flex-end; // 오른쪽 정렬
   gap: 8px;
 }
 
 .cancel-schedule-btn {
-  background: none;
-  border: none;
-  font-size: 16px;
-  cursor: pointer;
-  padding: 4px;
-  border-radius: 4px;
-  transition: all 0.2s ease;
-  color: #dc3545;
-  
-  &:hover {
-    background-color: #f8d7da;
-    transform: scale(1.1);
-  }
+  /* 예약 취소 버튼 스타일 */
 }
 
-/* 카드 호버 애니메이션 */
-.reportItem {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
+
+@media (max-width: 768px) {
+  .reportItem {
+    // 1. 수직 레이아웃으로 변경
+    flex-direction: column;
+    align-items: flex-start; // 모든 내용을 왼쪽 정렬
+    gap: 12px; // 각 섹션 사이의 간격
+  }
+
+  // 2. 모든 섹션이 화면 너비 전체를 사용하도록 설정
+  .left-section,
+  .center-section,
+  .right-section {
     width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(33, 150, 243, 0.1), transparent);
-    transition: left 0.6s ease;
   }
-  
-  &:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-    border-color: #2196f3;
-    
-    &::before {
-      left: 100%;
+
+  // 3. 정보 표시 순서 재정렬 (선택사항이지만 추천)
+  .center-section {
+    order: 1; // 제목/부가정보를 맨 위로
+  }
+  .left-section {
+    order: 2; // 양식명/예약정보를 중간으로
+  }
+  .right-section {
+    order: 3; // 결재선을 맨 아래로
+    justify-content: space-between; // 결재선과 취소 버튼을 양쪽 끝으로
+  }
+
+  // 4. 중앙 섹션의 내부 레이아웃 조정
+  .center-section {
+    padding: 0; // 불필요한 패딩 제거
+  }
+  .card-info {
+    // 기안일, 기안자 텍스트가 잘리지 않도록
+    span {
+      max-width: none;
     }
-    
-    .doc-icon {
-      transform: scale(1.1) rotate(5deg);
-    }
-    
-    .attachment-indicator {
-      animation: bounce 0.6s ease-in-out;
-    }
-  }
-  
-  &:active {
-    transform: translateY(-2px) scale(0.98);
   }
 }
 
-/* 아이콘 애니메이션 */
-.doc-icon {
-  transition: all 0.3s ease;
-}
-
-/* 첨부파일 표시 애니메이션 */
-.attachment-indicator {
-  transition: all 0.2s ease;
-}
-
-@keyframes bounce {
-  0%, 20%, 50%, 80%, 100% {
-    transform: translateY(0);
-  }
-  40% {
-    transform: translateY(-8px);
-  }
-  60% {
-    transform: translateY(-4px);
-  }
-}
-
-/* 카드 제목 호버 효과 */
-.card-title {
-  transition: color 0.2s ease;
-  
-  &:hover {
-    color: #2196f3;
-  }
+/* ★★★ 여기가 핵심 수정 부분입니다 ★★★ */
+.statusSection {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; // 예약정보와 결재선을 양쪽 끝으로
+  flex-wrap: wrap; // 화면 좁아지면 줄바꿈
+  gap: 8px 16px;
 }

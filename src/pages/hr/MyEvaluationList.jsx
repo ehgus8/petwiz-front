@@ -79,10 +79,10 @@ export default function MyEvaluationList() {
         <table className='emp-list-table'>
           <thead>
             <tr>
-              <th>평가ID</th>
-              <th>면담일</th>
-              <th>등록일</th>
-              <th>총점수</th>
+              <th style={{ textAlign: 'center' }}>평가ID</th>
+              <th style={{ textAlign: 'center' }}>면담일</th>
+              <th style={{ textAlign: 'center' }}>등록일</th>
+              <th style={{ textAlign: 'center' }}>평균 점수</th>
             </tr>
           </thead>
           <tbody>
@@ -95,10 +95,16 @@ export default function MyEvaluationList() {
                 }
                 style={{ cursor: 'pointer' }}
               >
-                <td>{evalItem.evaluationId}</td>
-                <td>{evalItem.interviewDate}</td>
-                <td>{evalItem.createdAt.split('T')[0]}</td>
-                <td>{evalItem.totalEvaluation}</td>
+                <td style={{ textAlign: 'center' }}>{evalItem.evaluationId}</td>
+                <td style={{ textAlign: 'center' }}>
+                  {evalItem.interviewDate}
+                </td>
+                <td style={{ textAlign: 'center' }}>
+                  {evalItem.createdAt.split('T')[0]}
+                </td>
+                <td style={{ textAlign: 'center' }}>
+                  {evalItem.totalEvaluation}
+                </td>
               </tr>
             ))}
           </tbody>
