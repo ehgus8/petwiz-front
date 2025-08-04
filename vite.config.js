@@ -5,6 +5,9 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   plugins: [react()],
   server: {
+    host: true, // 반드시 포함
+    port: 5173,
+    allowedHosts: ['hrhub.cc', 'www.hrhub.cc'],
     proxy: {
       '/api': {
         target: 'http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0',
