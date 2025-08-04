@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useContext } from 'react';
-import axios from 'axios';
-import { API_BASE_URL } from '../configs/host-config';
+import axiosInstance  from '../configs/axios-config'
+import { API_BASE_URL, APPROVAL_SERVICE } from '../configs/host-config';
 import { removeLocalStorageForLogout } from '../common/common';
+import axiosInstance from '../configs/axios-config';
 
 export const UserContext = React.createContext({
   isLoggedIn: false,
@@ -18,7 +19,7 @@ export const UserContext = React.createContext({
   setUserImage: () => { },
   isInit: false,
   accessToken: '',
-  counts: {},      
+  counts: {},
 });
 
 export const UserContextProvider = (props) => {
@@ -43,7 +44,7 @@ export const UserContextProvider = (props) => {
     scheduled: 0,
     cc: 0,
   });
-    useEffect(() => {
+  useEffect(() => {
     // 로그인 했을 때만 API 호출
     if (accessToken) {
       const fetchCounts = async () => {

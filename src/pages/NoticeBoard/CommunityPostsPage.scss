@@ -165,6 +165,7 @@
       justify-content: right;
       // margin-left: 55%;
       margin-left: auto; // ✅ 오른쪽 끝으로 정렬
+      margin-right: auto;
     }
     .write-button {
       padding: 0.5rem 1.2rem;
@@ -274,15 +275,6 @@
     .attachments,
     .buttons {
       margin-top: 10px;
-    }
-
-    .buttons button {
-      margin-right: 10px;
-      padding: 6px 12px;
-      background-color: blue;
-      color: black;
-      border: none;
-      cursor: pointer;
     }
   }
 }

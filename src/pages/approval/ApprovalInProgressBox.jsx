@@ -12,14 +12,14 @@ const ApprovalInProgressBox = ({ onTotalCountChange }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [totalCount, setTotalCount] = useState(0);
-  
+
   const { filteredReports, handleFilterChange } = useReportFilter(reports);
 
   useEffect(() => {
     const fetchInProgressReports = async () => {
       setLoading(true);
       setError(null);
-      
+
       const paramsApprover = {
         role: 'approver',
         status: 'IN_PROGRESS',
@@ -86,9 +86,9 @@ const ApprovalInProgressBox = ({ onTotalCountChange }) => {
   return (
     <div className={styles.reportListContainer}>
       <h2 className="sectionTitle">결재 중 문서함</h2>
-      
+
       <ReportFilter onFilterChange={handleFilterChange} />
-      
+
       <div className={styles.reportList}>
         {filteredReports.length > 0 ? (
           <>
@@ -100,7 +100,7 @@ const ApprovalInProgressBox = ({ onTotalCountChange }) => {
               .sort((a, b) => new Date(b.reportCreatedAt) - new Date(a.reportCreatedAt))
               .map((report) => (
                 <DraftBoxCard key={report.id} draft={report} />
-            ))}
+              ))}
           </>
         ) : (
           <div className={styles.noReports}>

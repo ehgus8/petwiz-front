@@ -295,9 +295,17 @@
   border-radius: 4px;
 }
 
-.excel-upload-btn,
-.employee-select-btn {
+.excel-upload-btn {
   background: #4a90e2;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s;
+}
+
+.employee-select-btn {
+  background: #0740b2;
   color: #fff;
   border: none;
   cursor: pointer;

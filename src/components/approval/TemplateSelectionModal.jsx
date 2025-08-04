@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import axiosInstance from '../../configs/axios-config';
 import { API_BASE_URL, APPROVAL_SERVICE } from '../../configs/host-config';
 import styles from './TemplateSelectionModal.module.scss';
+import { warn } from '../../common/common';
 
 const TemplateSelectionModal = ({ open, onClose, onStartWriting }) => {
   // --- 모든 훅(Hook)은 조건문 없이 컴포넌트 최상단에서 호출되어야 합니다. ---
@@ -61,16 +62,13 @@ const TemplateSelectionModal = ({ open, onClose, onStartWriting }) => {
   };
 
   const handleStart = () => {
-    if (selectedTemplateId) {
+    if (selectedTemplateId !== null) {
       onStartWriting(selectedTemplateId);
     } else {
-      alert('작성할 양식을 선택해주세요.');
+      warn('작성할 양식을 선택해주세요.');
     }
   };
 
-  const handleStartWithoutTemplate = () => {
-    onStartWriting(0);
-  };
 
   // 로딩/에러/콘텐츠 렌더링을 위한 헬퍼 함수
   const renderContent = () => {
@@ -132,10 +130,7 @@ const TemplateSelectionModal = ({ open, onClose, onStartWriting }) => {
           </div>
 
           <div className={styles.footer}>
-            <button onClick={handleStartWithoutTemplate} className={styles.defaultButton}>
-              템플릿 없이 작성
-            </button>
-            <button onClick={handleStart} className={styles.primaryButton} disabled={!selectedTemplateId}>
+            <button onClick={handleStart} className={styles.primaryButton} disabled={selectedTemplateId === null}>
               선택한 양식으로 작성
             </button>
           </div>

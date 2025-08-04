@@ -21,7 +21,8 @@ const CommunityWrite = ({ isEdit = false }) => {
     const [departments, setDepartments] = useState([]);   // 🔹 부서 리스트
 
     const { accessToken, userId, isInit, userRole } = useContext(UserContext); // ✅ 한 번에 구조 분해
-
+    const [titleError, setTitleError] = useState(false);
+    const [contentError, setContentError] = useState(false);
 
     const parseAttachmentUri = (raw) => {
         try {
@@ -82,21 +83,36 @@ const CommunityWrite = ({ isEdit = false }) => {
 
         // ✅ 제목 또는 내용이 비어있을 경우 알림
         if (!title.trim()) {
+            setTitleError(true);
             Swal.fire({
                 icon: 'warning',
                 title: '제목을 입력해주세요.',
                 confirmButtonText: '확인',
             });
             return;
+        } else {
+            setTitleError(false);
+        }
+
+        if (title.length > 100) {
+            Swal.fire({
+                icon: 'warning',
+                title: '제목은 100자 이내로 입력해주세요.',
+                confirmButtonText: '확인',
+            });
+            return;
         }
 
         if (!content.trim()) {
+            setContentError(true);
             Swal.fire({
                 icon: 'warning',
                 title: '내용을 입력해주세요.',
                 confirmButtonText: '확인',
             });
             return;
+        } else {
+            setContentError(false);
         }
 
         const uploadedFileUrls = [];
@@ -215,9 +231,12 @@ const CommunityWrite = ({ isEdit = false }) => {
                 type="text"
                 placeholder="제목을 입력하세요"
                 className="title-input"
-
+                maxLength={100}
                 value={title}
-                onChange={(e) => setTitle(e.target.value)}
+                onChange={(e) => {
+                    setTitle(e.target.value);
+                    setTitleError(false);
+                }}
             />
 
             {/* <textarea
@@ -226,8 +245,13 @@ const CommunityWrite = ({ isEdit = false }) => {
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
             /> */}
-            <div className="editor-wrapper">
-                <Editor content={content} onChange={setContent} />
+            <div className={`editor-wrapper ${contentError ? 'error-input' : ''}`}>
+                {/* <Editor content={content} onChange={setContent} />
+                 */}
+                <Editor content={content} onChange={(value) => {
+                    setContent(value);
+                    setContentError(false);
+                }} />
             </div>
 
 
@@ -247,8 +271,41 @@ const CommunityWrite = ({ isEdit = false }) => {
             )}
 
             <div className="attachments">
-                <input type="file" multiple onChange={(e) => setFiles([...e.target.files])} />
+                {/* 숨겨진 실제 파일 선택 input */}
+                <input
+                    type="file"
+                    id="fileUpload"
+                    multiple
+                    onChange={(e) => setFiles([...e.target.files])}
+                    style={{ display: 'none' }}
+                />
+
+                {/* 사용자 친화적인 커스텀 버튼 */}
+                <label htmlFor="fileUpload" className="file-upload-label">
+                    파일 선택
+                </label>
+
+                {/* 선택한 파일명 리스트 */}
+                {files.length > 0 && (
+                    <ul className="selected-files">
+                        {files.map((file, index) => (
+                            <li key={index} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                📄 {file.name}
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        setFiles(prev => prev.filter((_, i) => i !== index))
+                                    }
+                                    className="file-remove-button"
+                                >
+                                    ❌
+                                </button>
+                            </li>
+                        ))}
+                    </ul>
+                )}
             </div>
+
 
             <div className="buttons">
                 <button onClick={handleSubmit}>{isEdit ? '수정' : '저장'}</button>

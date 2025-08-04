@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { succeed, swalError, warn } from '../../common/common';
 import EmployeeSelectorModal from '../../common/EmployeeSelectorModal';
 import ExcelUploader from '../../common/ExcelUploader';
+import { getEmployeeList } from '../../common/hr'; // 상단 import 추가
 
 export default function EmployeeRegister() {
   const [departments, setDepartments] = useState([]);
@@ -29,6 +30,7 @@ export default function EmployeeRegister() {
   const [isLoading, setIsLoading] = useState(false); // 로딩 상태 추가
   const [excelEmployees, setExcelEmployees] = useState([]);
   const [showEmployeeModal, setShowEmployeeModal] = useState(false);
+  const [registeredEmployees, setRegisteredEmployees] = useState([]); // 추가
 
   function isValidEmail(email) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -212,7 +214,41 @@ export default function EmployeeRegister() {
 
   useEffect(() => {
     fetchDepartments();
+    // 등록된 직원 불러오기
+    getEmployeeList({
+      field: 'name',
+      keyword: '',
+      department: '전체',
+      setEmployees: setRegisteredEmployees,
+      setTotalPages: () => {},
+      isActive: true, // 재직자만
+      size: 9999,
+    });
   }, []);
+
+  // 이미 등록된 직원 이메일 배열
+  const registeredEmails = registeredEmployees.map(
+    (emp) => emp.email && emp.email.trim(),
+  );
+  // 엑셀에서 불러온 직원 중, 등록되지 않은 직원만 필터링
+  const filteredExcelEmployees = excelEmployees.filter(
+    (emp) => emp['이메일'] && !registeredEmails.includes(emp['이메일'].trim()),
+  );
+
+  // 디버깅용 콘솔 출력
+  console.log(
+    'registeredEmployees:',
+    registeredEmployees.map((e) => e.email),
+  );
+  console.log('registeredEmails:', registeredEmails);
+  console.log(
+    'excelEmployees:',
+    excelEmployees.map((e) => e['이메일']),
+  );
+  console.log(
+    'filteredExcelEmployees:',
+    filteredExcelEmployees.map((e) => e['이메일']),
+  );
 
   return (
     <>
@@ -237,7 +273,7 @@ export default function EmployeeRegister() {
         {/* 직원 선택 모달 */}
         {showEmployeeModal && (
           <EmployeeSelectorModal
-            employeeList={excelEmployees}
+            employeeList={filteredExcelEmployees}
             onSelect={handleEmployeeSelect}
             onClose={() => setShowEmployeeModal(false)}
           />

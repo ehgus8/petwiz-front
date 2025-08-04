@@ -68,7 +68,7 @@ const headerMenus = [
 ];
 
 export default function MainLayout() {
-  
+
   const location = useLocation();
   const { onLogout } = useContext(UserContext);
   const navigate = useNavigate();
@@ -139,7 +139,7 @@ export default function MainLayout() {
     fetchUnreadCount();
   }, [user, location.pathname]);
 
-  
+
   useEffect(() => {
     if (!user) return;
     const fetchAllCounts = async () => {
@@ -238,7 +238,7 @@ export default function MainLayout() {
             },
           },
         );
-        
+
         const newCount = res.data.result?.totalElements || 0;
 
         // ★★★ 2. 알림 조건 수정 ★★★
@@ -254,7 +254,7 @@ export default function MainLayout() {
             timerProgressBar: true,
           });
         }
-        
+
         setUnApprovalCount(newCount);
 
         // ★ 3. 첫 폴링 이후에는 초기 로딩 상태를 false로 변경 ★

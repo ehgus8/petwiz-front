@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import { UserContext } from '../../context/UserContext';
 import EmptyState from '../../components/approval/EmptyState';
 
-const ApprovalPendingList = ({ onTotalCountChange }) => {
+const ApprovalPendingList = () => {
   const [pendingReports, setPendingReports] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -44,18 +44,15 @@ const ApprovalPendingList = ({ onTotalCountChange }) => {
             }
           );
           setPendingReports(filteredApiReports);
-          if (onTotalCountChange) onTotalCountChange(filteredApiReports.length);
         } else {
           setError(
             res.data?.statusMessage ||
             '결재 예정 문서를 불러오는 데 실패했습니다.',
           );
-          if (onTotalCountChange) onTotalCountChange(0);
         }
       } catch (err) {
         console.error(err);
         setError('네트워크 오류 또는 서버 오류');
-        if (onTotalCountChange) onTotalCountChange(0);
       } finally {
         setLoading(false);
       }
@@ -88,9 +85,4 @@ const ApprovalPendingList = ({ onTotalCountChange }) => {
     </div>
   );
 };
-
-ApprovalPendingList.propTypes = {
-  onTotalCountChange: PropTypes.func,
-};
-
 export default ApprovalPendingList;

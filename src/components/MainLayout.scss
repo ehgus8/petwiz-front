@@ -332,6 +332,13 @@ $border: #eceff3;
 
 @media (max-width: 431px) {
   .main .header {
+    min-height: fit-content;
+  }
+  .main .content {
+    min-height: 98%;
+  }
+
+  .main .header {
     padding: 0.7rem 0.5rem;
     .menu {
       gap: 0.5rem;
@@ -690,4 +697,11 @@ body {
   border-radius: 10px;
   line-height: 1;
   margin-left: auto; // 오른쪽 끝으로 밀어냄
+}
+
+@media (max-width: 600px) {
+  .chatbot-fab,
+  .chatbot-popup {
+    display: none !important;
+  }
 }

@@ -9,6 +9,33 @@ import { UserContext, UserContextProvider } from '../../context/UserContext'; //
 // import './NoticeBoardList.scss';
 import './CommunityPostsPage.scss';
 
+const fileIconMap = {
+    txt: '/icons/txt.png',
+    doc: '/icons/doc.png',
+    docx: '/icons/docx.png',
+    pdf: '/icons/pdf.png',
+    php: '/icons/php.png',
+    xls: '/icons/xls.png',
+    xlsx: '/icons/xlsx.png',
+    csv: '/icons/csv.png',
+    css: '/icons/css.png',
+    jpg: '/icons/jpg.png',
+    jpeg: '/icons/jpg.png',
+    js: '/icons/js.png',
+    png: '/icons/png.png',
+    gif: '/icons/gif.png',
+    htm: '/icons/htm.png',
+    html: '/icons/html.png',
+    zip: '/icons/zip.png',
+    mp3: '/icons/mp3.png',
+    mp4: '/icons/mp4.png',
+    ppt: '/icons/ppt.png',
+    exe: '/icons/exe.png',
+    svg: '/icons/svg.png',
+};
+
+
+
 const CommunityPostsPage = () => {
     const navigate = useNavigate();
     const { isInit, userId, accessToken, departmentId, userRole, userPosition } = useContext(UserContext);
@@ -28,6 +55,11 @@ const CommunityPostsPage = () => {
     const [pageSize, setPageSize] = useState(10); // ✅ 보기 개수
     const [loading, setLoading] = useState(false);
     const [reportCount, setReportCount] = useState(0);
+
+    const truncateTitle = (title, maxLength = 35) => {
+        return title.length > maxLength ? `${title.slice(0, maxLength)}...` : title;
+    };
+
 
     useEffect(() => {
         if (!isInit || !accessToken || !userId) return; // ✅ 초기화 완료 여부 확인
@@ -144,8 +176,16 @@ const CommunityPostsPage = () => {
                     )}
                 <h2>게시판</h2>
                 <div className="filters">
-                    <input type="date" name="startDate" value={filters.startDate} onChange={handleInputChange} />
-                    <input type="date" name="endDate" value={filters.endDate} onChange={handleInputChange} />
+                    <input type="date" name="startDate" value={filters.startDate}
+                        onChange={handleInputChange}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') handleSearch();
+                        }} />
+                    <input type="date" name="endDate" value={filters.endDate}
+                        onChange={handleInputChange}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') handleSearch();
+                        }} />
                     <input type="text"
                         name="keyword"
                         value={filters.keyword}
@@ -175,7 +215,7 @@ const CommunityPostsPage = () => {
                                 }))
                             }
                             style={{
-                                marginLeft: '8px',
+                                // marginLeft: '8px',
                                 background: 'none',
                                 border: 'none',
                                 cursor: 'pointer',
@@ -188,7 +228,7 @@ const CommunityPostsPage = () => {
                     </div>
 
 
-                    <button onClick={handleSearch}>검색</button>
+                    {/* <button className='search-button' onClick={handleSearch}>검색</button> */}
                     <button
                         className="reset-button"
                         onClick={() => {
@@ -205,7 +245,15 @@ const CommunityPostsPage = () => {
                     >
                         초기화
                     </button>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginLeft: 'auto' }}>
+
+                    <div
+                        className="write-button-wrapper"
+                    // style={{ marginLeft: '270px' }}
+                    >
+                        <button className="write-button" onClick={() => navigate('/community/write')}>작성하기</button>
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginRight: 'auto' }}>
                         <div className="hide-reported" style={{ display: 'flex', alignItems: 'left', marginRight: '1rem' }}>
                             <input
                                 type="checkbox"
@@ -229,10 +277,6 @@ const CommunityPostsPage = () => {
                                 내 부서 글
                             </button>
                         </div>
-
-                        <div className="write-button-wrapper">
-                            <button className="write-button" onClick={() => navigate('/community/write')}>작성하기</button>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -253,7 +297,6 @@ const CommunityPostsPage = () => {
                             </tr>
                         </thead>
                         <tbody>
-
                             {(hideReported ? posts.filter(post => !post.hidden) : posts).length > 0 ? (
                                 (hideReported ? posts.filter(post => !post.hidden) : posts).map(post => (
                                     <tr
@@ -266,8 +309,47 @@ const CommunityPostsPage = () => {
                                         className={post.notice ? 'bold-row' : ''}
                                     >
                                         <td>{post.communityId}</td>
-                                        <td>{post.attachmentUri && post.attachmentUri.length > 0 && post.attachmentUri !== '[]' ? '📎' : ''}</td>
-                                        <td>{post.hidden ? <span>🚨{post.title}</span> : post.title}</td>
+                                        {/* <td>{post.attachmentUri && post.attachmentUri.length > 0 && post.attachmentUri !== '[]' ? '📎' : ''}</td> */}
+                                        <td>
+                                            {(() => {
+                                                try {
+                                                    const files = JSON.parse(post.attachmentUri); // attachmentUri는 JSON 문자열
+                                                    if (!Array.isArray(files) || files.length === 0) return null;
+
+                                                    if (files.length === 1) {
+                                                        const ext = files[0].split('.').pop().toLowerCase();
+                                                        const iconPath = fileIconMap[ext] || '/icons/default.png';
+                                                        return <img src={iconPath} alt={ext} style={{ width: '20px', height: '20px' }} />;
+                                                    } else {
+                                                        return <img src="/icons/multiple.png" alt="multiple files" style={{ width: '20px', height: '20px' }} />;
+                                                    }
+                                                } catch (e) {
+                                                    return null;
+                                                }
+                                            })()}
+                                        </td>
+
+                                        {/* <td>{post.hidden ? <span>🚨{post.title}</span> : post.title}</td> */}
+                                        <td title={post.title}>
+                                            {post.hidden ? (
+                                                <span>
+                                                    🚨{truncateTitle(post.title)}
+                                                    {Number(post.commentCount) > 0 && (
+                                                        <span style={{ color: '#777', fontSize: '0.9em' }}> ({post.commentCount})</span>
+                                                    )}
+                                                </span>
+                                            ) : (
+                                                <>
+                                                    {truncateTitle(post.title)}
+                                                    {Number(post.commentCount) > 0 && (
+                                                        <span style={{ color: '#777', fontSize: '0.9em' }}> ({post.commentCount})</span>
+                                                    )}
+                                                </>
+                                            )}
+                                        </td>
+
+
+
                                         <td>{post.employStatus === 'INACTIVE' ? (
                                             <span style={{ color: '#aaa', fontStyle: 'italic', marginLeft: '4px' }}>
                                                 {post.name}(퇴사)
