@@ -10,73 +10,145 @@ $text-muted: #8ca2b3;
 $shadow: 0 2px 14px 0 rgba(30, 65, 112, 0.07);
 
 .notice-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    font-size: 0.95rem;
-    color: #333;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 0.95rem;
+  color: #333;
 
-    width: 100%;
-    border-collapse: collapse;
+  width: 100%;
+  border-collapse: collapse;
+  box-sizing: border-box;
+  overflow: hidden; // 컨테이너 범위를 벗어나지 않도록
 
-    tr:hover {
-      background-color: #f0f0f0;
-      cursor: pointer;
+  tr:hover {
+    background-color: #f0f0f0;
+    cursor: pointer;
+  }
+
+  .notice-item {
+    padding: 10px 12px;
+    border-bottom: 1px solid #e5e7eb;
+    // display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.2s ease-in-out;
+
+    // 작은 화면에서 글자가 잘리는 것을 방지
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    &:hover {
+      background-color: #f3f4f6;
     }
-  
-    .notice-item {
+
+    &::before {
+      content: '📌';
+      margin-right: 6px;
+      font-size: 1rem;
+    }
+
+    td {
+      font-size: 0.98rem;
+      text-align: center;
+      color: $text-main;
       padding: 10px 12px;
-      border-bottom: 1px solid #e5e7eb;
-      // display: flex;
-      align-items: center;
-      gap: 8px;
-      transition: background 0.2s ease-in-out;
-
-      // 작은 화면에서 글자가 잘리는 것을 방지
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-  
-      &:hover {
-        background-color: #f3f4f6;
-      }
-  
-      &::before {
-        content: '📌';
-        margin-right: 6px;
-        font-size: 1rem;
-      }
-
-      td {
-        font-size: 0.98rem;
-        text-align: center;
-        color: $text-main;
-        padding: 10px 12px;
-      }
-
-      .notice-title {
-        text-align: left;
-        font-weight: 500;
-        color: #111827;
-      }
-  
-      .notice-author {
-        text-align: right;
-        color: #374151;
-        font-size: 13px;
-        white-space: nowrap;
-      }
-  
-      .notice-date {
-        text-align: right;
-        color: #6b7280;
-        font-size: 12px;
-        white-space: nowrap;
-      }
     }
-  
-    // 마지막 항목의 하단 경계선 제거
-    .notice-item:last-child {
-      border-bottom: none;
+
+    .notice-title {
+      text-align: left;
+      font-weight: 500;
+      color: #111827;
+    }
+
+    .notice-author {
+      text-align: right;
+      color: #374151;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .notice-date {
+      text-align: right;
+      color: #6b7280;
+      font-size: 12px;
+      white-space: nowrap;
     }
   }
+
+  // 마지막 항목의 하단 경계선 제거
+  .notice-item:last-child {
+    border-bottom: none;
+  }
+
+  @media (max-width: 431px) {
+    width: 100%;
+    box-sizing: border-box;
+    max-width: 100%; // 최대 너비 제한
+
+    tbody {
+      width: 100%;
+      box-sizing: border-box;
+
+      tr {
+        width: 100%;
+        max-width: 100%;
+        display: flex;
+        justify-content: space-between;
+        padding: 6px 4px;
+        box-sizing: border-box;
+        overflow: hidden;
+        margin: 0; // 마진 제거
+
+        td:first-child {
+          flex: 0 0 35px; // 더 작은 고정 너비
+          font-size: 10px;
+          padding: 6px 1px;
+          text-align: center;
+          min-width: 35px;
+          max-width: 35px;
+        }
+
+        .notice-title {
+          flex: 1 !important;
+          font-size: 13px !important;
+          min-width: 45% !important;
+          max-width: calc(
+            100% - 140px
+          ); // 다른 요소들의 너비를 제외한 최대 너비
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          font-size: 1px;
+          padding: 6px 3px;
+          text-align: left;
+        }
+
+        .notice-author {
+          flex: 0 0 40px; // 더 작은 고정 너비
+          font-size: 9px;
+          padding: 6px 1px;
+          text-align: center;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          min-width: 40px;
+          max-width: 40px;
+        }
+
+        .notice-date {
+          flex: 0 0 50px; // 더 작은 고정 너비
+          font-size: 8px;
+          padding: 6px 1px;
+          text-align: center;
+          // overflow: hidden;
+          // text-overflow: ellipsis;
+          white-space: nowrap;
+          min-width: 50px;
+          max-width: 50px;
+        }
+      }
+    }
+  }
+}

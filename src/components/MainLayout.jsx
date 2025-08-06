@@ -63,13 +63,9 @@ const headerMenus = [
     label: '커뮤니티',
     icon: <FaComments style={{ color: '#fff59d', opacity: 0.7 }} />,
   }, // 연한 노랑
-  // { to: '/board', label: '게시판' },
-  // { to: '/mail', label: '메일', icon: '✉️' },
-  // { to: '/attendance', label: '근태', icon: '🕒' },
 ];
 
 export default function MainLayout() {
-
   const location = useLocation();
   const { onLogout } = useContext(UserContext);
   const navigate = useNavigate();
@@ -83,7 +79,6 @@ export default function MainLayout() {
   };
 
   const [unreadCount, setUnreadCount] = useState(0);
-  const [unApprovalCount, setUnApprovalCount] = useState(0);
   const {
     user,
     userId,
@@ -94,7 +89,8 @@ export default function MainLayout() {
     userRole,
     userPosition,
     setCounts,
-    counts
+    counts,
+    refetchCounts,
   } = useContext(UserContext);
   const [pendingReports, setPendingReports] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -110,18 +106,27 @@ export default function MainLayout() {
   const [showSidebar, setShowSidebar] = useState(false); // 모바일 사이드바 상태
   const [isInitialLoad, setIsInitialLoad] = useState(true);
 
-  // ★ counts가 업데이트될 때 unApprovalCount도 업데이트
-  useEffect(() => {
-    if (counts && counts.pending !== undefined) {
-      setUnApprovalCount(counts.pending);
-    }
-  }, [counts]);
-
   const sidebarMenus = [
-    { to: '/notice', label: '공지사항', icon: <FaBullhorn style={{ color: '#ff8a80', opacity: 0.7 }} /> },
-    { to: '/dashboard', label: '대시보드', icon: <FaChartBar style={{ color: '#90caf9', opacity: 0.7 }} /> },
-    { to: '/hr', label: '인사관리', icon: <FaUsers style={{ color: '#81c784', opacity: 0.7 }} /> },
-    { to: '/approval', label: '전자결재', icon: <FaPen style={{ color: '#b39ddb', opacity: 0.7 }} /> },
+    {
+      to: '/notice',
+      label: '공지사항',
+      icon: <FaBullhorn style={{ color: '#ff8a80', opacity: 0.7 }} />,
+    },
+    {
+      to: '/dashboard',
+      label: '대시보드',
+      icon: <FaChartBar style={{ color: '#90caf9', opacity: 0.7 }} />,
+    },
+    {
+      to: '/hr',
+      label: '인사관리',
+      icon: <FaUsers style={{ color: '#81c784', opacity: 0.7 }} />,
+    },
+    {
+      to: '/approval',
+      label: '전자결재',
+      icon: <FaPen style={{ color: '#b39ddb', opacity: 0.7 }} />,
+    },
   ];
 
   useEffect(() => {
@@ -158,62 +163,27 @@ export default function MainLayout() {
       setDepartmentName('');
     }
   }, [departmentId]);
-
-  // 4. 예약 상신 알람 (폴링) - counts를 사용하도록 수정
   useEffect(() => {
-    if (!user) return;
+    if (!refetchCounts) return; // refetchCounts 함수가 없을 경우를 대비한 방어 코드
 
-    const intervalId = setInterval(async () => {
-      try {
-        const res = await axiosInstance.get(
-          `${API_BASE_URL}${APPROVAL_SERVICE}/reports`,
-          {
-            params: {
-              role: 'approver',
-              status: 'IN_PROGRESS',
-              size: 1000, // 실제 데이터를 가져와서 개수를 세기
-            },
-          },
-        );
-        
-        const newCount = res.data.result?.reports?.length || 0;
-
-        // 초기 로딩이 아니고, 새로운 개수가 이전 개수보다 많을 때 알림
-        if (!isInitialLoad && newCount > unApprovalCount) {
-          Swal.fire({
-            icon: 'info',
-            title: '새로운 결재 문서가 도착했습니다.',
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000,
-            timerProgressBar: true,
-          });
-          
-          // counts 업데이트
-          if (counts) {
-            setCounts({
-              ...counts,
-              pending: newCount,
-            });
-          }
-        }
-
-        setUnApprovalCount(newCount);
-
-        // 첫 폴링 이후에는 초기 로딩 상태를 false로 변경
-        if (isInitialLoad) {
-          setIsInitialLoad(false);
-        }
-
-      } catch (err) {
-        console.error("결재 문서 개수 폴링 중 오류 발생:", err);
+    const handleVisibilityChange = () => {
+      // document.hidden이 false이면, 탭이 다시 화면에 보인다는 의미
+      if (document.visibilityState === 'visible') {
+        console.log('👀 Tab is visible again, refetching counts...');
+        refetchCounts();
       }
-    }, 30000); // 30초로 조정
+    };
 
-    return () => clearInterval(intervalId);
+    // 이벤트 리스너 등록
+    document.addEventListener('visibilitychange', handleVisibilityChange);
 
-  }, [user, unApprovalCount, isInitialLoad, counts, setCounts]);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [refetchCounts]);
+
+  const pendingCount = counts?.pending || 0;
+  const totalBadgeCount = unreadCount + pendingCount;
 
   const roleMap = {
     CEO: '대표',
@@ -221,8 +191,6 @@ export default function MainLayout() {
     EMPLOYEE: '사원',
     ADMIN: '관리자',
   };
-
-
 
   return (
     <div className='layout'>
@@ -241,8 +209,8 @@ export default function MainLayout() {
             >
               <span className='menu-icon'>{menu.icon}</span>
               <span className='menu-label'>{menu.label}</span>
-              {menu.to === '/approval' && unApprovalCount > 0 && (
-                <span className='sidebar-badge'>{unApprovalCount}</span>
+              {menu.to === '/approval' && pendingCount > 0 && (
+                <span className='sidebar-badge'>{pendingCount}</span>
               )}
             </Link>
           ))}
@@ -290,7 +258,10 @@ export default function MainLayout() {
             className='notice-icon'
             onClick={() => navigate('/notice/alert')}
           >
-            <FaBullhorn color='#ff5252' style={{ verticalAlign: 'middle' }} />
+            <FaBullhorn
+              color='#ff5252'
+              style={{ verticalAlign: 'middle', fontSize: '20px' }}
+            />
             {(unreadCount > 0 || unApprovalCount > 0) && (
               <span className='badge'>{unreadCount + unApprovalCount}</span>
             )}

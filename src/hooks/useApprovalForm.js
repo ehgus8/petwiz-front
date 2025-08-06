@@ -38,6 +38,7 @@ export const useApprovalForm = (templateId, reportId) => {
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [reportStatus, setReportStatus] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -68,6 +69,10 @@ export const useApprovalForm = (templateId, reportId) => {
           const data = res.data.result;
           console.log(`%c[useApprovalForm] API 응답 성공:`, 'color: green;', data);
 
+
+          if (reportId && data.reportStatus) {
+            setReportStatus(data.reportStatus);
+          }
           // ★ 3. 응답 데이터를 각 상태에 맞게 설정합니다.
           // 템플릿 정보가 누락되어 있으면 templateId로 추가 조회
           if (data.template) {
@@ -126,5 +131,6 @@ export const useApprovalForm = (templateId, reportId) => {
     setAttachments,
     loading,
     error,
+    reportStatus,
   };
 }; 

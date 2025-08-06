@@ -192,9 +192,39 @@ $shadow: 0 2px 14px 0 rgba(30, 65, 112, 0.07);
         color: $accent;
         font-weight: bold;
         background: #f7fafd;
+        &:nth-child(1),
+        &:nth-child(4) {
+          width: 18%;
+        }
+        &:nth-child(2),
+        &:nth-child(5) {
+          width: 15%;
+        }
+        &:nth-child(3),
+        &:nth-child(6) {
+          width: 17%;
+        }
+        &:nth-child(3) {
+          border-right: 2px solid $border;
+        }
       }
       td {
         color: $text-main;
+        &:nth-child(1),
+        &:nth-child(4) {
+          width: 18%;
+        }
+        &:nth-child(2),
+        &:nth-child(5) {
+          width: 15%;
+        }
+        &:nth-child(3),
+        &:nth-child(6) {
+          width: 17%;
+        }
+        &:nth-child(3) {
+          border-right: 2px solid $border;
+        }
       }
       .status-approve {
         color: #26a03b;
@@ -482,6 +512,26 @@ $shadow: 0 2px 14px 0 rgba(30, 65, 112, 0.07);
   }
 }
 
+/* 모바일 팀 테이블 스타일 */
+.mobile-team-table {
+  th,
+  td {
+    &:nth-child(1) {
+      width: 30% !important;
+    }
+    &:nth-child(2) {
+      width: 25% !important;
+    }
+    &:nth-child(3) {
+      width: 45% !important;
+    }
+  }
+  th:nth-child(3),
+  td:nth-child(3) {
+    border-right: none !important;
+  }
+}
+
 /* 반응형 최소 */
 @media (max-width: 1100px) {
   .hr-top {
@@ -492,6 +542,39 @@ $shadow: 0 2px 14px 0 rgba(30, 65, 112, 0.07);
     min-width: 0 !important;
   }
 }
+
+/* 모바일 환경 (431px 이하) */
+@media (max-width: 431px) {
+  .hr-card {
+    padding: 1rem !important;
+  }
+
+  .mini-table {
+    font-size: 0.9rem !important;
+
+    th,
+    td {
+      padding: 0.4rem 0.3rem !important;
+      font-size: 0.85rem !important;
+    }
+  }
+
+  .mobile-team-table {
+    th,
+    td {
+      &:nth-child(1) {
+        width: 28% !important;
+      }
+      &:nth-child(2) {
+        width: 22% !important;
+      }
+      &:nth-child(3) {
+        width: 50% !important;
+      }
+    }
+  }
+}
+
 @media (max-width: 700px) {
   .hr-main-cards .hr-row {
     flex-direction: column;

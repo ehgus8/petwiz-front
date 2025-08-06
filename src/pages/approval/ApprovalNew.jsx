@@ -66,55 +66,40 @@ function ApprovalNew() {
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false); // 예약 상신 모달
   const [isScheduling, setIsScheduling] = useState(false); // 예약 상신 중 상태
 
-  // useCallback을 사용하여 함수가 항상 최신 상태를 참조하도록 함
+   // ====================================================================================
+  // ★★★★★ 핵심 수정 지점: handleFinalSubmit 함수 ★★★★★
+  // ====================================================================================
   const handleFinalSubmit = useCallback(async (isSubmit = false, isMovingAway = false) => {
     // 필수값 유효성 검사
     if (!formData.title || formData.title.trim() === '') {
-      await warn({
-        icon: 'warning',
-        title: '제목은 필수 입력 항목입니다.',
-        confirmButtonText: '확인',
-      });
-      if (isSubmit) setIsSubmitting(false);
-      else setIsSaving(false);
+      await warn({ icon: 'warning', title: '제목은 필수 입력 항목입니다.' });
+      if (isSubmit) setIsSubmitting(false); else setIsSaving(false);
       return;
     }
     if (isSubmit && (!approvalLine || approvalLine.length === 0)) {
-      await Swal.fire({
-        icon: 'warning',
-        title: '결재선을 한 명 이상 지정해야 합니다.',
-        confirmButtonText: '확인',
-      });
-      if (isSubmit) setIsSubmitting(false);
-      else setIsSaving(false);
+      await Swal.fire({ icon: 'warning', title: '결재선을 한 명 이상 지정해야 합니다.' });
+      if (isSubmit) setIsSubmitting(false); else setIsSaving(false);
       return;
     }
-    if (isSubmit) setIsSubmitting(true);
-    else setIsSaving(true);
 
-    let url, submissionData;
-    // editor 타입 필드 id 자동 보정: id 없으면 'content'로 대입
-    let fixedTemplate = template;
-    if (template && template.content) {
-      fixedTemplate = {
-        ...template,
-        content: template.content.map(f =>
-          f.type === 'editor' && !f.id ? { ...f, id: 'content' } : f
-        ),
-      };
-    }
-    // content 값 보정: editor 타입 id 없으면 'content'로 강제 추출
-    let contentValue = formData.content;
+    if (isSubmit) setIsSubmitting(true); else setIsSaving(true);
+
+    let url, method, submissionData;
+    let originalReportIdToDelete = null; // 수정 후 상신/예약 시 삭제할 원본 ID
+
+    // content 값 보정
+    let contentValue = formData.content || '';
     if (template && template.content) {
       const editorField = template.content.find(f => f.type === 'editor');
-      let editorId = editorField?.id || (editorField ? 'content' : undefined);
-      if (editorId) {
-        contentValue = formData[editorId] || '';
+      if (editorField) {
+        contentValue = formData[editorField.id || 'content'] || '';
       }
     }
-    // 상세 로그: 분기별로 어떤 API/데이터를 쓰는지
-    console.log('[ApprovalNew] handleFinalSubmit 호출:', { isSubmit, isMovingAway, resubmitId, effectiveReportId, formData, approvalLine, references, attachments, files });
+
+    // [수정] 의도에 따라 API와 데이터를 명확하게 분기
     if (resubmitId) {
+      // 시나리오 1: 재상신
+      method = 'post';
       url = `${API_BASE_URL}${APPROVAL_SERVICE}/reports/${resubmitId}/resubmit`;
       const resubmitDto = {
         newTitle: formData.title,
@@ -125,118 +110,115 @@ function ApprovalNew() {
       };
       submissionData = JSON.stringify(resubmitDto);
       console.log('[ApprovalNew] 재상신 API 호출 준비:', url, resubmitDto);
-    } else if (effectiveReportId && isSubmit) {
-      url = `${API_BASE_URL}${APPROVAL_SERVICE}/reports/${effectiveReportId}`;
-      const updateDto = {
-        title: formData.title,
-        content: contentValue,
-        templateId: fixedTemplate?.id,
-        reportTemplateData: JSON.stringify(formData),
-        approvalLine: approvalLine.map(a => ({ ...a })),
-        references: references.map(r => ({ ...r })),
-        attachments: attachments, // 기존 첨부파일 목록
-        status: 'IN_PROGRESS', // 상신이면 IN_PROGRESS
-      };
-      submissionData = new FormData();
-      submissionData.append('req', new Blob([JSON.stringify(updateDto)], { type: 'application/json' }));
-      files.forEach((file) => submissionData.append('files', file));
-      console.log('[ApprovalNew] 임시저장 문서 상신(수정) API 호출 준비:', url, updateDto, files);
+
     } else if (effectiveReportId && !isSubmit) {
+      // 시나리오 2: 수정 후 '임시 저장' (PUT .../reports/{id})
+      method = 'put';
       url = `${API_BASE_URL}${APPROVAL_SERVICE}/reports/${effectiveReportId}`;
       const updateDto = {
         title: formData.title,
         content: contentValue,
-        templateId: fixedTemplate?.id,
+        templateId: template?.id,
         reportTemplateData: JSON.stringify(formData),
-        approvalLine: approvalLine.map(a => ({ ...a })),
-        references: references.map(r => ({ ...r })),
-        attachments: attachments, // 기존 첨부파일 목록
-        status: 'DRAFT', // 임시저장
+        approvalLine: approvalLine.map(a => ({ employeeId: a.id || a.employeeId, approvalContext: a.approvalContext })),
+        references: references.map(r => ({ employeeId: r.id || r.employeeId })),
+        attachments: attachments,
+        status: 'DRAFT', // 임시저장이므로 DRAFT
       };
       submissionData = new FormData();
       submissionData.append('req', new Blob([JSON.stringify(updateDto)], { type: 'application/json' }));
       files.forEach((file) => submissionData.append('files', file));
-      console.log('[ApprovalNew] 임시저장 문서 임시저장(수정) API 호출 준비:', url, updateDto, files);
+      console.log('[ApprovalNew] 임시저장 수정(PUT) API 호출 준비:', url, updateDto);
+
     } else {
-      // 신규 생성 로직 (POST)
+      // 시나리오 3: 신규 상신 또는 수정 후 '상신' (POST .../submit)
+      method = 'post';
+      url = isSubmit
+        ? `${API_BASE_URL}${APPROVAL_SERVICE}/submit` // 상신 API
+        : `${API_BASE_URL}${APPROVAL_SERVICE}/save`;   // 신규 임시저장 API
+
       const reqDto = {
         title: formData.title,
         content: contentValue,
-        templateId: fixedTemplate?.id,
+        templateId: template?.id,
         reportTemplateData: JSON.stringify(formData),
-        approvalLine: approvalLine,
-        references: references,
+        approvalLine: approvalLine.map(a => ({ employeeId: a.id || a.employeeId, approvalContext: a.approvalContext })),
+        references: references.map(r => ({ employeeId: r.id || r.employeeId })),
       };
       submissionData = new FormData();
       submissionData.append('req', new Blob([JSON.stringify(reqDto)], { type: 'application/json' }));
       files.forEach((file) => submissionData.append('files', file));
-      url = isSubmit
-        ? `${API_BASE_URL}${APPROVAL_SERVICE}/submit`
-        : `${API_BASE_URL}${APPROVAL_SERVICE}/save`;
-      console.log('[ApprovalNew] 신규 생성 API 호출 준비:', url, reqDto, files);
-    }
-    const successMessage = isSubmit ? '성공적으로 상신되었습니다.' : '임시 저장되었습니다.';
-    try {
-      let res;
-      if (resubmitId) {
-        // 재상신: JSON body로 전송
-        res = await axiosInstance.post(url, submissionData, {
-          headers: { 'Content-Type': 'application/json' },
-        });
-      } else if (effectiveReportId && (isSubmit || !isSubmit)) {
-        // 임시저장 문서의 상신/임시저장 모두 PUT
-        res = await axiosInstance.put(url, submissionData);
-      } else {
-        res = await axiosInstance.post(url, submissionData);
+
+      // 수정 후 상신인 경우, 기존 임시저장 문서를 삭제하도록 ID를 저장
+      if (effectiveReportId && isSubmit) {
+        originalReportIdToDelete = effectiveReportId;
       }
-      console.log('[ApprovalNew] API 응답:', res && res.data);
+      console.log(`[ApprovalNew] ${isSubmit ? '상신' : '신규 임시저장'} API 호출 준비:`, url, reqDto);
+    }
+
+    const successMessage = isSubmit ? '성공적으로 상신되었습니다.' : '임시 저장되었습니다.';
+    
+    try {
+      // [수정] axios 호출 로직 단순화
+      let res;
+      const headers = method === 'post' && resubmitId 
+        ? { 'Content-Type': 'application/json' } 
+        : {};
+
+      if (method === 'post') {
+        res = await axiosInstance.post(url, submissionData, { headers });
+      } else { // method === 'put'
+        res = await axiosInstance.put(url, submissionData);
+      }
+
+      console.log('[ApprovalNew] API 응답:', res?.data);
+
       if (res.data && (res.data.statusCode === 201 || res.data.statusCode === 200)) {
-        setIsDirty(false); // dirty 해제
-        await Promise.resolve(); // 상태 반영 보장
-        await Swal.fire({
-          icon: 'success',
-          title: successMessage,
-          confirmButtonText: '확인',
-        });
-        // navigate는 성공 모달 확인 후 실행
-        if (isSubmit) {
-          navigate('/approval/home');
-        } else {
-          navigate('/approval/drafts');
+        setIsDirty(false);
+
+        // [추가] 수정 후 상신/예약 시, 기존 임시저장 문서 삭제
+        if (originalReportIdToDelete) {
+          try {
+            await axiosInstance.delete(`${API_BASE_URL}${APPROVAL_SERVICE}/reports/${originalReportIdToDelete}`);
+            console.log(`[ApprovalNew] 원본 임시저장 문서(ID: ${originalReportIdToDelete}) 삭제 성공`);
+          } catch (deleteErr) {
+            console.error(`[ApprovalNew] 원본 임시저장 문서(ID: ${originalReportIdToDelete}) 삭제 실패:`, deleteErr);
+            // 삭제 실패는 사용자에게 알리지 않아도 될 수 있음 (백그라운드 처리)
+          }
         }
+
+        await Swal.fire({ icon: 'success', title: successMessage });
+        navigate(isSubmit ? '/approval/home' : '/approval/drafts');
       } else {
-        console.error('[ApprovalNew] API 응답 statusCode 오류:', res.data);
-        throw new Error(res.data.statusMessage || '요청에 실패했습니다.');
+        throw new Error(res.data?.statusMessage || '요청에 실패했습니다.');
       }
     } catch (err) {
       console.error(`[ApprovalNew] 요청 실패: ${url}`, err);
       if (!isMovingAway) {
-        alert(`오류: ${err.response?.data?.statusMessage || err.message}`);
+        Swal.fire({ icon: 'error', title: '오류 발생', text: err.response?.data?.statusMessage || err.message });
       }
     } finally {
-      if (isSubmit) setIsSubmitting(false);
-      else setIsSaving(false);
+      if (isSubmit) setIsSubmitting(false); else setIsSaving(false);
     }
-  }, [formData, template, approvalLine, references, files, navigate, effectiveReportId]);
-
-  // React Router v7의 useBlocker로 페이지 이탈 감지
+  }, [formData, template, approvalLine, references, files, attachments, navigate, effectiveReportId, resubmitId]);
+  // ====================================================================================
+  // ★★★★★ 수정 종료 지점 ★★★★★
+  // ====================================================================================
+  
   const shouldBlock = !loading && isDirty;
   const blocker = useBlocker(shouldBlock);
 
-  // 작성자만 수정/재상신 가능하도록 방어
   useEffect(() => {
     if (!effectiveReportId) return;
-    // reportId 또는 resubmitId로 진입 시, 문서의 작성자와 현재 로그인 사용자가 다르면 차단
     (async () => {
       try {
         const res = await axiosInstance.get(`${API_BASE_URL}${APPROVAL_SERVICE}/reports/${effectiveReportId}`);
         const report = res.data?.result;
-        if (!report || !report.writer || !user || report.writer.id !== user.id) {
+        if (report && report.writer && user && report.writer.id !== user.id) {
           await Swal.fire({
             icon: 'error',
             title: '접근 권한이 없습니다.',
             text: '해당 문서는 작성자만 수정할 수 있습니다.',
-            confirmButtonText: '확인',
           });
           navigate('/approval/home');
         }
@@ -245,7 +227,6 @@ function ApprovalNew() {
           icon: 'error',
           title: '문서 정보를 불러올 수 없습니다.',
           text: err.response?.data?.statusMessage || err.message,
-          confirmButtonText: '확인',
         });
         navigate('/approval/home');
       }
@@ -253,7 +234,7 @@ function ApprovalNew() {
   }, [effectiveReportId, user, navigate]);
 
   useEffect(() => {
-    if(isDirty){
+    if (isDirty) {
       const handleBeforeUnload = (e) => {
         e.preventDefault();
         e.returnValue = '작성중인 내용이 있습니다.';
@@ -261,8 +242,8 @@ function ApprovalNew() {
       window.addEventListener('beforeunload', handleBeforeUnload);
       return () => window.removeEventListener('beforeunload', handleBeforeUnload);
     }
-    console.log('blocker', blocker);
-  }, [blocker]);
+  }, [isDirty]);
+
   useEffect(() => {
     if (blocker.state === 'blocked') {
       Swal.fire({
@@ -277,11 +258,6 @@ function ApprovalNew() {
       }).then(async (result) => {
         if (result.isConfirmed) {
           await handleFinalSubmit(false, true);
-          await Swal.fire({
-            icon: 'success',
-            title: '임시 저장되었습니다.',
-            confirmButtonText: '확인',
-          });
           blocker.proceed();
         } else if (result.isDenied) {
           blocker.proceed();

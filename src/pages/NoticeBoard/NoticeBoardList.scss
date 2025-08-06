@@ -285,21 +285,142 @@
 
 .view-mode-buttons {
   margin-right: 10px;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+  font-family: 'arial';
+
   button {
     border-radius: 50%;
     margin-right: 5px;
     padding: 6px 12px;
     border: 0px solid #ccc;
-    background-color: white;
+    background-color: #f3f3f3;
+    font-size: 0.95rem;
     cursor: pointer;
     &.active {
-      // background-color: #007bff;
-      color: blue;
+      background-color: #007bff;
+      color: white;
       font-weight: 700;
+      border-color: #007bff;
+    }
+    &:hover {
+      background-color: #e0e0e0;
+    }
+  }
+
+  .favorite-toggle {
+    display: flex;
+    align-items: center;
+    font-size: 0.95rem;
+    margin-left: auto;
+    gap: 4px;
+    font-family: inherit; // ✅ 전체 글꼴과 동일하게
+    cursor: pointer;
+    user-select: none;
+    // margin-right: 5px;
+    padding: 6px 12px;
+    border: 0px solid #ccc;
+    // background-color: #f3f3f3;
+
+    input[type='checkbox'] {
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+    }
+
+    span {
+      cursor: pointer;
+      user-select: none;
+      font-family: inherit; // ✅ 통일된 글꼴 적용
     }
   }
 }
 
 .bold-row {
   font-weight: bold;
+}
+
+.favorite-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 2px 6px;
+  font-size: 1.3em;
+  transition:
+    transform 0.2s ease,
+    color 0.3s ease;
+  color: #bbb;
+
+  &:hover {
+    transform: scale(1.2);
+    color: gold; // 호버 시 노란 별
+  }
+
+  &.active {
+    color: gold; // 즐겨찾기 된 경우
+    .star-icon {
+      animation: pop 0.3s ease-in-out;
+    }
+  }
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.5);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.write-button-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+
+  .write-button {
+    padding: 6px 12px;
+    font-size: 0.95rem;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+
+    &:hover {
+      background-color: #0056b3;
+    }
+  }
+
+  .favorite-toggle-icon {
+    font-size: 1rem;
+    font-family: inherit;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #f5b400;
+    padding: 0;
+    margin-left: 2px;
+
+    &:hover {
+      color: #d49f00;
+    }
+  }
+}
+
+.active-star {
+  color: gold;
+  font-size: 1rem;
+  animation: pop 0.3s ease-in-out;
+}
+
+.star {
+  animation: pop 0.3s ease-in-out;
+  color: #bbb;
 }

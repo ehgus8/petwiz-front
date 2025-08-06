@@ -1,9 +1,11 @@
+import axios from 'axios';
 import React, { useEffect, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
     API_BASE_URL, NOTICE_SERVICE
 } from '../../configs/host-config';
 import { UserContext, UserContextProvider } from '../../context/UserContext'; // 로그인 유저 정보
+import { fetchFavoriteNotices, toggleFavoriteNotice } from '../../api/favorite-api';
 import './NoticeBoardList.scss';
 import Swal from 'sweetalert2';
 
@@ -33,8 +35,10 @@ const fileIconMap = {
 };
 
 const NoticeBoardList = () => {
+
     const navigate = useNavigate();
     const { isInit, userId, accessToken, departmentId, userPosition, userRole } = useContext(UserContext);
+    const [favoriteList, setFavoriteList] = useState([]); // 즐겨찾기된 noticeId 배열
     const [viewMode, setViewMode] = useState('ALL'); // ALL | MY | DEPT
     const [posts, setPosts] = useState([]);
     const [notices, setNotices] = useState([]);
@@ -48,6 +52,15 @@ const NoticeBoardList = () => {
     const [pageSize, setPageSize] = useState(10); // ✅ 보기 개수
     const [loading, setLoading] = useState(false);
     const [deletingId, setDeletingId] = useState(null); // 삭제 중인 공지 ID
+    const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
+
+    const filteredNotices = showFavoritesOnly
+        ? notices.filter(notices => favoriteList.includes(notices.noticeId))
+        : notices;
+
+    const filteredGeneralNotices = showFavoritesOnly
+        ? generalNotices.filter(generalNotices => favoriteList.includes(generalNotices.noticeId))
+        : generalNotices;
 
     const dateOptions = { year: 'numeric', month: '2-digit', day: '2-digit' };
     const dateTimeOptions = {
@@ -95,8 +108,12 @@ const NoticeBoardList = () => {
         }
     };
 
+    console.log("isInit:", isInit);
+    console.log("accessToken:", accessToken);
+    console.log("userId:", userId);
+
     useEffect(() => {
-        if (!isInit || !accessToken || !userId) return; // ✅ 초기화 완료 여부 확인
+        // if (!isInit || !accessToken || !userId) return; // ✅ 초기화 완료 여부 확인
 
         const fetchPosts = async () => {
             setLoading(true);
@@ -170,6 +187,24 @@ const NoticeBoardList = () => {
         setPage(0); // 첫 페이지로 초기화
     };
 
+    useEffect(() => {
+        if (accessToken) {
+            fetchFavoriteNotices(accessToken)
+                .then(setFavoriteList)
+                .catch(console.error);
+        }
+    }, [accessToken]);
+
+    const handleFavoriteClick = async (noticeId) => {
+        try {
+            await toggleFavoriteNotice(noticeId, accessToken);
+            const updated = await fetchFavoriteNotices(accessToken);
+            setFavoriteList(updated);
+        } catch (err) {
+            alert('즐겨찾기 처리 중 오류가 발생했습니다.');
+        }
+    };
+
     return (
         <div className="notice-board">
             <div className="header">
@@ -240,6 +275,29 @@ const NoticeBoardList = () => {
                         <button className={viewMode === 'SCHEDULE' ? 'active' : ''} onClick={() => { setViewMode('SCHEDULE'); setPage(0); navigate(`/notice/schedule`) }}>
                             예약목록
                         </button>
+                        {/* <button onClick={() => setShowFavoritesOnly(prev => !prev)}>
+                            {showFavoritesOnly ? '전체 보기' : '즐겨찾기만 보기'}
+                        </button> */}
+                        {/* <label className="favorite-toggle">
+                            <input
+                                type="checkbox"
+                                checked={showFavoritesOnly}
+                                onChange={(e) => setShowFavoritesOnly(e.target.checked)}
+                            />
+                            <span>즐겨찾기</span>
+                        </label> */}
+                        <button
+                            className="favorite-toggle-icon"
+                            onClick={() => setShowFavoritesOnly(prev => !prev)}
+                            title={showFavoritesOnly ? '즐겨찾기 해제' : '즐겨찾기만 보기'}
+                        >
+                            <span className={showFavoritesOnly ? 'active-star' : 'star'}>
+                                {showFavoritesOnly ? '★ ' : '☆ '}
+                            </span>
+                            <label>
+                                즐겨찾기
+                            </label>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -261,7 +319,7 @@ const NoticeBoardList = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {generalNotices.map(post => (
+                            {filteredGeneralNotices.map(post => (
                                 <tr
                                     key={`generalnotice-${post.noticeId}`} className="generalnotice-row" onClick={() => navigate(`/notice/${post.noticeId}`)}>
                                     <td style={{
@@ -290,11 +348,29 @@ const NoticeBoardList = () => {
                                         color: post.position === userPosition ? '#28c309' : '#000',
                                         fontWeight: post.position === userPosition ? 'bold' : 'normal'
                                     }}>
-                                        {truncateTitle(post.title)}
-                                        {Number(post.commentCount) > 0 && (
-                                            <span style={{ color: '#777', fontSize: '0.9em' }}> ({post.commentCount})</span>
-                                        )}
+                                        {/* ⭐ 별 아이콘 표시 */}
+                                        {viewMode !== 'SCHEDULE' && <button
+                                            className={`favorite-btn ${favoriteList.includes(post.noticeId) ? 'active' : ''}`}
+                                            onClick={(e) => {
+                                                e.stopPropagation(); // 클릭 이벤트 버블링 방지
+                                                handleFavoriteClick(post.noticeId);
+                                            }}
+                                            title={favoriteList.includes(post.noticeId) ? '즐겨찾기 해제' : '즐겨찾기 추가'}
+                                        >
+                                            <span className="star-icon">{favoriteList.includes(post.noticeId) ? '★' : '☆'}</span>
+                                        </button>}
+                                        <span onClick={() => navigate(`/notice/${post.noticeId}`)}>
+                                            {post.commentCount === 0 ? (
+                                                truncateTitle(`${post.title}`)
+                                            ) : (
+                                                <>
+                                                    {truncateTitle(post.title)}
+                                                    <span style={{ color: '#777', fontSize: '0.9em' }}> ({post.commentCount})</span>
+                                                </>
+                                            )}
+                                        </span>
                                     </td>
+
                                     <td style={{
                                         color: post.position === userPosition ? '#28c309' : '#000',
                                         fontWeight: post.position === userPosition ? 'bold' : 'normal'
@@ -351,9 +427,9 @@ const NoticeBoardList = () => {
                                 </tr>
                             )}
 
-                            {notices.map(post => (
+                            {filteredNotices.map(post => (
                                 <tr
-                                    key={`notice-${post.noticeId}`} className="notice-row" onClick={() => navigate(`/notice/${post.noticeId}`)}>
+                                    key={`notice-${post.noticeId}`} className="notice-row">
                                     <td style={{
                                         color: post.position === userPosition ? '#21429e' : '#000',
                                         fontWeight: post.position === userPosition ? 'bold' : 'normal'
@@ -380,14 +456,27 @@ const NoticeBoardList = () => {
                                         color: post.position === userPosition ? '#21429e' : '#000',
                                         fontWeight: post.position === userPosition ? 'bold' : 'normal'
                                     }}>
-                                        {post.commentCount === 0 ? (
-                                            truncateTitle(`${post.title}`)
-                                        ) : (
-                                            <>
-                                                {truncateTitle(post.title)}
-                                                <span style={{ color: '#777', fontSize: '0.9em' }}> ({post.commentCount})</span>
-                                            </>
-                                        )}
+                                        {/* ⭐ 별 아이콘 표시 */}
+                                        {viewMode !== 'SCHEDULE' && <button
+                                            className={`favorite-btn ${favoriteList.includes(post.noticeId) ? 'active' : ''}`}
+                                            onClick={(e) => {
+                                                e.stopPropagation(); // 클릭 이벤트 버블링 방지
+                                                handleFavoriteClick(post.noticeId);
+                                            }}
+                                            title={favoriteList.includes(post.noticeId) ? '즐겨찾기 해제' : '즐겨찾기 추가'}
+                                        >
+                                            <span className="star-icon">{favoriteList.includes(post.noticeId) ? '★' : '☆'}</span>
+                                        </button>}
+                                        <span onClick={() => navigate(`/notice/${post.noticeId}`)}>
+                                            {post.commentCount === 0 ? (
+                                                truncateTitle(`${post.title}`)
+                                            ) : (
+                                                <>
+                                                    {truncateTitle(post.title)}
+                                                    <span style={{ color: '#777', fontSize: '0.9em' }}> ({post.commentCount})</span>
+                                                </>
+                                            )}
+                                        </span>
                                     </td>
                                     <td style={{
                                         color: post.position === userPosition ? '#21429e' : '#000',

@@ -8,7 +8,7 @@ import { useReportFilter } from '../../hooks/useReportFilter';
 import EmptyState from '../../components/approval/EmptyState';
 import Swal from 'sweetalert2';
 import Pagination from '../../components/approval/Pagination';
-import { UserContext } from '../../context/UserContext'; // UserContext import 추가
+import { UserContext } from '../../context/UserContext';
 import SkeletonCard from '../../components/approval/SkeletonCard';
 
 // onTotalCountChange prop 제거
@@ -19,7 +19,7 @@ const ScheduledBox = () => {
   const [totalCount, setTotalCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
-  const { user, counts, setCounts } = useContext(UserContext); // user 가져오기
+  const { user, refetchCounts  } = useContext(UserContext); // user 가져오기
   
   const { filteredReports, handleFilterChange } = useReportFilter(scheduledDocs);
 
@@ -77,10 +77,7 @@ const ScheduledBox = () => {
             text: '문서가 회수되어 임시저장 상태로 변경되었습니다.'
           });
 
-          setCounts(prevCounts => ({
-            ...prevCounts,
-            scheduled: (prevCounts.scheduled || 1) 
-          }))
+          await refetchCounts();
           // 목록을 새로고침하여 취소된 문서를 즉시 반영
           fetchScheduledDocs(currentPage);
         } else {

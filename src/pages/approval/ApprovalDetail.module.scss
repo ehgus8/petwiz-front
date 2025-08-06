@@ -293,6 +293,10 @@
     background-color: #fce8e6;
     color: #ea4335;
   }
+  &.pending {
+    background-color: #e7f1ff; /* 연한 파랑 */
+    color: #007bff; /* 진한 파랑 */
+  }
 }
 
 .historyComment {

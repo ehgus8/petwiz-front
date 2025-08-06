@@ -9,6 +9,8 @@ import CustomFieldModal from '../../components/approval/CustomFieldModal';
 import InfoChangeModal from '../../components/approval/InfoChangeModal';
 import AddFieldModal from '../../components/approval/AddFieldModal';
 import Swal from 'sweetalert2';
+import TemplateFormSkeleton from '../../components/approval/TemplateFormSkeleton';
+
 
 const ItemTypes = {
   FIELD: 'field',
@@ -97,6 +99,8 @@ const TemplateForm = () => {
   const navigate = useNavigate();
   const { templateId } = useParams();
   const isEditMode = !!templateId;
+
+  const [loading, setLoading] = useState(true);
 
   // --- Right Pane State ---
   const [useEditor, setUseEditor] = useState('Y');
@@ -192,17 +196,24 @@ const TemplateForm = () => {
     };
 
     const initializeForm = async () => {
+      try{
       const categoriesData = await fetchCategories();
-
+      setLoading(true); 
       if (isEditMode) {
         await fetchTemplateData(templateId);
       } else {
         if (categoriesData.length > 0) {
           setCategoryId(categoriesData[0].id);
         }
+      } 
+    }
+      catch(error){
+        console.error("불러오는 데 실패 했습니다", error);
+        setCategoryId(categoriesData[0].id);
+      } finally{
+        setLoading(false);
       }
     };
-
     initializeForm();
   }, [templateId, isEditMode]);
 
@@ -456,6 +467,20 @@ const TemplateForm = () => {
       </section>
     </div>
   );
+  if (loading) {
+    return (
+      <div className={styles.formBuilderPage}>
+        <div className={styles.mainContent}>
+          <TemplateFormSkeleton />
+        </div>
+        {/* 로딩 중에는 하단 버튼을 비활성화된 것처럼 보이게 하거나 숨길 수 있습니다. */}
+        <div className={styles.footer}>
+          <button className={styles.cancelButton} disabled>취소</button>
+          <button className={styles.saveButton} disabled>저장</button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.formBuilderPage}>

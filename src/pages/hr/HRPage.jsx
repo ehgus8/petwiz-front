@@ -40,6 +40,12 @@ export default function HRPage() {
   const [pendingPage, setPendingPage] = useState(null);
   const [fade, setFade] = useState(true);
   const autoSlideRef = useRef();
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 431);
+
+  // 터치/마우스 이벤트 관련 상태
+  const [touchStart, setTouchStart] = useState(null);
+  const [touchEnd, setTouchEnd] = useState(null);
+  const [isDragging, setIsDragging] = useState(false);
 
   const [deptNotices, setDeptNotices] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -128,7 +134,7 @@ export default function HRPage() {
         ((tempDate.getTime() - week1.getTime()) / 86400000 -
           3 +
           ((week1.getDay() + 6) % 7)) /
-        7,
+          7,
       )
     );
   }
@@ -153,6 +159,20 @@ export default function HRPage() {
     }
     fetchDepartments();
   }, []);
+
+  // 반응형 처리를 위한 window resize 이벤트 리스너
+  useEffect(() => {
+    const handleResize = () => {
+      const newIsMobile = window.innerWidth <= 431;
+      if (newIsMobile !== isMobile) {
+        setIsMobile(newIsMobile);
+        setTeamPage(0); // 페이지 초기화
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [isMobile]);
 
   useEffect(() => {
     console.log('departmentId:', departmentId, 'departments:', departments);
@@ -189,26 +209,14 @@ export default function HRPage() {
     const fetchDeptNotices = async () => {
       setLoading(true);
       try {
-        console.log('API_BASE_URL:', API_BASE_URL);
-        console.log('NOTICE_SERVICE:', NOTICE_SERVICE);
-        console.log('Full URL:', `${API_BASE_URL}${NOTICE_SERVICE}`);
-
         const url = `${API_BASE_URL}${NOTICE_SERVICE}`;
-
         const res = await fetch(url, {
           method: 'GET',
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
         });
-
-        // const res = await axiosInstance.get(url);
-
-        console.log('부서 공지 응답 res : ', res);
-
         const data = await res.json();
-        console.log('부서 공지 응답 data : ', data);
-
         setDeptNotices(data.notices || []);
       } catch (err) {
         console.error('부서 공지 가져오기 실패', err);
@@ -217,14 +225,12 @@ export default function HRPage() {
         setLoading(false);
       }
     };
-
     fetchDeptNotices();
   }, [departmentId, accessToken]);
 
   // 전체 공지 불러오기 useEffect
   useEffect(() => {
     if (!accessToken) return;
-
     const fetchAllNotices = async () => {
       try {
         const url = `${API_BASE_URL}${NOTICE_SERVICE}`;
@@ -234,9 +240,7 @@ export default function HRPage() {
             Authorization: `Bearer ${accessToken}`,
           },
         });
-        // const res = await axiosInstance.get(url);
         const data = await res.json();
-        console.log('전체 공지 응답 data : ', data);
         setAllNotices(data.generalNotices || []);
       } catch (err) {
         console.error('전체 공지 가져오기 실패', err);
@@ -247,36 +251,7 @@ export default function HRPage() {
     fetchAllNotices();
   }, [accessToken]);
 
-  // 이달의 사원 예시 데이터
-  const eomList = [
-    {
-      name: '홍길동',
-      dept: '영업팀',
-      comment: '항상 밝은 에너지로 팀을 이끄는 홍길동님!',
-      img: pin,
-    },
-    // {
-    //   name: '김철수',
-    //   dept: '개발팀',
-    //   comment: '혁신적인 아이디어로 프로젝트를 성공시킨 김철수님!',
-    //   img: pin,
-    // },
-    // {
-    //   name: '이영희',
-    //   dept: '인사팀',
-    //   comment: '세심한 배려로 모두를 챙기는 이영희님!',
-    //   img: pin,
-    // },
-  ];
   const [eomIndex, setEomIndex] = useState(0);
-  // 자동 슬라이드
-  useEffect(() => {
-    if (eomList.length <= 1) return;
-    const timer = setInterval(() => {
-      setEomIndex((prev) => (prev + 1) % eomList.length);
-    }, 3000);
-    return () => clearInterval(timer);
-  }, [eomList.length]);
 
   // 부서명 변경 시 우리팀 직원 목록 fetch
   useEffect(() => {
@@ -297,19 +272,22 @@ export default function HRPage() {
     fetchTeamEmployees();
   }, [departmentName]);
 
-  // 자동 슬라이드 타이머 관리
+  // 자동 슬라이드 타이머 관리 (비활성화)
   useEffect(() => {
-    if (teamEmployees.length <= 3) {
+    const currentPageSize = isMobile ? 5 : 10;
+    if (teamEmployees.length <= currentPageSize) {
       setTeamPage(0);
       return;
     }
-    autoSlideRef.current = setInterval(() => {
-      const nextPage = (teamPage + 1) % Math.ceil(teamEmployees.length / 3);
-      changeTeamPage(nextPage);
-    }, 3000);
-    return () => clearInterval(autoSlideRef.current);
+    // 자동 슬라이드 비활성화 - 스와이프로만 제어
+    // autoSlideRef.current = setInterval(() => {
+    //   const nextPage =
+    //     (teamPage + 1) % Math.ceil(teamEmployees.length / currentPageSize);
+    //   changeTeamPage(nextPage);
+    // }, 3000);
+    // return () => clearInterval(autoSlideRef.current);
     // eslint-disable-next-line
-  }, [teamEmployees, teamPage]);
+  }, [teamEmployees, teamPage, isMobile]);
 
   // 자연스러운 페이드 전환 함수
   const changeTeamPage = (nextPage) => {
@@ -333,9 +311,59 @@ export default function HRPage() {
   // dot 클릭 핸들러도 변경
   const handleTeamDotClick = (idx) => changeTeamPage(idx);
 
-  // 현재 보여줄 직원 3명 slice
-  const teamSlice = teamEmployees.slice(teamPage * 3, teamPage * 3 + 3);
-  const teamTotalPages = Math.ceil(teamEmployees.length / 3);
+  // 반응형에 따른 페이지 크기 및 slice 계산
+  const pageSize = isMobile ? 5 : 10;
+  const teamSlice = teamEmployees.slice(
+    teamPage * pageSize,
+    teamPage * pageSize + pageSize,
+  );
+  const teamTotalPages = Math.ceil(teamEmployees.length / pageSize);
+
+  // 스와이프 감지 로직
+  const minSwipeDistance = 50;
+
+  const onTouchStart = (e) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const onTouchMove = (e) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+
+    if (isLeftSwipe && teamPage < teamTotalPages - 1) {
+      // 왼쪽 스와이프 - 다음 페이지
+      changeTeamPage(teamPage + 1);
+    } else if (isRightSwipe && teamPage > 0) {
+      // 오른쪽 스와이프 - 이전 페이지
+      changeTeamPage(teamPage - 1);
+    }
+  };
+
+  // 마우스 이벤트 (데스크톱 지원)
+  const onMouseDown = (e) => {
+    setIsDragging(true);
+    setTouchEnd(null);
+    setTouchStart(e.clientX);
+  };
+
+  const onMouseMove = (e) => {
+    if (!isDragging) return;
+    setTouchEnd(e.clientX);
+  };
+
+  const onMouseUp = () => {
+    if (!isDragging) return;
+    setIsDragging(false);
+    onTouchEnd(); // 같은 로직 재사용
+  };
 
   // 수정 컴포넌트가 활성화되면 해당 컴포넌트만 렌더링
   if (showEdit) {
@@ -365,7 +393,6 @@ export default function HRPage() {
 
   return (
     <div className='hrpage-root'>
-      {/* <HRHeader /> */}
       {/* 유저 카드 + 검색/달력 */}
       <div
         className='hr-top'
@@ -393,7 +420,6 @@ export default function HRPage() {
       {/* 메인 카드 섹션 */}
       <div className='hr-main-cards'>
         <div className='hr-row'>
-          {/* 신청한내역 */}
           <ApprovalRequestTabs />
           {/* 공지사항 */}
           <div className='hr-card hr-tab-card' style={{ flex: 2 }}>
@@ -402,16 +428,18 @@ export default function HRPage() {
                 className={noticeTab === '전체' ? 'active' : ''}
                 onClick={() => setNoticeTab('전체')}
               >
+                {' '}
                 전체공지
               </button>
               <button
                 className={noticeTab === '부서' ? 'active' : ''}
                 onClick={() => setNoticeTab('부서')}
               >
+                {' '}
                 부서공지
               </button>
               <div className='menu-icon' onClick={() => navigate(`/notice`)}>
-                ≡
+                ≡{' '}
               </div>
             </div>
 
@@ -431,30 +459,70 @@ export default function HRPage() {
           <div className='hr-card hr-tab-card'>
             <div className='tabs'>
               <button className='active'>우리팀 직원</button>
-              <div className='menu-icon' onClick={() => navigate(`/contacts`)}>≡</div>
+              <div className='menu-icon' onClick={() => navigate(`/contacts`)}>
+                ≡
+              </div>
             </div>
             <table
-              className={`mini-table team-fade${fade ? ' team-fade-active' : ''}`}
+              className={`mini-table team-fade${fade ? ' team-fade-active' : ''} ${isMobile ? 'mobile-team-table' : ''}`}
+              onTouchStart={onTouchStart}
+              onTouchMove={onTouchMove}
+              onTouchEnd={onTouchEnd}
+              onMouseDown={onMouseDown}
+              onMouseMove={onMouseMove}
+              onMouseUp={onMouseUp}
+              onMouseLeave={onMouseUp}
+              style={{
+                touchAction: 'pan-y',
+                cursor: isDragging ? 'grabbing' : 'grab',
+                userSelect: 'none',
+              }}
             >
               <thead>
                 <tr>
                   <th>성명</th>
                   <th>직급</th>
                   <th>연락처</th>
+                  {!isMobile && (
+                    <>
+                      <th>성명</th>
+                      <th>직급</th>
+                      <th>연락처</th>
+                    </>
+                  )}
                 </tr>
               </thead>
               <tbody>
-                {teamSlice.map((emp) => (
-                  <tr key={emp.employeeId}>
-                    <td>{emp.name}</td>
-                    <td>{emp.position}</td>
-                    <td>{emp.phone}</td>
-                  </tr>
-                ))}
-                {teamEmployees.length === 0 && (
+                {teamEmployees.length === 0 ? (
                   <tr>
-                    <td colSpan={3}>팀원이 없습니다.</td>
+                    <td colSpan={isMobile ? 3 : 6}>팀원이 없습니다.</td>
                   </tr>
+                ) : isMobile ? (
+                  // 모바일: 5명을 1열로 표시
+                  teamSlice.map((emp, index) => (
+                    <tr key={emp.employeeId || index}>
+                      <td>{emp.name}</td>
+                      <td>{emp.position}</td>
+                      <td>{emp.phone}</td>
+                    </tr>
+                  ))
+                ) : (
+                  // 데스크톱: 10명을 2열로 표시
+                  Array.from({ length: 5 }, (_, rowIndex) => {
+                    const leftEmp = teamSlice[rowIndex];
+                    const rightEmp = teamSlice[rowIndex + 5];
+
+                    return (
+                      <tr key={rowIndex}>
+                        <td>{leftEmp?.name || ''}</td>
+                        <td>{leftEmp?.position || ''}</td>
+                        <td>{leftEmp?.phone || ''}</td>
+                        <td>{rightEmp?.name || ''}</td>
+                        <td>{rightEmp?.position || ''}</td>
+                        <td>{rightEmp?.phone || ''}</td>
+                      </tr>
+                    );
+                  })
                 )}
               </tbody>
             </table>
@@ -484,7 +552,7 @@ export default function HRPage() {
               </div>
             )}
           </div>
-          <CalendarWidget
+          {/* <CalendarWidget
             calendarDate={calendarDate}
             setCalendarDate={setCalendarDate}
             today={today}
@@ -495,7 +563,7 @@ export default function HRPage() {
             year={year}
             month={month}
             weekNumber={weekNumber}
-          />
+          /> */}
         </div>
       </div>
     </div>

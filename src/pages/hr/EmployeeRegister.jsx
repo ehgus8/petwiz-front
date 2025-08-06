@@ -118,7 +118,7 @@ export default function EmployeeRegister() {
   // 부서 등록 핸들러
   const handleAddDepartment = async () => {
     if (!newDeptName.trim()) {
-      alert('부서명을 입력하세요.');
+      warn('부서명을 입력하세요.');
       return;
     }
 

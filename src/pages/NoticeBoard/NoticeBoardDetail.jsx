@@ -316,9 +316,10 @@ const NoticeBoardDetail = () => {
     };
 
     useEffect(() => {
-        if (!isInit || !accessToken) return;
+        // if (!isInit || !accessToken) return;
 
         const fetchPost = async () => {
+            setLoading(true);
             try {
                 const res = await fetch(
                     `${API_BASE_URL}${NOTICE_SERVICE}/${noticeId}`,
@@ -388,9 +389,6 @@ const NoticeBoardDetail = () => {
             }
         }
     }, [posts, userId]); // ✅ 여기서만 판단하도록 분리
-
-    if (loading) return <p>불러오는 중...</p>;
-    if (!posts) return <p>게시글을 찾을 수 없습니다.</p>;
 
     console.log('posts : ', posts);
 
@@ -550,85 +548,91 @@ const NoticeBoardDetail = () => {
 
     return (
         <div className="notice-detail">
-            <h2>{posts.departmentId === 0 ? '[공지] ' : ''}{posts.title}</h2>
-            <button className="print-button" onClick={() => window.print()} title="인쇄하기">🖨️</button>
-            <div className="meta-with-attachment">
-                <div className="meta">
-                    <p>작성자 : {posts.name}{posts.employStatus === 'INACTIVE' ? '(퇴사)' : ''}</p>
-                    <p>부서 : {posts.departmentName}</p>
-                    <p>등록일 : {posts.createdAt?.substring(0, 10)}</p>
-                    <p>조회수 : {posts.viewCount}</p>
-                </div>
-                {attachments.length > 0 && (
-                    <div className="attachment-link">
-                        {attachments.map((url, idx) => (
-                            <div key={idx} >
-                                <a
-                                    href="#!"
-                                    onClick={() => handleDownloadClick(url)}
-                                    rel="noopener noreferrer"
-                                >
-                                    <img src={fileIconMap[attachments[0].split('.').pop().toLowerCase()] || '/icons/default.png'} alt={attachments[0].split('.').pop().toLowerCase()}
-                                        style={{ width: '20px', height: '20px' }} />
-                                    {truncateTitle(url.split('/').pop())}
-                                </a>
-                            </div>
-                        ))}
-                    </div>
-                )}
-            </div>
-            <hr />
-            <div
-                className="content"
-                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(posts.content) }}
-            />
-            <hr />
-
-            {/* ✅ 첨부파일 미리보기 */}
-            {attachments.length > 0 && (
-                <div className="attachments">
-                    {attachments.map((url, idx) => (
-                        <div key={idx} style={{ marginBottom: '10px' }}>
-                            {isImageFile(url) ? (
-                                <img
-                                    src={url}
-                                    alt={`attachment-${idx}`}
-                                    style={{ maxWidth: '100%', borderRadius: '8px' }}
-                                />
-                            ) : (<img />)}
+            {loading ? (
+                <p>불러오는 중...</p>
+            ) : (
+                <>
+                    <h2>{posts.departmentId === 0 ? '[공지] ' : ''}{posts.title}</h2>
+                    <button className="print-button" onClick={() => window.print()} title="인쇄하기">🖨️</button>
+                    <div className="meta-with-attachment">
+                        <div className="meta">
+                            <p>작성자 : {posts.name}{posts.employStatus === 'INACTIVE' ? '(퇴사)' : ''}</p>
+                            <p>부서 : {posts.departmentName}</p>
+                            <p>등록일 : {posts.createdAt?.substring(0, 10)}</p>
+                            <p>조회수 : {posts.viewCount}</p>
                         </div>
-                    ))}
-                </div>
-            )}
-            {isAuthor && (
-                <div className="buttons">
-                    <button onClick={handleEdit}>수정</button>
-                    <button onClick={handleDelete}>삭제</button>
-                </div>
-            )}
-
-            {/* ✅ 댓글 영역 시작 */}
-            {posts.published === true && (
-                <div className="comment-section">
-                    <h3>댓글</h3>
-                    <div className="comment-input">
-                        <textarea
-                            placeholder="댓글을 입력하세요..."
-                            value={newComment}
-                            onChange={(e) => setNewComment(e.target.value)}
-                        />
-                        <button onClick={handleAddComment}>등록</button>
+                        {attachments.length > 0 && (
+                            <div className="attachment-link">
+                                {attachments.map((url, idx) => (
+                                    <div key={idx} >
+                                        <a
+                                            href="#!"
+                                            onClick={() => handleDownloadClick(url)}
+                                            rel="noopener noreferrer"
+                                        >
+                                            <img src={fileIconMap[attachments[0].split('.').pop().toLowerCase()] || '/icons/default.png'} alt={attachments[0].split('.').pop().toLowerCase()}
+                                                style={{ width: '20px', height: '20px' }} />
+                                            {truncateTitle(url.split('/').pop())}
+                                        </a>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
+                    <hr />
+                    <div
+                        className="content"
+                        dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(posts.content) }}
+                    />
+                    <hr />
 
-                    <div className="comment-list">
-                        {comments.length === 0 && <p className='noComment'>아직 댓글이 없습니다.</p>}
-                        {renderComments(comments)}
+                    {/* ✅ 첨부파일 미리보기 */}
+                    {attachments.length > 0 && (
+                        <div className="attachments">
+                            {attachments.map((url, idx) => (
+                                <div key={idx} style={{ marginBottom: '10px' }}>
+                                    {isImageFile(url) ? (
+                                        <img
+                                            src={url}
+                                            alt={`attachment-${idx}`}
+                                            style={{ maxWidth: '100%', borderRadius: '8px' }}
+                                        />
+                                    ) : (<img />)}
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                    {isAuthor && (
+                        <div className="buttons">
+                            <button onClick={handleEdit}>수정</button>
+                            <button onClick={handleDelete}>삭제</button>
+                        </div>
+                    )}
+
+                    {/* ✅ 댓글 영역 시작 */}
+                    {posts.published === true && (
+                        <div className="comment-section">
+                            <h3>댓글</h3>
+                            <div className="comment-input">
+                                <textarea
+                                    placeholder="댓글을 입력하세요..."
+                                    value={newComment}
+                                    onChange={(e) => setNewComment(e.target.value)}
+                                />
+                                <button onClick={handleAddComment}>등록</button>
+                            </div>
+
+                            <div className="comment-list">
+                                {comments.length === 0 && <p className='noComment'>아직 댓글이 없습니다.</p>}
+                                {renderComments(comments)}
+                            </div>
+                        </div>)}
+
+                    <div className="buttons">
+                        <button onClick={handleBack}>뒤로가기</button>
                     </div>
-                </div>)}
-
-            <div className="buttons">
-                <button onClick={handleBack}>뒤로가기</button>
-            </div>
+                </>
+            )}
         </div>
     );
 };

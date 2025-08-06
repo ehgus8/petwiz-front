@@ -1,22 +1,15 @@
-// /src/components/approval/VisualApprovalLine.jsx (최종 완성본)
-
 import React from 'react';
 import styles from './VisualApprovalLine.module.scss';
 
 const VisualApprovalLine = ({ approvalLine, reportStatus, mode = 'full' }) => {
+  // --- 이 부분은 그대로 유지 ---
   if (!approvalLine || approvalLine.length === 0) {
-    if (mode === 'summary') return null;
+    if (mode === 'summary') return <div className={styles.summaryText}>결재선 없음</div>;
     return <div className={styles.noApprovers}>결재선 정보 없음</div>;
   }
-   // 화면에 보여줄 최대 결재자 수
   const MAX_VISIBLE_APPROVERS = 3;
-
-  // 실제 화면에 표시될 결재자 목록 (최대 3명)
   const visibleApprovers = approvalLine.slice(0, MAX_VISIBLE_APPROVERS);
-  
-  // 숨겨진 결재자 수 계산
   const hiddenCount = approvalLine.length - MAX_VISIBLE_APPROVERS;
-  
   const getStatusClass = (status) => {
     switch (status) {
       case 'APPROVED': return styles.approved;
@@ -24,12 +17,10 @@ const VisualApprovalLine = ({ approvalLine, reportStatus, mode = 'full' }) => {
       default: return styles.pending;
     }
   };
-
   const isNewDraft = !approvalLine.some(a => a.approvalStatus);
 
   const renderLine = () => (
     <>
-      {/* 3명까지만 렌더링하도록 visibleApprovers 사용 */}
       {visibleApprovers.map((approver, index) => (
         <React.Fragment key={approver.id || approver.employeeId}>
           <div className={`${styles.approverNode} ${getStatusClass(approver.approvalStatus)}`}>
@@ -47,13 +38,11 @@ const VisualApprovalLine = ({ approvalLine, reportStatus, mode = 'full' }) => {
               </span>
             )}
           </div>
-          {/* 마지막 결재자가 아니거나, 뒤에 숨겨진 결재자가 더 있을 경우에만 화살표 표시 */}
           {(index < visibleApprovers.length - 1 || hiddenCount > 0) && (
             <div className={styles.arrow}>→</div>
           )}
         </React.Fragment>
       ))}
-
       {hiddenCount > 0 && (
         <div className={styles.ellipsis} title={`${approvalLine.length}명 중 ${hiddenCount + 1}번째 결재자부터 숨김`}>
           ... (+{hiddenCount})
@@ -62,26 +51,46 @@ const VisualApprovalLine = ({ approvalLine, reportStatus, mode = 'full' }) => {
     </>
   );
 
+  // ★★★ 여기가 핵심 수정 부분입니다 ★★★
   const renderSummaryLine = () => {
-    const summaryStr = approvalLine.map(a => `${a.employeeName || a.name}(${a.approvalStatus})`).join(' → ');
-    const summaryVisible = approvalLine.slice(0, 2); // 요약 모드는 2명 + '...'
-    const summaryHidden = approvalLine.length - 2;
+    const totalApprovers = approvalLine.length;
+    const firstApprover = approvalLine[0];
+    const lastApprover = approvalLine[totalApprovers - 1];
+    
+    // 전체 결재선을 보여주는 툴팁 텍스트
+    const fullLineTitle = approvalLine.map(a => a.employeeName || a.name).join(' → ');
 
+    // 1. 결재자가 1명일 경우, 그 사람 이름만 표시
+    if (totalApprovers === 1) {
       return (
-      <div className={styles.summaryText} title={approvalLine.map(a => a.employeeName || a.name).join(' → ')}>
-        {summaryVisible.map((a, idx) => (
-          <React.Fragment key={a.employeeId || a.id || idx}>
-            <span style={{ display: 'inline-flex', alignItems: 'center' }}>
-              {a.employeeName || a.name}
-            </span>
-            {(idx < summaryVisible.length - 1 || summaryHidden > 0) && (
-              <span style={{ margin: '0 8px', color: '#bbb' }}>→</span>
-            )}
-          </React.Fragment>
-        ))}
-        {summaryHidden > 0 && (
-          <span className={styles.ellipsis}>...</span>
+        <div className={styles.summaryText} title={fullLineTitle}>
+          <span>{firstApprover.employeeName || firstApprover.name}</span>
+        </div>
+      );
+    }
+
+    // 2. 결재자가 2명 이상일 경우
+    return (
+      <div className={styles.summaryText} title={fullLineTitle}>
+        {/* 첫 번째 결재자 */}
+        <span style={{ display: 'inline-flex', alignItems: 'center' }}>
+          {firstApprover.employeeName || firstApprover.name}
+        </span>
+        
+        <span style={{ margin: '0 8px', color: '#bbb' }}>→</span>
+        
+        {/* 결재자가 3명 이상일 때만 '...' 표시 */}
+        {totalApprovers > 2 && (
+          <>
+            <span className={styles.ellipsis}>...</span>
+            <span style={{ margin: '0 8px', color: '#bbb' }}>→</span>
+          </>
         )}
+        
+        {/* 마지막 결재자 */}
+        <span style={{ display: 'inline-flex', alignItems: 'center' }}>
+          {lastApprover.employeeName || lastApprover.name}
+        </span>
       </div>
     );
   };
