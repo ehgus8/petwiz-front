@@ -13,13 +13,17 @@ let backendHostName;
 
 if (clientHostName === 'localhost') {
   // 개발 중
-  backendHostName = 'http://localhost:8000';
+  // backendHostName = 'http://localhost:8000';
   // backendHostName = 'http://3.37.254.91:8000';
+  // backendHostName = 'https://3.37.254.91/api';
+  backendHostName = 'https://hrhub.cc/api';
 } else if (clientHostName === 'playdatashop.com') {
   // 배포해서 현재 서비스 중
   backendHostName = 'https://api.playdatashop.com';
 } else {
-  backendHostName = 'http://localhost:8000';
+  // backendHostName = 'http://localhost:8000';
+  // backendHostName = 'https://3.37.254.91/api';
+  backendHostName = 'https://hrhub.cc/api';
 }
 export const API_BASE_URL = backendHostName;
 export const NOTICE_SERVICE = '/notice';
