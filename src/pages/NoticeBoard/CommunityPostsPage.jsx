@@ -2,11 +2,9 @@ import React, { useEffect, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   API_BASE_URL,
-  NOTICE_SERVICE,
   COMMUNITY_SERVICE,
 } from '../../configs/host-config';
-import { UserContext, UserContextProvider } from '../../context/UserContext'; // 로그인 유저 정보
-// import './NoticeBoardList.scss';
+import { UserContext } from '../../context/UserContext';
 import './CommunityPostsPage.scss';
 
 const fileIconMap = {
@@ -38,10 +36,10 @@ const CommunityPostsPage = () => {
   const navigate = useNavigate();
   const { isInit, userId, accessToken, departmentId, userRole, userPosition } =
     useContext(UserContext);
+
   const [viewMode, setViewMode] = useState('ALL'); // ALL | MY | DEPT
   const [posts, setPosts] = useState([]);
   const [hideReported, setHideReported] = useState(false);
-
   const [filters, setFilters] = useState({
     startDate: '',
     endDate: '',
@@ -51,28 +49,33 @@ const CommunityPostsPage = () => {
   });
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
-  const [pageSize, setPageSize] = useState(10); // ✅ 보기 개수
+  const [pageSize, setPageSize] = useState(10);
   const [loading, setLoading] = useState(false);
   const [reportCount, setReportCount] = useState(0);
 
+  // 제목 자르기
   const truncateTitle = (title, maxLength = 35) => {
     return title.length > maxLength ? `${title.slice(0, maxLength)}...` : title;
   };
 
+  // 게시글 불러오는 함수 (비동기, useEffect에서 호출)
   const fetchPosts = async () => {
     if (!accessToken || !userId) {
       console.log('CommunityPostsPage: API 호출 조건 불충족', {
         accessToken: !!accessToken,
         userId,
       });
+      setPosts([]);
+      setTotalPages(1);
       return;
     }
 
     setLoading(true);
+
     try {
       const { keyword, startDate, endDate, sortBy, sortDir } = filters;
       const params = new URLSearchParams({
-        keyword: filters.keyword.trim(),
+        keyword: keyword.trim(),
         fromDate: startDate,
         toDate: endDate,
         sortBy,
@@ -80,20 +83,8 @@ const CommunityPostsPage = () => {
         page,
         pageSize,
       });
-    useEffect(() => {
-        // if (!isInit || !accessToken || !userId) return; // ✅ 초기화 완료 여부 확인
 
-      let url;
-      console.log('CommunityPostsPage API 호출 정보:', {
-        viewMode,
-        departmentId,
-        userId,
-        accessToken: !!accessToken,
-        filters,
-        page,
-        pageSize,
-      });
-
+      let url = '';
       if (viewMode === 'MY') {
         url = `${API_BASE_URL}${COMMUNITY_SERVICE}/my?${params.toString()}`;
       } else if (viewMode === 'DEPT') {
@@ -102,8 +93,6 @@ const CommunityPostsPage = () => {
         url = `${API_BASE_URL}${COMMUNITY_SERVICE}?${params.toString()}`;
       }
 
-      console.log('CommunityPostsPage API URL:', url);
-
       const res = await fetch(url, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -111,93 +100,42 @@ const CommunityPostsPage = () => {
       });
 
       if (!res.ok) {
-        console.error(
-          'CommunityPostsPage API 오류:',
-          res.status,
-          res.statusText,
-        );
         throw new Error(`서버 오류: ${res.status}`);
       }
 
       const data = await res.json();
-      console.log('CommunityPostsPage API 응답:', data);
-      console.log('CommunityPostsPage 응답 키들:', Object.keys(data));
-      console.log(
-        'CommunityPostsPage 게시글 수:',
-        data.posts?.length ||
-          data.myposts?.length ||
-          data.mydepposts?.length ||
-          0,
-      );
-
-      // 각 viewMode별 데이터 존재 여부 확인
-      console.log('CommunityPostsPage 데이터 존재 여부:', {
-        posts: !!data.posts,
-        myposts: !!data.myposts,
-        mydepposts: !!data.mydepposts,
-        currentViewMode: viewMode,
-      });
 
       if (viewMode === 'MY') {
-        const myPosts = data.myposts || [];
-        console.log(
-          'CommunityPostsPage MY 모드 설정:',
-          myPosts.length,
-          '개 게시글',
-        );
-        setPosts(myPosts);
+        setPosts(data.myposts || []);
         setTotalPages(data.totalPages || 1);
       } else if (viewMode === 'DEPT') {
-        const deptPosts = data.mydepposts || [];
-        console.log(
-          'CommunityPostsPage DEPT 모드 설정:',
-          deptPosts.length,
-          '개 게시글',
-        );
-        setPosts(deptPosts);
+        setPosts(data.mydepposts || []);
         setTotalPages(data.totalPages || 1);
       } else {
-        const allPosts = data.posts || [];
-        console.log(
-          'CommunityPostsPage ALL 모드 설정:',
-          allPosts.length,
-          '개 게시글',
-        );
-        setPosts(allPosts);
+        setPosts(data.posts || []);
         setTotalPages(data.totalPages || 1);
       }
     } catch (err) {
       console.error('CommunityPostsPage 게시글 불러오기 실패:', err);
-      setPosts([]); // 에러 시 빈 배열로 설정
+      setPosts([]);
+      setTotalPages(1);
     } finally {
       setLoading(false);
     }
   };
 
+  // 게시글 목록 fetch 트리거 (의존성 주의)
   useEffect(() => {
+    // 초기화 전이면 기다렸다가 다시 시도 (최대 1회)
     if (!isInit || !accessToken || !userId) {
-      console.log('CommunityPostsPage: 초기화 대기 중...', {
-        isInit,
-        accessToken: !!accessToken,
-        userId,
-      });
-
-      // isInit이 false인 경우 3초 후 강제로 API 호출 시도
-      if (!isInit && accessToken && userId) {
-        console.log(
-          'CommunityPostsPage: isInit이 false이지만 3초 후 강제 API 호출 시도',
-        );
-        const timer = setTimeout(() => {
-          console.log('CommunityPostsPage: 강제 API 호출 실행');
-          fetchPosts();
-        }, 3000);
-        return () => clearTimeout(timer);
-      }
-
-      return; // ✅ 초기화 완료 여부 확인
+      setPosts([]);
+      setTotalPages(1);
+      // 강제 트리거 로직이 필요하면 아래처럼 추가
+      // setTimeout(fetchPosts, 3000);
+      return;
     }
-
     fetchPosts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     filters,
     page,
@@ -209,8 +147,8 @@ const CommunityPostsPage = () => {
     userId,
   ]);
 
+  // 신고된 글 개수 fetch
   useEffect(() => {
-    // HR_MANAGER일 경우에만 신고 수를 불러옴
     if (
       userRole === 'HR_MANAGER' &&
       (userPosition === 'MANAGER' ||
@@ -225,7 +163,7 @@ const CommunityPostsPage = () => {
           if (!res.ok) throw new Error('신고 목록 조회 실패');
 
           const data = await res.json();
-          setReportCount(data.posts.length);
+          setReportCount(data.posts?.length || 0);
         } catch (err) {
           console.error('신고 수 조회 실패:', err);
         }
@@ -235,17 +173,15 @@ const CommunityPostsPage = () => {
     }
   }, [userRole, userPosition, accessToken]);
 
+  // 핸들러
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFilters((prev) => ({ ...prev, [name]: value }));
   };
-
   const handleSearch = () => setPage(0);
-
   const handlePageSizeChange = (e) => {
-    console.log('Number(e.target.value) : ', Number(e.target.value));
     setPageSize(Number(e.target.value));
-    setPage(0); // 첫 페이지로 초기화
+    setPage(0);
   };
 
   return (
@@ -265,89 +201,6 @@ const CommunityPostsPage = () => {
                   <span className='report-badge'>{reportCount}</span>
                 )}
               </button>
-                    <div className="sort-options" style={{ display: 'flex', alignItems: 'center' }}>
-                        <select
-                            name="sortBy"
-                            value={filters.sortBy}
-                            onChange={(e) => setFilters(prev => ({ ...prev, sortBy: e.target.value }))}
-                        >
-                            <option value="createdAt">등록일</option>
-                            <option value="title">제목</option>
-                            <option value="viewCount">조회수</option>
-                        </select>
-
-                        <button
-                            onClick={() =>
-                                setFilters(prev => ({
-                                    ...prev,
-                                    sortDir: prev.sortDir === 'asc' ? 'desc' : 'asc'
-                                }))
-                            }
-                            style={{
-                                // marginLeft: '8px',
-                                background: 'none',
-                                border: 'none',
-                                cursor: 'pointer',
-                                fontSize: '1.2em',
-                            }}
-                            title={filters.sortDir === 'asc' ? '오름차순' : '내림차순'}
-                        >
-                            {filters.sortDir === 'asc' ? '⬆️' : '⬇️'}
-                        </button>
-                    </div>
-
-
-                    {/* <button className='search-button' onClick={handleSearch}>검색</button> */}
-                    <button
-                        className="reset-button"
-                        onClick={() => {
-                            setFilters({
-                                startDate: '',
-                                endDate: '',
-                                keyword: '',
-                                sortBy: 'createdAt',
-                                sortDir: 'desc'
-                            });
-                            setPage(0);
-                            setPageSize(10);
-                        }}
-                    >
-                        초기화
-                    </button>
-
-                    <div
-                        className="write-button-wrapper"
-                    // style={{ marginLeft: '270px' }}
-                    >
-                        <button className="write-button" onClick={() => navigate('/community/write')}>작성하기</button>
-                    </div>
-
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginRight: 'auto' }}>
-                        <div className="view-mode-buttons">
-                            <button className={viewMode === 'ALL' ? 'active' : ''} onClick={() => { setViewMode('ALL'); setPage(0); navigate('/community') }}>
-                                전체
-                            </button>
-                            <button className={viewMode === 'MY' ? 'active' : ''} onClick={() => { setViewMode('MY'); setPage(0); navigate('/community/my') }}>
-                                내가 쓴 글
-                            </button>
-                            <button className={viewMode === 'DEPT' ? 'active' : ''} onClick={() => { setViewMode('DEPT'); setPage(0); navigate('/community/mydepartment') }}>
-                                내 부서 글
-                            </button>
-                        </div>
-                        <div className="hide-reported" style={{ display: 'flex', alignItems: 'left', marginRight: '1rem' }}>
-                            <input
-                                type="checkbox"
-                                id="hideReported"
-                                checked={hideReported}
-                                onChange={(e) => setHideReported(e.target.checked)}
-                                style={{ marginRight: '6px' }}
-                            />
-                            <label htmlFor="hideReported" className='hideReported' style={{ fontSize: '0.95rem', color: '#333' }}>
-                                신고된 게시글 제외
-                            </label>
-                        </div>
-                    </div>
-                </div>
             </div>
           )}
         <h2>게시판</h2>
@@ -380,7 +233,6 @@ const CommunityPostsPage = () => {
               if (e.key === 'Enter') handleSearch();
             }}
           />
-
           <div
             className='sort-options'
             style={{ display: 'flex', alignItems: 'center' }}
@@ -396,7 +248,6 @@ const CommunityPostsPage = () => {
               <option value='title'>제목</option>
               <option value='viewCount'>조회수</option>
             </select>
-
             <button
               onClick={() =>
                 setFilters((prev) => ({
@@ -405,7 +256,6 @@ const CommunityPostsPage = () => {
                 }))
               }
               style={{
-                // marginLeft: '8px',
                 background: 'none',
                 border: 'none',
                 cursor: 'pointer',
@@ -416,8 +266,6 @@ const CommunityPostsPage = () => {
               {filters.sortDir === 'asc' ? '⬆️' : '⬇️'}
             </button>
           </div>
-
-          {/* <button className='search-button' onClick={handleSearch}>검색</button> */}
           <button
             className='reset-button'
             onClick={() => {
@@ -434,11 +282,7 @@ const CommunityPostsPage = () => {
           >
             초기화
           </button>
-
-          <div
-            className='write-button-wrapper'
-            // style={{ marginLeft: '270px' }}
-          >
+          <div className='write-button-wrapper'>
             <button
               className='write-button'
               onClick={() => navigate('/community/write')}
@@ -446,7 +290,6 @@ const CommunityPostsPage = () => {
               작성하기
             </button>
           </div>
-
           <div
             style={{
               display: 'flex',
@@ -546,14 +389,12 @@ const CommunityPostsPage = () => {
                     className={post.notice ? 'bold-row' : ''}
                   >
                     <td>{post.communityId}</td>
-                    {/* <td>{post.attachmentUri && post.attachmentUri.length > 0 && post.attachmentUri !== '[]' ? '📎' : ''}</td> */}
                     <td>
                       {(() => {
                         try {
-                          const files = JSON.parse(post.attachmentUri); // attachmentUri는 JSON 문자열
+                          const files = JSON.parse(post.attachmentUri);
                           if (!Array.isArray(files) || files.length === 0)
                             return null;
-
                           if (files.length === 1) {
                             const ext = files[0].split('.').pop().toLowerCase();
                             const iconPath =
@@ -579,8 +420,6 @@ const CommunityPostsPage = () => {
                         }
                       })()}
                     </td>
-
-                    {/* <td>{post.hidden ? <span>🚨{post.title}</span> : post.title}</td> */}
                     <td title={post.title}>
                       {post.hidden ? (
                         <span>
@@ -604,7 +443,6 @@ const CommunityPostsPage = () => {
                         </>
                       )}
                     </td>
-
                     <td>
                       {post.employStatus === 'INACTIVE' ? (
                         <span
@@ -633,7 +471,6 @@ const CommunityPostsPage = () => {
               )}
             </tbody>
           </table>
-
           <div className='pagination'>
             <button
               onClick={() => setPage((p) => Math.max(p - 1, 0))}
@@ -657,7 +494,6 @@ const CommunityPostsPage = () => {
               다음
             </button>
           </div>
-
           <div className='page-size-selector'>
             <label>보기 개수:&nbsp;</label>
             <select value={pageSize} onChange={handlePageSizeChange}>
