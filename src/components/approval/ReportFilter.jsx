@@ -28,37 +28,47 @@ const ReportFilter = ({ onFilterChange, showCategory = true }) => {
     <div className={styles.filterContainer}>
       <div className={styles.filterHeader}>
         <h3>필터</h3>
-        <button 
-          type="button" 
+        <button
+          type="button"
           onClick={handleClearFilters}
           className={styles.clearButton}
         >
           필터 초기화
         </button>
       </div>
-      
+
       <div className={styles.filterContent}>
         <div className={styles.filterRow}>
           <div className={styles.filterItem}>
             <label>기간</label>
             <div className={styles.dateInputs}>
               <input
-                type="date"
+                type="text"
                 value={filters.dateFrom}
                 onChange={(e) => handleFilterChange('dateFrom', e.target.value)}
                 placeholder="시작일"
+                onFocus={(e) => (e.target.type = 'date')}
+                onBlur={(e) => {
+                  if (!e.target.value) e.target.type = 'text';
+                }}
+                className={styles.dateInput} // ★★★ 클래스 추가
               />
               <span className={styles.dateSeparator}>~</span>
               <input
-                type="date"
+                type="text"
                 value={filters.dateTo}
                 onChange={(e) => handleFilterChange('dateTo', e.target.value)}
                 placeholder="종료일"
+                onFocus={(e) => (e.target.type = 'date')}
+                onBlur={(e) => {
+                  if (!e.target.value) e.target.type = 'text';
+                }}
+                className={styles.dateInput} // ★★★ 클래스 추가
               />
             </div>
           </div>
         </div>
-        
+
         <div className={styles.filterRow}>
           <div className={styles.filterItem}>
             <label>제목</label>
@@ -71,10 +81,9 @@ const ReportFilter = ({ onFilterChange, showCategory = true }) => {
             />
           </div>
         </div>
-      
       </div>
     </div>
   );
 };
 
-export default ReportFilter; 
+export default ReportFilter;

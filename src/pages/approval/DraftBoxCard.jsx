@@ -125,6 +125,17 @@ const DraftBoxCard = ({ draft, showScheduleInfo = false, onCancelSchedule }) => 
             mode='summary'
           />
         </div>
+        {showScheduleInfo && draft.reportStatus === 'SCHEDULED' && onCancelSchedule && (
+          <button
+            className={styles['cancel-schedule-btn']}
+            onClick={(e) => {
+              e.stopPropagation(); // 카드 클릭(수정페이지 이동) 방지
+              onCancelSchedule(draft.id);
+            }}
+          >
+            예약 취소
+          </button>
+        )}
       </div>
       {isModalOpen && (
         <ModalPortal>

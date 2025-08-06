@@ -106,14 +106,16 @@ const NoticeBoardList = () => {
                     keyword: filters.keyword.trim(),
                     fromDate: startDate,
                     toDate: endDate,
-                    sortBy, sortDir, page, pageSize,
+                    sortBy: sortBy,
+                    sortDir: sortDir, page, pageSize: pageSize,
                 });
 
                 let url;
                 console.log('viewMode : ', viewMode);
                 console.log('departmentId : ', departmentId);
                 if (viewMode === 'MY') {
-                    url = `${API_BASE_URL}${NOTICE_SERVICE}/my`;
+                    // url = `${API_BASE_URL}${NOTICE_SERVICE}/my`;
+                    url = `${API_BASE_URL}${NOTICE_SERVICE}/my?${params.toString()}`;
                 } else if (viewMode === 'SCHEDULE') {
                     url = `${API_BASE_URL}${NOTICE_SERVICE}/schedule`;
                 }
@@ -266,7 +268,6 @@ const NoticeBoardList = () => {
                                         color: post.position === userPosition ? '#28c309' : '#000',
                                         fontWeight: post.position === userPosition ? 'bold' : 'normal'
                                     }}>{post.noticeId}</td>
-                                    {/* <td>{post.attachmentUri && post.attachmentUri.length > 0 && post.attachmentUri != '[]' ? '📎' : ''}</td> */}
                                     <td>
                                         {(() => {
                                             try {
@@ -352,7 +353,7 @@ const NoticeBoardList = () => {
 
                             {notices.map(post => (
                                 <tr
-                                    key={`notice-${post.noticeId}`} className="notice-row" onClick={() => navigate(`${post.noticeId}`)}>
+                                    key={`notice-${post.noticeId}`} className="notice-row" onClick={() => navigate(`/notice/${post.noticeId}`)}>
                                     <td style={{
                                         color: post.position === userPosition ? '#21429e' : '#000',
                                         fontWeight: post.position === userPosition ? 'bold' : 'normal'

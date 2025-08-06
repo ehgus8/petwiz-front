@@ -77,43 +77,101 @@
   gap: 8px;
 }
 
-/* ★★★ 여기가 핵심 수정 부분입니다 ★★★ */
-/* 중복된 menuItem 정의를 하나로 합치고, active 클래스에도 flex를 적용합니다. */
 .menuItem {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  
   padding: 10px 15px;
-  color: #495057;
-  text-decoration: none;
   border-radius: 6px;
   font-weight: 500;
-  transition:
-    background-color 0.2s,
-    color 0.2s;
+  text-decoration: none;
+  transition: background-color 0.2s, color 0.2s;
+
+  /* ★★★ 1. 메뉴 이름(span)은 항상 기본 색상을 유지합니다. ★★★ */
+  span {
+    color: #495057; /* 기본 텍스트 색상 (원래의 검은색 계열) */
+    font-weight: 500; /* 기본 굵기 */
+  }
 
   &:hover {
     background-color: #e9ecef;
   }
 
+  /* ★★★ 2. 활성화(.active) 상태일 때의 스타일 ★★★ */
   &.active {
     background-color: #007bff;
-    color: white !important;
-    font-weight: 600;
+    
+    /* 활성 메뉴의 이름(span)은 흰색으로 변경 */
+    span {
+      color: white !important;
+      font-weight: 600;
+    }
 
-    &:hover {
-      background-color: #007bff;
+    /* 활성 메뉴의 배지(countBadge)도 흰색으로 변경 */
+    .countBadge {
+      color: white !important;
     }
   }
 }
 
 .countBadge {
-  margin-left: 8px;
-  background-color: #dc3545;
-  color: white;
-  border-radius: 10px;
-  padding: 2px 7px;
-  font-size: 11px;
-  font-weight: 600;
+  font-size: 15px; /* 폰트 크기를 조금 키워 가독성 향상 */
+  font-weight: 700; /* 항상 굵게 표시 */
+  
+  /* ★★★ 3. 기본 배지 색상은 파란색으로 설정합니다. ★★★ */
+  
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  
+  &[data-count="0"] {
+    opacity: 0;
+    transform: scale(0.5);
+    pointer-events: none;
+  }
+}
+
+/* ★★★ 4. '결재 예정 문서함'에만 특별한 스타일을 적용합니다. ★★★ */
+/* to="/approval/pending"을 가진 NavLink를 직접 타겟팅합니다. */
+.menuItem[href$="/approval/pending"] {
+  /* 비활성 상태일 때 '결재 예정'의 배지만 빨간색으로 변경 */
+  &:not(.active) .countBadge {
+    color: #dc3545;
+  }
+}
+
+.menuItem[href$="/approval/in-progress"] {
+  /* 비활성 상태일 때 '결재 예정'의 배지만 빨간색으로 변경 */
+  &:not(.active) .countBadge {
+    color: #007bff;
+  }
+}
+
+.menuItem[href$="/approval/completed"] {
+  /* 비활성 상태일 때 '결재 예정'의 배지만 빨간색으로 변경 */
+  &:not(.active) .countBadge {
+    color: #007bff;
+  }
+}
+.menuItem[href$="/approval/rejected"] {
+  /* 비활성 상태일 때 '결재 예정'의 배지만 빨간색으로 변경 */
+  &:not(.active) .countBadge {
+    color: #007bff;
+  }
+}
+.menuItem[href$="/approval/drafts"] {
+  /* 비활성 상태일 때 '결재 예정'의 배지만 빨간색으로 변경 */
+  &:not(.active) .countBadge {
+    color: #007bff;
+  }
+}
+.menuItem[href$="/approval/scheduled"] {
+  /* 비활성 상태일 때 '결재 예정'의 배지만 빨간색으로 변경 */
+  &:not(.active) .countBadge {
+    color: #007bff;
+  }
+}
+.menuItem[href$="/approval/cc"] {
+  /* 비활성 상태일 때 '결재 예정'의 배지만 빨간색으로 변경 */
+  &:not(.active) .countBadge {
+    color: #007bff;
+  }
 }

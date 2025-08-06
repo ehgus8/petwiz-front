@@ -1,15 +1,41 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState, useContext, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import DOMPurify from 'dompurify';
 import {
     API_BASE_URL,
-    NOTICE_SERVICE,
     COMMUNITY_SERVICE
 } from '../../configs/host-config';
 import Swal from 'sweetalert2';
 import axios from 'axios';
 import { UserContext } from '../../context/UserContext';
 import './CommunityDetail.scss';
+import { BsThreeDotsVertical } from "react-icons/bs";
+
+
+const fileIconMap = {
+    txt: '/icons/txt.png',
+    doc: '/icons/doc.png',
+    docx: '/icons/docx.png',
+    pdf: '/icons/pdf.png',
+    php: '/icons/php.png',
+    xls: '/icons/xls.png',
+    xlsx: '/icons/xlsx.png',
+    csv: '/icons/csv.png',
+    css: '/icons/css.png',
+    jpg: '/icons/jpg.png',
+    jpeg: '/icons/jpg.png',
+    js: '/icons/js.png',
+    png: '/icons/png.png',
+    gif: '/icons/gif.png',
+    htm: '/icons/htm.png',
+    html: '/icons/html.png',
+    zip: '/icons/zip.png',
+    mp3: '/icons/mp3.png',
+    mp4: '/icons/mp4.png',
+    ppt: '/icons/ppt.png',
+    exe: '/icons/exe.png',
+    svg: '/icons/svg.png',
+};
 
 const CommunityDetail = () => {
     const { communityId } = useParams();
@@ -17,6 +43,27 @@ const CommunityDetail = () => {
     const [loading, setLoading] = useState(true);
     const [isAuthor, setIsAuthor] = useState(false); // ✅ 상태값으로 분리
     const [attachments, setAttachments] = useState([]);
+    const [menuOpenId, setMenuOpenId] = useState(null);
+
+    const menuPopupRef = useRef(null);
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (menuPopupRef.current && !menuPopupRef.current.contains(event.target)) {
+                setMenuOpenId(null); // 외부 클릭 시 팝업 닫기
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [menuPopupRef]);
+
+    const truncateTitle = (title, maxLength = 30) => {
+        title[0].split('.').pop().toLowerCase()
+        return title.length > maxLength ? `${title.slice(0, maxLength)}···.${title.split('.').pop().toLowerCase()}` : title;
+    };
 
     // ✅ 댓글 관련 상태
     const [comments, setComments] = useState([]);
@@ -24,9 +71,13 @@ const CommunityDetail = () => {
     const [editCommentId, setEditCommentId] = useState(null);
     const [editContent, setEditContent] = useState('');
 
+    const [replyTargetId, setReplyTargetId] = useState(null);
+    const [replyContent, setReplyContent] = useState('');
+
 
     const { accessToken, userId, isInit, userName } = useContext(UserContext);
     const navigate = useNavigate();
+
 
     // 신고 버튼 클릭 핸들러
     const handleReportClick = () => {
@@ -137,6 +188,7 @@ const CommunityDetail = () => {
             });
             const data = await res.json();
             setComments(data);
+            console.log('댓글 data:', data)
         } catch (err) {
             console.error('댓글 불러오기 실패:', err);
             await Swal.fire({
@@ -211,11 +263,9 @@ const CommunityDetail = () => {
                             'Authorization': `Bearer ${accessToken}`,
                         },
                     });
-                    // Swal.fire('삭제 완료!', '댓글이 삭제되었습니다.', 'success');
                     Swal.fire('삭제 완료!', '댓글이 삭제되었습니다.', 'success').then(() => {
                         window.location.reload(); // 또는 window.location.href = `/noticeboard/${id}`;
                     });
-                    // navigate(`/noticeboard/${id}`);
                 } catch (err) {
                     console.error(err);
                     Swal.fire('오류 발생', '삭제 중 오류가 발생했습니다.', 'error');
@@ -336,6 +386,159 @@ const CommunityDetail = () => {
 
     console.log('posts : ', posts);
 
+    const handleAddReply = async (parentId) => {
+        if (!replyContent.trim()) return;
+
+        console.log("replyContent : ", replyContent);
+        console.log("userName : ", userName);
+        console.log("userId : ", userId);
+        console.log("parentId : ", parentId);
+
+        try {
+            await axios.post(`${API_BASE_URL}/community/${posts.communityId}/comments`, {
+                content: replyContent,
+                writerName: userName,
+                writerId: userId,
+                parentId: parentId
+            }, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                }
+            });
+
+            setReplyContent('');
+            setReplyTargetId(null);
+            fetchComments(); // 댓글 새로고침
+        } catch (err) {
+            console.error('대댓글 등록 실패', err);
+        }
+    };
+
+    const renderComments = (comments) => {
+        return comments.map((topComment) => (
+            <div key={topComment.communityComentId} className="comment-item">
+                <span className="writerAndOption">
+                    <strong>{topComment.writerName}</strong>
+                    {(String(userId) === String(posts.employeeId) || topComment.writerName === userName) && (
+                        <div className="comment-options">
+                            <BsThreeDotsVertical
+                                onClick={() =>
+                                    setMenuOpenId(
+                                        menuOpenId === topComment.communityComentId ? null : topComment.communityComentId
+                                    )}
+                                style={{ cursor: "pointer" }}
+                            />
+                            {menuOpenId === topComment.communityComentId && (
+                                <div className="menu-popup" ref={menuPopupRef}>
+                                    <button onClick={() => {
+                                        setEditCommentId(topComment.communityComentId);
+                                        setEditContent(topComment.content);
+                                        setMenuOpenId(null);
+                                    }}>수정</button>
+                                    <button onClick={() => {
+                                        handleDeleteComment(topComment.communityComentId);
+                                        setMenuOpenId(null);
+                                    }}>삭제</button>
+                                </div>
+                            )}
+                        </div>
+                    )}
+                </span>
+
+                {editCommentId === topComment.communityComentId ? (
+                    <div className="edit-input">
+                        <textarea
+                            value={editContent}
+                            onChange={(e) => setEditContent(e.target.value)}
+                        />
+                        <button onClick={() => handleEditComment(topComment.communityComentId)}>저장</button>
+                        <button onClick={() => setEditCommentId(null)}>취소</button>
+                    </div>
+                ) : (
+                    <>
+                        <p className="commentContent">{topComment.content}</p>
+                        <p className="commentDate">{topComment.createdAt?.substring(0, 16).replace('T', ' ')}</p>
+                        <div className="comment-buttons">
+                            <button className="reply-btn" onClick={() => {
+                                setReplyTargetId(topComment.communityComentId);
+                                setReplyContent('');
+                            }}>답글</button>
+                        </div>
+                    </>
+                )}
+
+                {/* 대댓글 입력창 */}
+                {replyTargetId === topComment.communityComentId && (
+                    <div className="reply-input">
+                        <textarea
+                            placeholder="답글을 입력하세요..."
+                            value={replyContent}
+                            onChange={(e) => setReplyContent(e.target.value)}
+                        />
+                        <button onClick={() => handleAddReply(topComment.communityComentId)}>등록</button>
+                        <button onClick={() => setReplyTargetId(null)}>취소</button>
+                    </div>
+                )}
+
+                {/* 대댓글 렌더링 */}
+                <div className="replies">
+                    {topComment.children?.map((reply) => (
+                        <div key={reply.communityComentId} className="reply-item">
+                            <p className="writerAndOption">
+                                <strong>{reply.writerName}</strong>
+                                {(String(userId) === String(posts.employeeId) || reply.writerName === userName) && (
+                                    <div className="comment-options">
+                                        <BsThreeDotsVertical
+                                            onClick={() =>
+                                                setMenuOpenId(
+                                                    menuOpenId === reply.communityComentId ? null : reply.communityComentId
+                                                )}
+                                            style={{ cursor: "pointer" }}
+                                        />
+                                        {menuOpenId === reply.communityComentId && (
+                                            <div className="menu-popup" ref={menuPopupRef}>
+                                                <button onClick={() => {
+                                                    setEditCommentId(reply.communityComentId);
+                                                    setEditContent(reply.content);
+                                                    setMenuOpenId(null);
+                                                }}>수정</button>
+                                                <button onClick={() => {
+                                                    handleDeleteComment(reply.communityComentId);
+                                                    setMenuOpenId(null);
+                                                }}>삭제</button>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+                            </p>
+
+                            {editCommentId === reply.communityComentId ? (
+                                <div className="edit-input">
+                                    <textarea
+                                        value={editContent}
+                                        onChange={(e) => setEditContent(e.target.value)}
+                                    />
+                                    <button onClick={() => handleEditComment(reply.communityComentId)}>저장</button>
+                                    <button onClick={() => setEditCommentId(null)}>취소</button>
+                                </div>
+                            ) : (
+                                <>
+                                    <p className="commentContent">{reply.content}</p>
+                                    <p className="commentDate">{reply.createdAt?.substring(0, 16).replace('T', ' ')}</p>
+                                    <div className="comment-buttons">
+                                        <button className="reply-btn" onClick={() => {
+                                            setReplyTargetId(topComment.communityComentId);
+                                            setReplyContent('');
+                                        }}>답글</button>
+                                    </div>
+                                </>
+                            )}
+                        </div>
+                    ))}
+                </div>
+            </div>
+        ));
+    };
 
     return (
         <div className="notice-detail">
@@ -343,11 +546,9 @@ const CommunityDetail = () => {
                 <span style={{ color: 'rgba(171, 26, 26, 1)', fontWeight: 'bold' }}>
                     🚨이 글은 신고된 글입니다.
                 </span>
-            ) : (
-                <span></span>
-            )}
+            ) : (<span></span>)}
             </div>
-            <h2>{posts.notice ? '[공지] ' : ''}{posts.title}</h2>
+            <h2>{posts.title}</h2>
             <div className="meta-with-attachment">
                 <div className="meta">
                     <p>작성자 : {posts.name}{posts.employStatus === 'INACTIVE' ? '(퇴사)' : ''}</p>
@@ -364,13 +565,14 @@ const CommunityDetail = () => {
                                     onClick={() => handleDownloadClick(url)}
                                     rel="noopener noreferrer"
                                 >
-                                    📎 {url.split('/').pop()}
+                                    <img src={fileIconMap[attachments[0].split('.').pop().toLowerCase()] || '/icons/default.png'} alt={attachments[0].split('.').pop().toLowerCase()}
+                                        style={{ width: '20px', height: '20px' }} />
+                                    {truncateTitle(url.split('/').pop())}
                                 </a>
                             </div>
                         ))}
                     </div>
-                )
-                }
+                )}
             </div>
             <hr />
             <div
@@ -390,18 +592,11 @@ const CommunityDetail = () => {
                                     alt={`attachment-${idx}`}
                                     style={{ maxWidth: '100%', borderRadius: '8px' }}
                                 />
-
-                            ) : (
-                                <a href="#!" onClick={() => forceDownload(url, url.split('/').pop())}>
-                                    📎 파일 다운로드 {url.split('/').pop()}
-                                </a>
-                            )
-                            }
+                            ) : (<img />)}
                         </div>
                     ))}
                 </div>
             )}
-
             {isAuthor && (
                 <div className="buttons">
                     <button onClick={handleEdit}>수정</button>
@@ -410,12 +605,11 @@ const CommunityDetail = () => {
             )}
 
             <div className="buttons">
-                {posts.hidden ? (
+                {posts.hidden || posts.employeeId === userId ? (
                     <span></span>
                 ) : (
                     <button onClick={handleReportClick}>🚨 게시글 신고</button>
                 )}
-                {/* <button onClick={handleReportClick}>🚨 게시글 신고</button> */}
                 <button onClick={handleBack}>뒤로가기</button>
             </div>
 
@@ -432,35 +626,8 @@ const CommunityDetail = () => {
                 </div>
 
                 <div className="comment-list">
-                    {comments.length === 0 && <p>아직 댓글이 없습니다.</p>}
-                    {comments.map((comment) => (
-                        <div key={comment.communityCommentId} className="comment-item">
-                            <p><strong>{comment.writerName}</strong> • {comment.createdAt?.substring(0, 10)}</p>
-                            {editCommentId === comment.communityCommentId ? (
-                                <>
-                                    <textarea
-                                        value={editContent}
-                                        onChange={(e) => setEditContent(e.target.value)}
-                                    />
-                                    <button onClick={() => handleEditComment(comment.communityCommentId)}>저장</button>
-                                    <button onClick={() => setEditCommentId(null)}>취소</button>
-                                </>
-                            ) : (
-                                <>
-                                    <p>{comment.content}</p>
-                                    {String(userId) === String(posts.employeeId) || comment.writerName === userName ? (
-                                        <div className="comment-buttons">
-                                            <button onClick={() => {
-                                                setEditCommentId(comment.communityCommentId);
-                                                setEditContent(comment.content);
-                                            }}>수정</button>
-                                            <button onClick={() => handleDeleteComment(comment.communityCommentId)}>삭제</button>
-                                        </div>
-                                    ) : null}
-                                </>
-                            )}
-                        </div>
-                    ))}
+                    {comments.length === 0 && <p className='noComment'>아직 댓글이 없습니다.</p>}
+                    {renderComments(comments)}
                 </div>
             </div>
         </div>

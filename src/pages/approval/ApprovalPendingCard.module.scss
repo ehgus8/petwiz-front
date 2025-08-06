@@ -8,29 +8,50 @@
   gap: 12px;
   border: 1.5px solid #2196f3;
   transition: box-shadow 0.2s, border 0.2s;
+  overflow: visible; // 결재선이 잘리지 않도록 visible로 설정
+  
   .approvalpending-title {
     font-size: 18px;
     font-weight: 600;
     color: #222;
     margin-bottom: 6px;
   }
+  
   .approvalpending-info {
     display: flex;
     align-items: center;
     gap: 24px;
+    overflow: visible; // 결재선이 잘리지 않도록 visible로 설정
+    
     .approvalpending-status {
       font-size: 15px;
       font-weight: 600;
       color: #2196f3;
     }
+    
     .approvalpending-date {
       font-size: 14px;
       color: #888;
     }
+    
     .approvalpending-writer {
       font-size: 15px;
       color: #2196f3;
       font-weight: 600;
     }
+  }
+}
+
+/* --- 📱 모바일 반응형 스타일 (768px 미만일 때 적용) --- */
+@media (max-width: 768px) {
+  .approvalpending-card {
+    padding: 16px;
+    overflow: visible; // 결재선이 잘리지 않도록 visible로 설정
+  }
+  
+  .approvalpending-info {
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
   }
 } 

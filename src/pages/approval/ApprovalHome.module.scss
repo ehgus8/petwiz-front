@@ -1,19 +1,30 @@
 .approvalHomeContainer {
-    padding: 30px;
-    background-color: #f4f6f8;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
-  }
-  
-  .frequentTemplatesSection,
-  .reportListContainer {
-    background-color: #fff;
-    border-radius: 12px;
-    padding: 30px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-  }
+  padding: 30px;
+  background-color: #f4f6f8;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  overflow: visible; // 결재선이 잘리지 않도록 visible로 설정
+}
+
+.frequentTemplatesSection,
+.reportListContainer {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  overflow: visible; // 결재선이 잘리지 않도록 visible로 설정
+}
+
+// reportListContainer에 특별한 스타일 추가
+.reportListContainer {
+  flex: 1; // 남은 공간을 모두 차지
+  min-height: 0; // flex 아이템의 최소 높이 제한 해제
+  max-height: calc(100vh - 300px); // 최대 높이 제한
+  overflow-y: auto; // 세로 스크롤 활성화
+  overflow-x: visible; // 가로 스크롤 허용하여 결재선이 잘리지 않도록
+}
   
   .sectionHeader {
     display: flex;
@@ -147,11 +158,22 @@
   .approvalHomeContainer {
     padding: 16px; // 전체 여백 줄이기
     gap: 20px;
+    height: calc(100vh - 100px); // 모바일에서 높이 조정
+    overflow-y: auto; // 세로 스크롤 활성화
+    overflow-x: visible; // 결재선이 잘리지 않도록 visible로 설정
   }
 
   .frequentTemplatesSection,
   .reportListContainer {
     padding: 20px 16px; // 섹션 내부 여백 줄이기
+    max-height: none; // 모바일에서는 최대 높이 제한 해제
+    overflow: visible; // 결재선이 잘리지 않도록 visible로 설정
+  }
+
+  .reportListContainer {
+    height: auto; // 모바일에서는 자동 높이
+    min-height: 300px; // 최소 높이 설정
+    overflow-x: visible; // 결재선이 잘리지 않도록 visible로 설정
   }
 
   .sectionTitle {

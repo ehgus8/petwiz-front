@@ -5,7 +5,7 @@ import { API_BASE_URL, APPROVAL_SERVICE } from '../../configs/host-config';
 import CategoryModal from '../../components/approval/CategoryModal';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
-import useWindowDimensions from '../../hooks/useWindowDimensions';
+import useWindowDimensions from '../../hooks/useWindowDimensions'
 
 const TemplateAdminPage = () => {
   const navigate = useNavigate();
@@ -32,9 +32,7 @@ const TemplateAdminPage = () => {
   const fetchCategories = useCallback(async () => {
     try {
       setLoading(true);
-      const res = await axiosInstance.get(
-        `${API_BASE_URL}${APPROVAL_SERVICE}/category`,
-      );
+      const res = await axiosInstance.get(`${API_BASE_URL}${APPROVAL_SERVICE}/category`);
       console.log('서버에서 받은 카테고리 목록:', res.data);
       setCategories(res.data?.result || []);
     } catch (err) {
@@ -56,29 +54,20 @@ const TemplateAdminPage = () => {
 
       // 1. 카테고리 필터
       if (selectedCategory) {
-        templates = templates.filter((t) => t.categoryId === selectedCategory);
+        templates = templates.filter(t => t.categoryId === selectedCategory);
       }
 
       // 2. 상태 필터 (API에 status 필드가 추가되어야 함)
       // 현재는 임시로 모든 템플릿에 'ACTIVE' 상태가 있다고 가정
       if (statusFilter !== 'ALL') {
-        templates = templates.filter((t) =>
-          statusFilter === 'ACTIVE' ? t.status === 'Y' : t.status === 'N',
-        );
+        templates = templates.filter(t => (statusFilter === 'ACTIVE' ? t.status === 'Y' : t.status === 'N'));
       }
 
       // 3. 검색어 필터
       if (searchTerm) {
-        templates = templates.filter(
-          (t) =>
-            (t.template.title &&
-              t.template.title
-                .toLowerCase()
-                .includes(searchTerm.toLowerCase())) ||
-            (t.template.description &&
-              t.template.description
-                .toLowerCase()
-                .includes(searchTerm.toLowerCase())),
+        templates = templates.filter(t =>
+          (t.template.title && t.template.title.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          (t.template.description && t.template.description.toLowerCase().includes(searchTerm.toLowerCase()))
         );
       }
 
@@ -88,14 +77,14 @@ const TemplateAdminPage = () => {
     applyFilters();
   }, [selectedCategory, statusFilter, searchTerm, allTemplates]);
 
+
   useEffect(() => {
     const fetchTemplates = async () => {
       try {
         setTemplatesLoading(true);
-        const res = await axiosInstance.get(
-          `${API_BASE_URL}${APPROVAL_SERVICE}/templates/list`,
-        );
+        const res = await axiosInstance.get(`${API_BASE_URL}${APPROVAL_SERVICE}/templates/list`);
         setAllTemplates(res.data?.result || []);
+
       } catch (err) {
         setTemplatesError('양식 목록을 불러오는 데 실패했습니다.');
         console.error(err);
@@ -132,25 +121,17 @@ const TemplateAdminPage = () => {
 
         if (!result.isConfirmed) return;
 
-        await axiosInstance.delete(
-          `${API_BASE_URL}${APPROVAL_SERVICE}/category/${editingCategory.id}`,
-        );
+        await axiosInstance.delete(`${API_BASE_URL}${APPROVAL_SERVICE}/category/${editingCategory.id}`);
         await Swal.fire({
           icon: 'success',
           title: '삭제 완료',
           text: '카테고리가 삭제되었습니다.',
         });
       } else if (editingCategory && editingCategory.id) {
-        await axiosInstance.put(
-          `${API_BASE_URL}${APPROVAL_SERVICE}/category/${editingCategory.id}`,
-          categoryData,
-        );
+        await axiosInstance.put(`${API_BASE_URL}${APPROVAL_SERVICE}/category/${editingCategory.id}`, categoryData);
         await Swal.fire('수정 완료', '카테고리가 수정되었습니다.', 'success');
       } else {
-        await axiosInstance.post(
-          `${API_BASE_URL}${APPROVAL_SERVICE}/category/create`,
-          categoryData,
-        );
+        await axiosInstance.post(`${API_BASE_URL}${APPROVAL_SERVICE}/category/create`, categoryData);
         await Swal.fire('등록 완료', '카테고리가 추가되었습니다.', 'success');
       }
 
@@ -176,13 +157,9 @@ const TemplateAdminPage = () => {
     if (!result.isConfirmed) return;
 
     try {
-      await axiosInstance.delete(
-        `${API_BASE_URL}${APPROVAL_SERVICE}/templates/${templateId}`,
-      );
+      await axiosInstance.delete(`${API_BASE_URL}${APPROVAL_SERVICE}/templates/${templateId}`);
       await Swal.fire('삭제 완료', '템플릿이 삭제되었습니다.', 'success');
-      setAllTemplates((prevTemplates) =>
-        prevTemplates.filter((t) => t.templateId !== templateId),
-      );
+      setAllTemplates(prevTemplates => prevTemplates.filter(t => t.templateId !== templateId));
     } catch (error) {
       console.error('Failed to delete template:', error);
       Swal.fire('삭제 실패', '템플릿 삭제에 실패했습니다.', 'error');
@@ -195,22 +172,18 @@ const TemplateAdminPage = () => {
 
   const renderCategoryList = () => {
     if (loading) {
-      return <li key='loading'>로딩 중...</li>;
+      return <li key="loading">로딩 중...</li>;
     }
     if (error) {
-      return (
-        <li key='error' className={styles.error}>
-          {error}
-        </li>
-      );
+      return <li key="error" className={styles.error}>{error}</li>;
     }
     if (categories.length === 0) {
-      return <li key='no-category'>카테고리가 없습니다.</li>;
+      return <li key="no-category">카테고리가 없습니다.</li>;
     }
 
     return [
       <li
-        key='all'
+        key="all"
         className={`${styles.categoryItem} ${selectedCategory === null ? styles.active : ''}`}
         onClick={() => handleCategoryClick(null)}
       >
@@ -224,11 +197,7 @@ const TemplateAdminPage = () => {
         >
           <div className={styles.categoryInfo}>
             <span className={styles.categoryName}>{cat.categoryName}</span>
-            {cat.categoryDescription && (
-              <span className={styles.categoryDesc}>
-                {cat.categoryDescription}
-              </span>
-            )}
+            {cat.categoryDescription && <span className={styles.categoryDesc}>{cat.categoryDescription}</span>}
           </div>
           <button
             className={styles.editButton}
@@ -247,18 +216,15 @@ const TemplateAdminPage = () => {
   return (
     <div className={styles.pageContainer}>
       {!isMobile && (
-        <aside className={styles.sidebar}>
-          <div className={styles.sidebarHeader}>
-            <h4>카테고리</h4>
-          </div>
-          <ul className={styles.categoryList}>{renderCategoryList()}</ul>
-          <button
-            onClick={handleOpenCreateModal}
-            className={styles.addCategoryButton}
-          >
-            + 카테고리 추가
-          </button>
-        </aside>
+      <aside className={styles.sidebar}>
+        <div className={styles.sidebarHeader}>
+          <h4>카테고리</h4>
+        </div>
+        <ul className={styles.categoryList}>
+          {renderCategoryList()}
+        </ul>
+        <button onClick={handleOpenCreateModal} className={styles.addCategoryButton}>+ 카테고리 추가</button>
+      </aside>
       )}
 
       <main className={styles.mainContent}>
@@ -270,27 +236,21 @@ const TemplateAdminPage = () => {
           <div className={styles.mobileCategoryFilter}>
             <select
               value={selectedCategory || 'all'}
-              onChange={(e) =>
-                handleCategoryClick(
-                  e.target.value === 'all' ? null : Number(e.target.value),
-                )
-              }
+              onChange={(e) => handleCategoryClick(e.target.value === 'all' ? null : Number(e.target.value))}
             >
-              <option value='all'>전체 카테고리</option>
-              {categories.map((cat) => (
-                <option key={cat.id} value={cat.id}>
-                  {cat.categoryName}
-                </option>
+              <option value="all">전체 카테고리</option>
+              {categories.map(cat => (
+                <option key={cat.id} value={cat.id}>{cat.categoryName}</option>
               ))}
             </select>
           </div>
         )}
-
+        
         <div className={styles.controls}>
           <div className={styles.searchBar}>
             <input
-              type='text'
-              placeholder='카테고리, 문서명으로 검색하세요.'
+              type="text"
+              placeholder="카테고리, 문서명으로 검색하세요."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -304,51 +264,32 @@ const TemplateAdminPage = () => {
             </button>
           </div>
           <div className={styles.actions}>
-            <button
-              className={styles.addButton}
-              onClick={() => navigate('/approval/admin/templates/new')}
-            >
-              + 양식 추가하기
-            </button>
+            <button className={styles.addButton} onClick={() => navigate('/approval/admin/templates/new')}>+ 양식 추가하기</button>
           </div>
         </div>
         <div className={styles.templateListContainer}>
           {templatesLoading && <p>로딩 중...</p>}
           {templatesError && <p className={styles.error}>{templatesError}</p>}
-          {!templatesLoading &&
-            !templatesError &&
-            filteredTemplates.map((template) => (
-              <div key={template.templateId} className={styles.templateItem}>
-                <div className={styles.checkboxContainer}>
-                  <input type='checkbox' />
+          {!templatesLoading && !templatesError && filteredTemplates.map(template => (
+            <div key={template.templateId} className={styles.templateItem}>
+              <div className={styles.checkboxContainer}>
+                <input type="checkbox" />
+              </div>
+              <div className={styles.templateDetails}>
+                <div className={styles.templateTitle}>
+                  {template.template.title}
+
                 </div>
-                <div className={styles.templateDetails}>
-                  <div className={styles.templateTitle}>
-                    {template.template.title}
-                  </div>
-                  <div className={styles.templateDescription}>
-                    {template.template.description}
-                  </div>
-                </div>
-                <div className={styles.templateActions}>
-                  <button
-                    onClick={() =>
-                      navigate(
-                        `/approval/admin/templates/edit/${template.templateId}`,
-                      )
-                    }
-                  >
-                    수정
-                  </button>
-                  <button
-                    onClick={() => handleDelete(template.templateId)}
-                    className={styles.deleteButton}
-                  >
-                    삭제
-                  </button>
+                <div className={styles.templateDescription}>
+                  {template.template.description}
                 </div>
               </div>
-            ))}
+              <div className={styles.templateActions}>
+                <button onClick={() => navigate(`/approval/admin/templates/edit/${template.templateId}`)}>수정</button>
+                <button onClick={() => handleDelete(template.templateId)} className={styles.deleteButton}>삭제</button>
+              </div>
+            </div>
+          ))}
           {!templatesLoading && filteredTemplates.length === 0 && (
             <div className={styles.noResults}>
               <p>표시할 문서 양식이 없습니다.</p>
@@ -366,4 +307,4 @@ const TemplateAdminPage = () => {
   );
 };
 
-export default TemplateAdminPage;
+export default TemplateAdminPage; 

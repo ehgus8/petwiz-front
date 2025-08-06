@@ -6,6 +6,9 @@
   // ★ 컨테이너 자체에서 줄바꿈을 허용하지 않도록 설정
   white-space: nowrap; 
   overflow: hidden; // 컨테이너를 벗어나는 내용은 숨김
+  flex-wrap: wrap;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .approverNode {
@@ -13,6 +16,10 @@
   flex-direction: row;
   align-items: center;
   gap: 4px; // 아이콘과 이름 사이 간격
+  flex-shrink: 0;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .statusIcon {
@@ -23,11 +30,16 @@
 .approverName {
   font-weight: 500;
   font-size: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 120px;
 }
 
 .arrow {
   font-size: 16px;
   color: #ccc; // 화살표 색상 연하게
+  flex-shrink: 0;
 }
 
 /* 상태별 색상 */
@@ -46,6 +58,10 @@
   font-size: 13px;
   color: #6c757d;
   font-weight: 400;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 80px;
 }
 .ellipsis {
   font-weight: 600;

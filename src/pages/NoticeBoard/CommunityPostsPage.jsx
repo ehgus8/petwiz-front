@@ -89,9 +89,9 @@ const CommunityPostsPage = () => {
                 console.log('viewMode : ', viewMode);
                 console.log('departmentId : ', departmentId);
                 if (viewMode === 'MY') {
-                    url = `${API_BASE_URL}${COMMUNITY_SERVICE}/my`;
+                    url = `${API_BASE_URL}${COMMUNITY_SERVICE}/my?${params.toString()}`;
                 } else if (viewMode === 'DEPT') {
-                    url = `${API_BASE_URL}${COMMUNITY_SERVICE}/mydepartment`;
+                    url = `${API_BASE_URL}${COMMUNITY_SERVICE}/mydepartment?${params.toString()}`;
                 } else {
                     url = `${API_BASE_URL}${COMMUNITY_SERVICE}?${params.toString()}`;
                 }
@@ -108,13 +108,19 @@ const CommunityPostsPage = () => {
                 console.log('data : ', data);
                 console.log('data.posts : ', data.posts);
 
-                if (viewMode === 'MY' || viewMode === 'DEPT') {
-                    setPosts(data || []); // 서버에서 단일 배열을 반환하므로 전체를 posts로 처리
-                    setTotalPages(1); // 페이징 미적용이므로 1로 고정
-                } else {
-                    setPosts(data.posts || []);
+                if (viewMode === 'MY') {
+                    setPosts(data.myposts || []); // 서버에서 단일 배열을 반환하므로 전체를 posts로 처리
                     setTotalPages(data.totalPages || 1);
+                } else {
+                    if (viewMode === 'DEPT') {
+                        setPosts(data.mydepposts || []); // 서버에서 단일 배열을 반환하므로 전체를 posts로 처리
+                        setTotalPages(data.totalPages || 1);
+                    } else {
+                        setPosts(data.posts || []);
+                        setTotalPages(data.totalPages || 1);
+                    }
                 }
+
             } catch (err) {
                 console.error('게시글 불러오기 실패:', err);
             } finally {

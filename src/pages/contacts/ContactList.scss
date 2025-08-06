@@ -225,6 +225,7 @@
   }
   .contact-org {
     width: 100vw;
+    min-height: fit-content !important;
     min-width: 0;
     border-right: none;
     border-bottom: 1px solid #e3e8ee;
@@ -255,6 +256,7 @@
   }
   .contact-main {
     padding: 12px 20px 12px 5px;
+    min-height: 100% !important;
   }
   .contact-search {
     flex-direction: column;

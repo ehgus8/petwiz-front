@@ -12,6 +12,7 @@ $border: #eceff3;
   min-height: 100vh;
   background: $main-bg;
   animation: fadeIn 0.8s ease-out;
+  overflow: visible; // 결재선이 잘리지 않도록 visible로 설정
 }
 
 @keyframes fadeIn {
@@ -43,6 +44,7 @@ $border: #eceff3;
   transform: none !important;
   margin: 0 !important;
   animation: slideInLeft 0.6s ease-out;
+  overflow-y: auto; // 사이드바 스크롤 활성화
 
   .logo {
     margin-bottom: 0;
@@ -243,7 +245,7 @@ $border: #eceff3;
       transition: background 0.16s;
 
       &:hover {
-        background: darken($accent, 8%);
+        background: darken(#3b82f6, 8%);
       }
     }
   }
@@ -256,7 +258,9 @@ $border: #eceff3;
     border-radius: 1.2rem;
     margin: 1.3rem;
     box-shadow: 0 2px 12px 0 rgba(44, 62, 80, 0.08);
-    overflow-x: auto;
+    overflow-x: visible; // 결재선이 잘리지 않도록 visible로 설정
+    overflow-y: auto; // 세로 스크롤 활성화
+    height: calc(100vh - 2.6rem); // 고정 높이 설정
 
     // 스크롤바 커스텀(크롬계열)
     &::-webkit-scrollbar {
@@ -331,6 +335,13 @@ $border: #eceff3;
 }
 
 @media (max-width: 431px) {
+  .header-user-desktop {
+    display: none !important;
+  }
+  .sidebar.sidebar--mobile-open .sidebar-logout-mobile {
+    display: block;
+  }
+  
   .main .header {
     min-height: fit-content;
   }
@@ -359,6 +370,109 @@ $border: #eceff3;
   }
 }
 
+@media (max-width: 360px) {
+  .layout,
+  .main,
+  .main .content,
+  .main .header {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+    overflow: visible !important; // 결재선이 잘리지 않도록 visible로 설정
+    margin: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+  body {
+    overflow: visible !important; // 결재선이 잘리지 않도록 visible로 설정
+  }
+}
+
+@media (max-width: 320px) {
+  .layout,
+  .main,
+  .main .content,
+  .main .header {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+    overflow: visible !important; // 결재선이 잘리지 않도록 visible로 설정
+    margin: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+  
+  .header {
+    padding: 0.5rem !important;
+    
+    .hamburger-btn {
+      left: 0.5rem;
+      top: 0.5rem;
+    }
+  }
+  
+  .sidebar {
+    width: 100vw !important;
+  }
+  
+  body {
+    overflow: visible !important; // 결재선이 잘리지 않도록 visible로 설정
+  }
+}
+.fab-container.fab-raised {
+  // 하단 탭 메뉴 높이(60px) + 기본 여백(2.5rem) 만큼 위로 올림
+  bottom: calc(70px + 2.5rem);
+}
+
+.nav a {
+  // Link 태그는 a 태그로 렌더링됩니다.
+  display: flex;
+  align-items: center;
+  gap: 12px; // 아이콘과 라벨 사이 간격
+}
+
+.menu-label {
+  flex-grow: 1; // 라벨이 남은 공간을 차지하도록
+}
+
+// 사이드바용 뱃지 스타일
+.sidebar-badge {
+  background-color: #dc3545;
+  color: white;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 7px;
+  border-radius: 10px;
+  line-height: 1;
+  margin-left: auto; // 오른쪽 끝으로 밀어냄
+}
+
+@media (max-width: 600px) {
+  .chatbot-fab,
+  .chatbot-popup {
+    display: none !important;
+  }
+}
+
+.header-user-desktop {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+}
+
+.sidebar-logout-mobile {
+  display: none;
+  width: 100%;
+  text-align: center;
+  margin-top: 2rem;
+}
+
+html,
+body {
+  overflow-x: hidden;
+}
 @media (max-width: 360px) {
   .main .header {
     padding: 0.4rem 0.1rem;
@@ -627,7 +741,7 @@ body {
   .main,
   .main .content,
   .main .header {
-    width: 100vw !important;
+    width: auto !important;
     max-width: 100vw !important;
     min-width: 0 !important;
     box-sizing: border-box !important;
@@ -641,6 +755,11 @@ body {
     }
   }
 
+  .main .content {
+    height: calc(100vh - 120px) !important; // 모바일에서 높이 조정
+    overflow-y: auto !important; // 세로 스크롤 활성화
+  }
+
   .header {
     .hamburger-btn {
       left: 0.1rem;
@@ -650,58 +769,5 @@ body {
 
   body {
     overflow-x: hidden !important;
-  }
-}
-
-@media (max-width: 360px) {
-  .layout,
-  .main,
-  .main .content,
-  .main .header {
-    width: 100vw !important;
-    max-width: 100vw !important;
-    min-width: 0 !important;
-    box-sizing: border-box !important;
-    overflow-x: hidden !important;
-    margin: 0 !important;
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-  }
-  body {
-    overflow-x: hidden !important;
-  }
-}
-.fab-container.fab-raised {
-  // 하단 탭 메뉴 높이(60px) + 기본 여백(2.5rem) 만큼 위로 올림
-  bottom: calc(70px + 2.5rem);
-}
-
-.nav a {
-  // Link 태그는 a 태그로 렌더링됩니다.
-  display: flex;
-  align-items: center;
-  gap: 12px; // 아이콘과 라벨 사이 간격
-}
-
-.menu-label {
-  flex-grow: 1; // 라벨이 남은 공간을 차지하도록
-}
-
-// 사이드바용 뱃지 스타일
-.sidebar-badge {
-  background-color: #dc3545;
-  color: white;
-  font-size: 11px;
-  font-weight: 600;
-  padding: 3px 7px;
-  border-radius: 10px;
-  line-height: 1;
-  margin-left: auto; // 오른쪽 끝으로 밀어냄
-}
-
-@media (max-width: 600px) {
-  .chatbot-fab,
-  .chatbot-popup {
-    display: none !important;
   }
 }

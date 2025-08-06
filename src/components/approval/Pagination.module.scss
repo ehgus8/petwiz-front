@@ -1,0 +1,78 @@
+/* /src/components/Pagination.module.scss */
+
+.paginationNav {
+    display: flex;
+    justify-content: center;
+  }
+  
+  /* ★★★ ul 태그의 기본 스타일(검은 점, 안쪽 여백)을 제거합니다. */
+  .paginationList {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    list-style: none; /* 검은 점 제거 */
+    padding: 0;      /* 브라우저 기본 패딩 제거 */
+    margin: 0;       /* 브라우저 기본 마진 제거 */
+  }
+  
+  .pageItem {
+    button,
+    span {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-width: 36px;
+      height: 36px;
+      padding: 0 12px;
+      font-size: 14px;
+      font-weight: 500;
+      border-radius: 6px;
+      transition: all 0.2s ease-in-out;
+    }
+  
+    button {
+      background-color: #ffffff;
+      border: 1px solid #dee2e6;
+      color: #495057;
+      cursor: pointer;
+  
+      &:hover {
+        background-color: #f8f9fa;
+        border-color: #adb5bd;
+      }
+    }
+  
+    /* 활성화된 페이지 버튼 스타일 */
+    &.active button {
+      background-color: #007bff;
+      border-color: #007bff;
+      color: #ffffff;
+      font-weight: 700;
+      box-shadow: 0 2px 4px rgba(0, 123, 255, 0.25);
+    }
+  
+    /* 비활성화된 버튼 스타일 */
+    &.disabled button {
+      background-color: #f8f9fa;
+      color: #ced4da;
+      cursor: not-allowed;
+      border-color: #e9ecef;
+    }
+    
+    /* ... (생략) 표시 스타일 */
+    &.ellipsis span {
+      color: #adb5bd;
+    }
+  }
+  
+  /* --- 반응형 (모바일) --- */
+  @media (max-width: 480px) {
+    .pageItem {
+      button, span {
+        min-width: 32px;
+        height: 32px;
+        padding: 0 8px;
+        font-size: 13px;
+      }
+    }
+  }

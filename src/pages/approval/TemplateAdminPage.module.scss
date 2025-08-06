@@ -224,8 +224,9 @@
 }
 
 .templateItem {
-    display: flex;
-    align-items: center;
+    display: flex;         /* 1. Flexbox 레이아웃 적용 */
+    align-items: center;   /* 2. 자식 요소들을 수직 중앙 정렬 */
+    gap: 1rem;             /* 3. 자식 요소들 사이의 간격 추가 */
     padding: 1.25rem 1rem;
     border-bottom: 1px solid #f1f3f5;
     transition: background-color 0.2s;
@@ -240,7 +241,8 @@
 }
 
 .checkboxContainer {
-    padding-right: 1.5rem;
+    flex-shrink: 0; /* 크기가 줄어들지 않도록 고정 */
+    padding-right: 0.5rem;
     input[type="checkbox"] {
         width: 18px;
         height: 18px;
@@ -248,16 +250,13 @@
 }
 
 .templateDetails {
-    flex-grow: 1;
+    flex-grow: 1;   /* 4. 남는 공간을 모두 차지 */
+    min-width: 0;   /* 5. 내용이 길어져도 줄어들 수 있도록 허용 (가장 중요!) */
 }
-
 .templateTitle {
     font-size: 1.05rem;
     font-weight: 600;
     color: #343a40;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
     margin-bottom: 0.25rem;
 }
 
@@ -280,9 +279,16 @@
 .templateDescription {
     font-size: 0.9rem;
     color: #6c757d;
+    /* 6. 단어가 길어져도 자연스럽게 줄바꿈되도록 설정 */
+    word-break: break-word; 
+    white-space: normal; /* 여러 줄 표시 허용 */
 }
 
 .templateActions {
+    flex-shrink: 0; /* 7. 버튼 영역은 크기가 줄어들지 않도록 고정 */
+    display: flex;
+    gap: 0.5rem;
+    
     button {
         background: #fff;
         border: 1px solid #ced4da;
@@ -350,44 +356,112 @@
   
     // 4. 템플릿 목록 아이템 스타일 조정
     .templateItem {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 12px;
-      padding: 16px;
+        display: flex;
+        /* 1. 자식 요소들을 수직 중앙에 정렬합니다. */
+        align-items: center; 
+        padding: 1.25rem 1rem;
+        border-bottom: 1px solid #f1f3f5;
+        transition: background-color 0.2s;
+        /* 2. 자식 요소들 사이에 간격을 줍니다. */
+        gap: 1rem; 
+    
+        &:last-child {
+            border-bottom: none;
+        }
+    
+        &:hover {
+            background-color: #fafafa;
+        }
     }
   
     .checkboxContainer {
-      display: none; // 모바일에서는 체크박스 숨김 (선택사항)
+        /* 체크박스는 크기가 변하지 않도록 합니다. */
+        flex-shrink: 0;
+        padding-right: 0.5rem; /* 오른쪽 여백 조정 */
+        
+        input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+        }
     }
-  
     .templateDetails {
-      width: 100%;
+        /* 3. 남는 공간을 모두 차지하도록 설정합니다. */
+        flex-grow: 1; 
+        /* 4. 내용이 길어져도 줄어들 수 있도록 허용합니다. (중요!) */
+        min-width: 0; 
     }
-  
+    
     .templateTitle {
-      font-size: 16px;
+        font-size: 1.05rem;
+        font-weight: 600;
+        color: #343a40;
+        margin-bottom: 0.25rem;
     }
-  
+    
     .templateDescription {
-      font-size: 13px;
+        font-size: 0.9rem;
+        color: #6c757d;
+        /* 5. 단어가 길어져도 자연스럽게 줄바꿈이 되도록 합니다. */
+        word-break: break-word; 
     }
-  
+    
     .templateActions {
-      width: 100%;
-      display: flex;
-      justify-content: flex-end; // 버튼을 오른쪽으로 정렬
-      gap: 8px;
+        /* 6. 버튼 영역은 크기가 줄어들지 않도록 고정합니다. */
+        flex-shrink: 0; 
+        display: flex;
+        gap: 0.5rem; /* 버튼 사이 간격 */
+    
+        button {
+            background: #fff;
+            border: 1px solid #ced4da;
+            color: #495057;
+            padding: 0.4rem 1rem;
+            font-size: 0.9rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s, border-color 0.2s;
+            /* 버튼 텍스트가 줄바꿈되지 않도록 합니다. */
+            white-space: nowrap; 
+    
+            &:hover {
+                background-color: #f8f9fa;
+                border-color: #adb5bd;
+            }
+            
+            &.deleteButton { // 삭제 버튼에만 특별히 스타일을 주고 싶을 때 사용
+                &:hover {
+                    border-color: #dc3545;
+                    color: #dc3545;
+                }
+            }
+        }
     }
-  }
-  .mobileCategoryFilter {
-    margin-bottom: 16px;
-  
-    select {
-      width: 100%;
-      padding: 12px;
-      font-size: 16px;
-      border: 1px solid #dee2e6;
-      border-radius: 6px;
-      background-color: #fff;
+    
+    .noResults {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        text-align: center;
+        color: #868e96;
+        font-size: 1rem;
+    } 
+    
+    /* --- 반응형 스타일은 기존 코드를 그대로 유지 --- */
+    @media (max-width: 768px) {
+        /* ... (기존 반응형 코드) ... */
+        .templateItem {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 12px;
+          padding: 16px;
+        }
+        
+        .templateActions {
+          width: 100%;
+          display: flex;
+          justify-content: flex-end;
+          gap: 8px;
+        }
     }
-  }
+}

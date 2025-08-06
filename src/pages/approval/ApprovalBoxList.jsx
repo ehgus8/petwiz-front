@@ -8,6 +8,7 @@ import EmptyState from '../../components/approval/EmptyState';
 import { FixedSizeList as List } from 'react-window';
 import useWindowDimensions from '../../hooks/useWindowDimensions';
 
+
 const ApprovalBoxList = () => {
   const { user } = useContext(UserContext);
   const navigate = useNavigate();

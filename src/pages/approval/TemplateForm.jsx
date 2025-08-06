@@ -234,7 +234,7 @@ const TemplateForm = () => {
   const handleAddFieldSelection = (type) => {
     setIsAddFieldModalOpen(false); // 모달 닫기
 
-    if (type === 'custom') {
+    if (type === 'text') {
       // '새 항목 직접 만들기'를 선택한 경우, 기존의 커스텀 필드 생성 모달을 엽니다.
       handleOpenCustomFieldModal(null);
     } else {

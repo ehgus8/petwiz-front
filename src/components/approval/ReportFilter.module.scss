@@ -11,7 +11,7 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
-  
+
   h3 {
     margin: 0;
     font-size: 16px;
@@ -29,7 +29,7 @@
   font-size: 12px;
   cursor: pointer;
   transition: background-color 0.2s;
-  
+
   &:hover {
     background: #5a6268;
   }
@@ -51,21 +51,22 @@
   align-items: center;
   gap: 12px;
   flex: 1;
-  
+
   label {
     font-weight: 500;
     color: #495057;
     min-width: 60px;
     font-size: 14px;
   }
-  
+
+  /* 모든 input과 select의 공통 스타일 */
   input, select {
     padding: 8px 12px;
     border: 1px solid #ddd;
     border-radius: 4px;
     font-size: 14px;
     transition: border-color 0.2s;
-    
+
     &:focus {
       outline: none;
       border-color: #4a7ae5;
@@ -78,10 +79,6 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  
-  input[type="date"] {
-    width: 140px;
-  }
 }
 
 .dateSeparator {
@@ -89,47 +86,57 @@
   font-weight: 500;
 }
 
+/* ★★★ 핵심 수정 부분 ★★★ */
+.dateInput {
+  width: 140px;
+  color: #868e96; /* 플레이스홀더와 비슷한 연한 색상 */
+
+  /* 플레이스홀더 스타일 지정 */
+  &::placeholder {
+    color: #868e96;
+    opacity: 1; /* 브라우저 기본 투명도 제거 */
+  }
+
+  /* 실제 값이 입력되었을 때 (날짜 선택 후) 텍스트 색상을 진하게 변경 */
+  &:not(:placeholder-shown) {
+    color: #212529;
+  }
+}
+
 .titleInput {
-  width: 250px;
+  flex: 1; /* 남은 공간을 모두 차지하도록 변경 */
+  max-width: 400px; /* 너무 길어지지 않도록 최대 너비 설정 */
 }
 
-.categorySelect {
-  width: 120px;
-}
-
+/* --- 반응형 --- */
 @media (max-width: 768px) {
   .filterContent {
-    gap: 12px;
+    gap: 16px;
+  }
+  
+  .filterRow, .filterItem {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
   }
   
   .filterItem {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 6px;
-    
+    width: 100%;
     label {
       min-width: auto;
     }
-    
-    input, select {
-      width: 100%;
-    }
   }
-  
+
+  .dateInputs, .titleInput {
+    width: 100%;
+  }
+
   .dateInputs {
-    flex-direction: column;
-    gap: 6px;
-    
-    input[type="date"] {
-      width: 100%;
-    }
+    gap: 8px;
   }
   
-  .titleInput {
+  /* ★★★ 반응형에서도 클래스 선택자로 변경 ★★★ */
+  .dateInput {
     width: 100%;
   }
-  
-  .categorySelect {
-    width: 100%;
-  }
-} 
+}

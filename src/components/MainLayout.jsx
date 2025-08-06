@@ -22,6 +22,7 @@ import {
 } from 'react-icons/fa';
 import { getDepartmentNameById } from '../common/hr';
 import { FaUserCircle } from 'react-icons/fa';
+import Swal from 'sweetalert2';
 
 const sidebarMenus = [
   {
@@ -92,7 +93,8 @@ export default function MainLayout() {
     departmentId,
     userRole,
     userPosition,
-    setCounts
+    setCounts,
+    counts
   } = useContext(UserContext);
   const [pendingReports, setPendingReports] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -107,6 +109,13 @@ export default function MainLayout() {
   const [departmentName, setDepartmentName] = useState('');
   const [showSidebar, setShowSidebar] = useState(false); // 모바일 사이드바 상태
   const [isInitialLoad, setIsInitialLoad] = useState(true);
+
+  // ★ counts가 업데이트될 때 unApprovalCount도 업데이트
+  useEffect(() => {
+    if (counts && counts.pending !== undefined) {
+      setUnApprovalCount(counts.pending);
+    }
+  }, [counts]);
 
   const sidebarMenus = [
     { to: '/notice', label: '공지사항', icon: <FaBullhorn style={{ color: '#ff8a80', opacity: 0.7 }} /> },
@@ -139,38 +148,6 @@ export default function MainLayout() {
     fetchUnreadCount();
   }, [user, location.pathname]);
 
-
-  useEffect(() => {
-    if (!user) return;
-    const fetchAllCounts = async () => {
-      try {
-        const countPromises = [
-          axiosInstance.get(`${API_BASE_URL}${APPROVAL_SERVICE}/reports`, { params: { role: 'approver', status: 'IN_PROGRESS', size: 1 } }),
-          axiosInstance.get(`${API_BASE_URL}${APPROVAL_SERVICE}/reports`, { params: { role: 'writer', status: 'IN_PROGRESS', size: 1 } }),
-          axiosInstance.get(`${API_BASE_URL}${APPROVAL_SERVICE}/reports`, { params: { role: 'writer', status: 'REJECTED', size: 1 } }),
-          axiosInstance.get(`${API_BASE_URL}${APPROVAL_SERVICE}/reports`, { params: { role: 'writer', status: 'DRAFT,RECALLED', size: 1 } }),
-          axiosInstance.get(`${API_BASE_URL}${APPROVAL_SERVICE}/reports/list/scheduled`, { params: { size: 1 } }),
-          axiosInstance.get(`${API_BASE_URL}${APPROVAL_SERVICE}/reports`, { params: { role: 'reference', size: 1 } }),
-        ];
-        const responses = await Promise.all(countPromises);
-        const newCounts = {
-          pending: responses[0].data.result?.totalElements || 0,
-          inProgress: responses[1].data.result?.totalElements || 0,
-          rejected: responses[2].data.result?.totalElements || 0,
-          drafts: responses[3].data.result?.totalElements || 0,
-          scheduled: responses[4].data.result?.totalElements || 0,
-          cc: responses[5].data.result?.totalElements || 0,
-          completed: 0,
-        };
-        setCounts(newCounts);
-        setUnApprovalCount(newCounts.pending);
-      } catch (err) {
-        console.error("문서함 개수 조회 실패:", err);
-      }
-    };
-    fetchAllCounts();
-  }, [user, location.pathname, setCounts]);
-
   // 3. (기존 코드 유지) 부서 이름 조회
   useEffect(() => {
     if (departmentId) {
@@ -182,47 +159,7 @@ export default function MainLayout() {
     }
   }, [departmentId]);
 
-  // 4. (기존 코드 유지) 예약 상신 알람 (폴링)
-  useEffect(() => {
-    if (!user) return;
-    const intervalId = setInterval(async () => {
-      try {
-        const res = await axiosInstance.get(`${API_BASE_URL}${APPROVAL_SERVICE}/reports`, {
-          params: { role: 'approver', status: 'IN_PROGRESS', size: 1 },
-        });
-        const newCount = res.data.result?.totalElements || 0;
-        if (!isInitialLoad && newCount > unApprovalCount) {
-          Swal.fire({
-            icon: 'info',
-            title: '새로운 결재 문서가 도착했습니다.',
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000,
-            timerProgressBar: true,
-          });
-        }
-        setUnApprovalCount(newCount);
-        if (isInitialLoad) {
-          setIsInitialLoad(false);
-        }
-      } catch (err) {
-        console.error("결재 문서 개수 폴링 중 오류 발생:", err);
-      }
-    }, 60000);
-    return () => clearInterval(intervalId);
-  }, [user, unApprovalCount, isInitialLoad]);
-
-  const roleMap = {
-    CEO: '대표',
-    HR_MANAGER: '인사담당',
-    EMPLOYEE: '사원',
-    ADMIN: '관리자',
-  };
-
-  // /src/components/MainLayout.jsx
-
-  // 예약 상신 알람 
+  // 4. 예약 상신 알람 (폴링) - counts를 사용하도록 수정
   useEffect(() => {
     if (!user) return;
 
@@ -234,14 +171,13 @@ export default function MainLayout() {
             params: {
               role: 'approver',
               status: 'IN_PROGRESS',
-              size: 1,
+              size: 1000, // 실제 데이터를 가져와서 개수를 세기
             },
           },
         );
+        
+        const newCount = res.data.result?.reports?.length || 0;
 
-        const newCount = res.data.result?.totalElements || 0;
-
-        // ★★★ 2. 알림 조건 수정 ★★★
         // 초기 로딩이 아니고, 새로운 개수가 이전 개수보다 많을 때 알림
         if (!isInitialLoad && newCount > unApprovalCount) {
           Swal.fire({
@@ -253,11 +189,19 @@ export default function MainLayout() {
             timer: 3000,
             timerProgressBar: true,
           });
+          
+          // counts 업데이트
+          if (counts) {
+            setCounts({
+              ...counts,
+              pending: newCount,
+            });
+          }
         }
 
         setUnApprovalCount(newCount);
 
-        // ★ 3. 첫 폴링 이후에는 초기 로딩 상태를 false로 변경 ★
+        // 첫 폴링 이후에는 초기 로딩 상태를 false로 변경
         if (isInitialLoad) {
           setIsInitialLoad(false);
         }
@@ -265,11 +209,20 @@ export default function MainLayout() {
       } catch (err) {
         console.error("결재 문서 개수 폴링 중 오류 발생:", err);
       }
-    }, 60000);
+    }, 30000); // 30초로 조정
 
     return () => clearInterval(intervalId);
 
-  }, [user, unApprovalCount, isInitialLoad]); // ★ 4. 의존성 배열에 isInitialLoad 추가
+  }, [user, unApprovalCount, isInitialLoad, counts, setCounts]);
+
+  const roleMap = {
+    CEO: '대표',
+    HR_MANAGER: '인사담당',
+    EMPLOYEE: '사원',
+    ADMIN: '관리자',
+  };
+
+
 
   return (
     <div className='layout'>
