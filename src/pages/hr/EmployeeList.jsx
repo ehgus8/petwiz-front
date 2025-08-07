@@ -416,25 +416,29 @@ export default function EmployeeList() {
                       }}
                     >
                       <span>{emp.name}</span>
-                      {evaluationStatus[emp.employeeId || emp.id] === false && (
-                        <span
-                          style={{
-                            background: '#ff5252',
-                            color: '#fff',
-                            borderRadius: '10px',
-                            fontSize: '0.62em',
-                            padding: '0 5px',
-                            marginTop: '3px',
-                            fontWeight: 600,
-                            letterSpacing: '0.01em',
-                            height: '16px',
-                            lineHeight: '16px',
-                            display: 'inline-block',
-                          }}
-                        >
-                          평가 필요
-                        </span>
-                      )}
+
+                      {/* ⬇️  퇴직자(isActive === false) 는 뱃지 숨김  */}
+                      {emp.isActive !== false && // 재직자만
+                        evaluationStatus[emp.employeeId || emp.id] ===
+                          false && (
+                          <span
+                            style={{
+                              background: '#ff5252',
+                              color: '#fff',
+                              borderRadius: '10px',
+                              fontSize: '0.62em',
+                              padding: '0 5px',
+                              marginTop: '3px',
+                              fontWeight: 600,
+                              letterSpacing: '0.01em',
+                              height: '16px',
+                              lineHeight: '16px',
+                              display: 'inline-block',
+                            }}
+                          >
+                            평가 필요
+                          </span>
+                        )}
                     </div>
                   </div>
                 </td>
