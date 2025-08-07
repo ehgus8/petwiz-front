@@ -113,7 +113,7 @@ const Weather = () => {
       try {
         // const url = `/api/getVilageFcst?serviceKey=${KMA_API_KEY}&pageNo=1&numOfRows=1000&dataType=JSON&base_date=${base_date}&base_time=${base_time}&nx=${rs.x}&ny=${rs.y}`;
         // const response = await axios.get(url);
-        const url = `/hr/getVilageFcst?pageNo=1&numOfRows=1000&dataType=JSON&base_date=${base_date}&base_time=${base_time}&nx=${rs.x}&ny=${rs.y}`;
+        const url = `/api/hr/getVilageFcst?pageNo=1&numOfRows=1000&dataType=JSON&base_date=${base_date}&base_time=${base_time}&nx=${rs.x}&ny=${rs.y}`;
         const response = await axios.get(url);
 
         const items = response.data.response.body.items.item;
