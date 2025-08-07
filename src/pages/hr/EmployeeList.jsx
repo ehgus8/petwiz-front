@@ -11,6 +11,7 @@ import { warn } from '../../common/common';
 import ModalPortal from '../../components/approval/ModalPortal';
 import styles from '../../components/approval/CategoryModal.module.scss';
 import pin from '../../assets/pin.jpg';
+import TransferHistoryModal from './TransferHistoryModal'; // 추가
 
 export default function EmployeeList() {
   const [mode, setMode] = useState('list'); // 'list', 'edit', 'eval'
@@ -35,6 +36,10 @@ export default function EmployeeList() {
   const [sortField, setSortField] = useState(null);
   const [sortOrder, setSortOrder] = useState('asc');
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+
+  // 인사이동 이력 모달 상태/데이터 추가
+  const [isTransferHistoryOpen, setIsTransferHistoryOpen] = useState(false);
+  const [transferHistoryList, setTransferHistoryList] = useState([]);
 
   useEffect(() => {
     getEmployeeList({
@@ -264,6 +269,20 @@ export default function EmployeeList() {
   const handleModalClose = () => {
     setIsDetailModalOpen(false);
     setSelectedId(null);
+  };
+
+  // *** 인사이동 이력 핸들러 ***
+  const handleTransferHistory = async (employee) => {
+    if (!employee?.employeeId) return;
+    try {
+      const res = await axiosInstance.get(
+        `${API_BASE_URL}${HR_SERVICE}/transfer-history/${employee.employeeId}`,
+      );
+      setTransferHistoryList(res.data.result || []);
+      setIsTransferHistoryOpen(true);
+    } catch (err) {
+      alert('이력 조회에 실패했습니다.');
+    }
   };
 
   // 전체 페이지 전환 분기
@@ -517,10 +536,20 @@ export default function EmployeeList() {
                 employee={selectedDetail}
                 onEdit={handleEdit}
                 onEval={handleEvalWithCheck}
-                onTransferHistory={() => {}}
+                onTransferHistory={handleTransferHistory} // 빈 함수 아님!
               />
             </div>
           </div>
+        </ModalPortal>
+      )}
+
+      {/* 인사이동 이력 모달 */}
+      {isTransferHistoryOpen && (
+        <ModalPortal>
+          <TransferHistoryModal
+            history={transferHistoryList}
+            onClose={() => setIsTransferHistoryOpen(false)}
+          />
         </ModalPortal>
       )}
     </>
