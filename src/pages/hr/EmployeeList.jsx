@@ -548,7 +548,7 @@ export default function EmployeeList() {
       {isTransferHistoryOpen && (
         <ModalPortal>
           <TransferHistoryModal
-            history={transferHistoryList}
+            employeeId={selectedDetail.employeeId ?? selectedDetail.id}
             onClose={() => setIsTransferHistoryOpen(false)}
           />
         </ModalPortal>
