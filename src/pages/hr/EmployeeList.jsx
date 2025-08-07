@@ -7,7 +7,7 @@ import './EmployeeList.scss';
 import axiosInstance from '../../configs/axios-config';
 import { API_BASE_URL, HR_SERVICE } from '../../configs/host-config';
 import { getDepartmentNameById } from '../../common/hr';
-import { warn } from '../../common/common';
+import { swalError, warn } from '../../common/common';
 import ModalPortal from '../../components/approval/ModalPortal';
 import styles from '../../components/approval/CategoryModal.module.scss';
 import pin from '../../assets/pin.jpg';
@@ -282,7 +282,8 @@ export default function EmployeeList() {
       setTransferHistoryList(res.data.result || []);
       setIsTransferHistoryOpen(true);
     } catch (err) {
-      alert('이력 조회에 실패했습니다.');
+      swalError('이력 조회에 실패했습니다.');
+      console.log(err, '이력조회실패에러');
     }
   };
 
