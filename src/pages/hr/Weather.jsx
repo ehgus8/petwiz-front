@@ -116,6 +116,7 @@ const Weather = () => {
         // const response = await axios.get(url);
         const url = `/api/hr/getVilageFcst?pageNo=1&numOfRows=1000&dataType=JSON&base_date=${base_date}&base_time=${base_time}&nx=${rs.x}&ny=${rs.y}`;
         const response = await axiosInstance.get(url);
+        console.log('날씨 API 응답:', response.data);
 
         const items = response.data.response.body.items.item;
 
