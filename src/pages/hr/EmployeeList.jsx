@@ -417,8 +417,8 @@ export default function EmployeeList() {
                     >
                       <span>{emp.name}</span>
 
-                      {/* ⬇️  퇴직자(isActive === false) 는 뱃지 숨김  */}
-                      {emp.isActive !== false && // 재직자만
+                      {/* “평가 필요” 뱃지 – 재직자만 표시 */}
+                      {!showInactive /* 퇴직자 화면이면 건너뜀 */ &&
                         evaluationStatus[emp.employeeId || emp.id] ===
                           false && (
                           <span
