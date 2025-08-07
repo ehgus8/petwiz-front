@@ -61,6 +61,11 @@ const Weather = () => {
         navigator.geolocation.getCurrentPosition(
           (position) => {
             fetchWeather(position.coords.latitude, position.coords.longitude);
+            console.log(
+              position.coords.latitude,
+              position.coords.longitude,
+              '여기임',
+            );
           },
           () => {
             setError(
