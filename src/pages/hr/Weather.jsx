@@ -142,7 +142,7 @@ const Weather = () => {
         setError(null);
       } catch (err) {
         setError('날씨 정보를 불러오는 데 실패했습니다.');
-        console.error(err);
+        console.error('날씨 왜 못불러오는데', err, '날씨 왜 못불러오는데');
       } finally {
         setLoading(false);
       }
