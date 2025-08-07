@@ -278,6 +278,7 @@ export default function EmployeeList() {
       const res = await axiosInstance.get(
         `${API_BASE_URL}${HR_SERVICE}/transfer-history/${employee.employeeId}`,
       );
+      console.log(employee, '임플로이');
       setTransferHistoryList(res.data.result || []);
       setIsTransferHistoryOpen(true);
     } catch (err) {
