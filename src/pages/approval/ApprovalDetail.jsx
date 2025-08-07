@@ -136,6 +136,7 @@ const ApprovalDetail = () => {
         comment: comment || (isApproved ? '승인합니다.' : ''),
       });
       await Swal.fire({ icon: 'success', title: '성공적으로 처리되었습니다.', confirmButtonText: '확인' });
+      await refetchCounts();
       fetchReportDetail();
     } catch (err) {
       await Swal.fire({
@@ -193,6 +194,8 @@ const ApprovalDetail = () => {
     try {
       await axiosInstance.post(`${API_BASE_URL}${APPROVAL_SERVICE}/reports/${reportId}/recall`);
       await Swal.fire({ icon: 'success', title: '회수 처리되었습니다.', confirmButtonText: '확인' });
+      await refetchCounts();
+      fetchReportDetail();
       navigate('/approval/drafts');
     } catch (err) {
       await Swal.fire({

@@ -6,7 +6,7 @@ import { API_BASE_URL, APPROVAL_SERVICE } from '../../configs/host-config';
 import ReportFilter from '../../components/approval/ReportFilter';
 import { useReportFilter } from '../../hooks/useReportFilter';
 import EmptyState from '../../components/approval/EmptyState';
-import Pagination from '../../components/Pagination';
+// Pagination removed: fetch all documents at once for global filtering
 import SkeletonCard from '../../components/approval/SkeletonCard';
 import { UserContext } from '../../context/UserContext';
 
@@ -16,32 +16,32 @@ const CompletedBox = () => {
   const [error, setError] = useState(null);
   const { user } = useContext(UserContext);
 
-  const [currentPage, setCurrentPage] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
-  // ★ 1. totalCount 상태를 제거합니다.
+  // 모든 문서를 가져오므로 페이지네이션 상태 제거
   
   const { filteredReports, handleFilterChange } = useReportFilter(completedDocs);
 
-  const fetchCompletedDocs = async (page = 0) => {
+  const fetchCompletedDocs = async () => {
     setLoading(true);
     setError(null);
     try {
       const response = await axiosInstance.get(
         `${API_BASE_URL}${APPROVAL_SERVICE}/reports`,
         {
-          params: { 
-            role: 'writer', status: 'APPROVED', sortBy: 'reportCreatedAt',
-            sortOrder: 'desc', page, size: 10
+          params: {
+            role: 'writer',
+            status: 'APPROVED',
+            sortBy: 'reportCreatedAt',
+            sortOrder: 'desc',
+            page: 0,
+            size: 1000,
           },
         }
       );
 
       if (response.data?.result) {
         // ★ 2. 응답에서 totalElements를 사용하지 않습니다.
-        const { reports, totalPages, number } = response.data.result;
+        const { reports } = response.data.result;
         setCompletedDocs(reports || []);
-        setTotalPages(totalPages || 0);
-        setCurrentPage(number || 0);
       } else {
         throw new Error('완료된 문서를 불러오지 못했습니다.');
       }
@@ -53,12 +53,8 @@ const CompletedBox = () => {
   };
 
   useEffect(() => {
-    if(user?.id) fetchCompletedDocs();
+    if (user?.id) fetchCompletedDocs();
   }, [user?.id]);
-
-  const handlePageChange = (newPage) => {
-    fetchCompletedDocs(newPage);
-  };
 
   return (
     <div className={styles.container}>
@@ -90,11 +86,7 @@ const CompletedBox = () => {
             <EmptyState icon="📁" message="완료된 문서가 없습니다." />
           )}
 
-          {totalPages > 1 && (
-            <div className={styles.paginationContainer}>
-              <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
-            </div>
-          )}
+          {/* Pagination removed to search across the entire document list */}
         </>
       )}
     </div>

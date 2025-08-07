@@ -66,9 +66,7 @@ function ApprovalNew() {
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false); // 예약 상신 모달
   const [isScheduling, setIsScheduling] = useState(false); // 예약 상신 중 상태
 
-   // ====================================================================================
-  // ★★★★★ 핵심 수정 지점: handleFinalSubmit 함수 ★★★★★
-  // ====================================================================================
+  
   const handleFinalSubmit = useCallback(async (isSubmit = false, isMovingAway = false) => {
     // 필수값 유효성 검사
     if (!formData.title || formData.title.trim() === '') {
@@ -111,7 +109,7 @@ function ApprovalNew() {
       submissionData = JSON.stringify(resubmitDto);
       console.log('[ApprovalNew] 재상신 API 호출 준비:', url, resubmitDto);
 
-    } else if (effectiveReportId && !isSubmit) {
+    } else if (effectiveReportId) {
       // 시나리오 2: 수정 후 '임시 저장' (PUT .../reports/{id})
       method = 'put';
       url = `${API_BASE_URL}${APPROVAL_SERVICE}/reports/${effectiveReportId}`;
@@ -123,7 +121,7 @@ function ApprovalNew() {
         approvalLine: approvalLine.map(a => ({ employeeId: a.id || a.employeeId, approvalContext: a.approvalContext })),
         references: references.map(r => ({ employeeId: r.id || r.employeeId })),
         attachments: attachments,
-        status: 'DRAFT', // 임시저장이므로 DRAFT
+        status: isSubmit ? 'IN_PROGRESS' : 'DRAFT', // ← 이 부분이 핵심!
       };
       submissionData = new FormData();
       submissionData.append('req', new Blob([JSON.stringify(updateDto)], { type: 'application/json' }));
@@ -175,18 +173,6 @@ function ApprovalNew() {
 
       if (res.data && (res.data.statusCode === 201 || res.data.statusCode === 200)) {
         setIsDirty(false);
-
-        // [추가] 수정 후 상신/예약 시, 기존 임시저장 문서 삭제
-        if (originalReportIdToDelete) {
-          try {
-            await axiosInstance.delete(`${API_BASE_URL}${APPROVAL_SERVICE}/reports/${originalReportIdToDelete}`);
-            console.log(`[ApprovalNew] 원본 임시저장 문서(ID: ${originalReportIdToDelete}) 삭제 성공`);
-          } catch (deleteErr) {
-            console.error(`[ApprovalNew] 원본 임시저장 문서(ID: ${originalReportIdToDelete}) 삭제 실패:`, deleteErr);
-            // 삭제 실패는 사용자에게 알리지 않아도 될 수 있음 (백그라운드 처리)
-          }
-        }
-
         await Swal.fire({ icon: 'success', title: successMessage });
         navigate(isSubmit ? '/approval/home' : '/approval/drafts');
       } else {
@@ -201,10 +187,7 @@ function ApprovalNew() {
       if (isSubmit) setIsSubmitting(false); else setIsSaving(false);
     }
   }, [formData, template, approvalLine, references, files, attachments, navigate, effectiveReportId, resubmitId]);
-  // ====================================================================================
-  // ★★★★★ 수정 종료 지점 ★★★★★
-  // ====================================================================================
-  
+
   const shouldBlock = !loading && isDirty;
   const blocker = useBlocker(shouldBlock);
 

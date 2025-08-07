@@ -54,6 +54,26 @@ const NoticeBoardList = () => {
     const [deletingId, setDeletingId] = useState(null); // 삭제 중인 공지 ID
     const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
 
+    const DateInput = ({ name, value, onChange, placeholder }) => {
+        const [type, setType] = useState('text');
+
+        return (
+            <input
+                className="custom-date-input"
+                type={type}
+                name={name}
+                value={value}
+                placeholder={placeholder}
+                onFocus={() => setType('date')}
+                onBlur={() => {
+                    if (!value) setType('text');
+                }}
+                onChange={onChange}
+            />
+        );
+    };
+
+
     const filteredNotices = showFavoritesOnly
         ? notices.filter(notices => favoriteList.includes(notices.noticeId))
         : notices;
@@ -210,12 +230,23 @@ const NoticeBoardList = () => {
             <div className="header">
                 <h2>공지사항</h2>
                 <div className="filters">
-                    <input type="date" name="startDate" value={filters.startDate}
-                        onChange={handleInputChange}
-                        onKeyDown={(e) => { if (e.key === 'Enter') handleSearch(); }} />
-                    <input type="date" name="endDate" value={filters.endDate}
-                        onChange={handleInputChange}
-                        onKeyDown={(e) => { if (e.key === 'Enter') handleSearch(); }} />
+                    <div className="date-wrapper">
+                        <DateInput
+                            name="startDate"
+                            value={filters.startDate}
+                            onChange={handleInputChange}
+                            placeholder="시작일"
+                        />
+                    </div>
+                    <div className="date-wrapper">
+                        <DateInput
+                            name="endDate"
+                            value={filters.endDate}
+                            onChange={handleInputChange}
+                            placeholder="종료일"
+                        />
+                    </div>
+
                     <input type="text" name="keyword" value={filters.keyword} placeholder="제목 검색"
                         onChange={handleInputChange}
                         onKeyDown={(e) => { if (e.key === 'Enter') handleSearch(); }} />
@@ -275,17 +306,6 @@ const NoticeBoardList = () => {
                         <button className={viewMode === 'SCHEDULE' ? 'active' : ''} onClick={() => { setViewMode('SCHEDULE'); setPage(0); navigate(`/notice/schedule`) }}>
                             예약목록
                         </button>
-                        {/* <button onClick={() => setShowFavoritesOnly(prev => !prev)}>
-                            {showFavoritesOnly ? '전체 보기' : '즐겨찾기만 보기'}
-                        </button> */}
-                        {/* <label className="favorite-toggle">
-                            <input
-                                type="checkbox"
-                                checked={showFavoritesOnly}
-                                onChange={(e) => setShowFavoritesOnly(e.target.checked)}
-                            />
-                            <span>즐겨찾기</span>
-                        </label> */}
                         <button
                             className="favorite-toggle-icon"
                             onClick={() => setShowFavoritesOnly(prev => !prev)}

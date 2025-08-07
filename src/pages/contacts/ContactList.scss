@@ -256,7 +256,7 @@
   }
   .contact-main {
     padding: 12px 20px 12px 5px;
-    min-height: 100% !important;
+    // min-height: 100% !important; << 이중 스크롤 문제의 원인
   }
   .contact-search {
     flex-direction: column;
@@ -314,66 +314,66 @@
     padding: 18px 0;
   }
 }
-@media (max-width: 360px) {
-  .contact-org {
-    padding: 8px 2px;
-    h3 {
-      font-size: 0.92rem;
-      margin-right: 6px;
-    }
-    ul {
-      gap: 8px;
-      margin-left: 5px;
-    }
-    ul li {
-      font-size: 0.9rem;
-      padding: 4px 6px;
-    }
-  }
-  .contact-main {
-    padding: 4px 22px 4px 6px;
-  }
-  .contact-search {
-    font-size: 0.92rem;
-    padding: 6px 2px;
-  }
-  .contact-search select,
-  .contact-search input {
-    font-size: 0.92rem;
-    padding: 4px 5px;
-  }
-  .contact-search button {
-    font-size: 0.92rem;
-    padding: 5px 6px;
-  }
-  .contact-list {
-    gap: 7px;
-  }
-  .contact-card {
-    padding: 7px 2px 7px 2px;
-    min-height: 60px;
-  }
-  .contact-profile {
-    width: 36px;
-    height: 36px;
-    margin-right: 5px;
-  }
-  .contact-info b {
-    font-size: 0.92rem;
-  }
-  .contact-info span {
-    font-size: 0.85rem;
-    margin-left: 2px;
-  }
-  .contact-info div {
-    font-size: 0.9rem;
-  }
-  .contact-pagination button {
-    font-size: 0.9rem;
-    padding: 4px 4px;
-  }
-  .no-result {
-    font-size: 0.92rem;
-    padding: 10px 0;
-  }
-}
+// @media (max-width: 360px) {
+//   .contact-org {
+//     padding: 8px 2px;
+//     h3 {
+//       font-size: 0.92rem;
+//       margin-right: 6px;
+//     }
+//     ul {
+//       gap: 8px;
+//       margin-left: 5px;
+//     }
+//     ul li {
+//       font-size: 0.9rem;
+//       padding: 4px 6px;
+//     }
+//   }
+//   .contact-main {
+//     padding: 4px 22px 4px 6px;
+//   }
+//   .contact-search {
+//     font-size: 0.92rem;
+//     padding: 6px 2px;
+//   }
+//   .contact-search select,
+//   .contact-search input {
+//     font-size: 0.92rem;
+//     padding: 4px 5px;
+//   }
+//   .contact-search button {
+//     font-size: 0.92rem;
+//     padding: 5px 6px;
+//   }
+//   .contact-list {
+//     gap: 7px;
+//   }
+//   .contact-card {
+//     padding: 7px 2px 7px 2px;
+//     min-height: 60px;
+//   }
+//   .contact-profile {
+//     width: 36px;
+//     height: 36px;
+//     margin-right: 5px;
+//   }
+//   .contact-info b {
+//     font-size: 0.92rem;
+//   }
+//   .contact-info span {
+//     font-size: 0.85rem;
+//     margin-left: 2px;
+//   }
+//   .contact-info div {
+//     font-size: 0.9rem;
+//   }
+//   .contact-pagination button {
+//     font-size: 0.9rem;
+//     padding: 4px 4px;
+//   }
+//   .no-result {
+//     font-size: 0.92rem;
+//     padding: 10px 0;
+//   }
+// }

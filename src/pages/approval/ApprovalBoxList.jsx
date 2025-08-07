@@ -61,15 +61,15 @@ const ApprovalBoxList = () => {
  
       const response = await axiosInstance.get(
         `${API_BASE_URL}${APPROVAL_SERVICE}/reports`,
-        { params } 
+        { params },
       );
- 
-      // 백엔드의 CommonResDto에 맞춰 'data'를 사용하고, 페이징 정보도 저장합니다.
-      if (response.data?.data) {
+
+      // 백엔드의 CommonResDto는 데이터를 'result' 필드로 제공한다.
+      if (response.data?.result) {
         setPageData({
-          reports: response.data.data.reports || [],
-          totalPages: response.data.data.totalPages || 0,
-          totalElements: response.data.data.totalElements || 0,
+          reports: response.data.result.reports || [],
+          totalPages: response.data.result.totalPages || 0,
+          totalElements: response.data.result.totalElements || 0,
         });
       } else {
         setPageData({ reports: [], totalPages: 0, totalElements: 0 });
@@ -91,7 +91,9 @@ const ApprovalBoxList = () => {
   const groupReportsByDate = useCallback((reportsToGroup) => {
     if (!reportsToGroup) return {};
     return reportsToGroup.reduce((acc, report) => {
-      const date = new Date(report.createdAt).toLocaleDateString('ko-KR', {
+      const date = new Date(
+        report.reportCreatedAt || report.createdAt,
+      ).toLocaleDateString('ko-KR', {
         year: 'numeric',
         month: 'long',
         day: 'numeric',
@@ -139,7 +141,7 @@ const ApprovalBoxList = () => {
           {report.name || '정보 없음'}
         </div>
         <div className={styles.itemCell} style={{ flex: 1 }}>
-          {new Date(report.createdAt).toLocaleDateString()}
+          {new Date(report.reportCreatedAt || report.createdAt).toLocaleDateString()}
         </div>
         <div className={styles.itemCell} style={{ flex: 1 }}>
           <span className={`${styles.status} ${styles[report.reportStatus?.toLowerCase() || '']}`}>

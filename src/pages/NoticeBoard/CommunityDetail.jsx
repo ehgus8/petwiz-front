@@ -313,7 +313,7 @@ const CommunityDetail = () => {
 
 
     useEffect(() => {
-        if (!isInit || !accessToken) return;
+        // if (!isInit || !accessToken) return;
 
         const fetchPost = async () => {
             try {

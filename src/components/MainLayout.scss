@@ -368,24 +368,24 @@ $border: #eceff3;
   }
 }
 
-@media (max-width: 360px) {
-  .layout,
-  .main,
-  .main .content,
-  .main .header {
-    width: 100vw !important;
-    max-width: 100vw !important;
-    min-width: 0 !important;
-    box-sizing: border-box !important;
-    overflow: visible !important; // 결재선이 잘리지 않도록 visible로 설정
-    margin: 0 !important;
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-  }
-  body {
-    overflow: visible !important; // 결재선이 잘리지 않도록 visible로 설정
-  }
-}
+// @media (max-width: 360px) {
+//   .layout,
+//   .main,
+//   .main .content,
+//   .main .header {
+//     width: 100vw !important;
+//     max-width: 100vw !important;
+//     min-width: 0 !important;
+//     box-sizing: border-box !important;
+//     overflow: visible !important; // 결재선이 잘리지 않도록 visible로 설정
+//     margin: 0 !important;
+//     padding-left: 0 !important;
+//     padding-right: 0 !important;
+//   }
+//   body {
+//     overflow: visible !important; // 결재선이 잘리지 않도록 visible로 설정
+//   }
+// }
 
 @media (max-width: 320px) {
   .layout,
@@ -471,19 +471,19 @@ html,
 body {
   overflow-x: hidden;
 }
-@media (max-width: 360px) {
-  .main .header {
-    padding: 0.4rem 0.1rem;
-    .menu {
-      gap: 0.2rem;
-      a {
-        font-size: 0.88rem;
-        padding: 0.15rem 0.2rem;
-        max-width: 70px;
-      }
-    }
-  }
-}
+// @media (max-width: 360px) {
+//   .main .header {
+//     padding: 0.4rem 0.1rem;
+//     .menu {
+//       gap: 0.2rem;
+//       a {
+//         font-size: 0.88rem;
+//         padding: 0.15rem 0.2rem;
+//         max-width: 70px;
+//       }
+//     }
+//   }
+// }
 
 .notice-icon {
   position: relative;

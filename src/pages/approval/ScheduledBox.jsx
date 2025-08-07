@@ -76,9 +76,7 @@ const ScheduledBox = () => {
             title: '예약이 취소되었습니다.',
             text: '문서가 회수되어 임시저장 상태로 변경되었습니다.'
           });
-
           await refetchCounts();
-          // 목록을 새로고침하여 취소된 문서를 즉시 반영
           fetchScheduledDocs(currentPage);
         } else {
           throw new Error(response.data?.statusMessage || '예약 취소에 실패했습니다.');

@@ -217,8 +217,6 @@
 
   .notice-row {
     background-color: #eef3ff;
-    // font-weight: bold;
-    // color: #21429e;
   }
 
   .divider-row td {
@@ -319,10 +317,8 @@
     font-family: inherit; // ✅ 전체 글꼴과 동일하게
     cursor: pointer;
     user-select: none;
-    // margin-right: 5px;
     padding: 6px 12px;
     border: 0px solid #ccc;
-    // background-color: #f3f3f3;
 
     input[type='checkbox'] {
       width: 16px;
@@ -423,4 +419,26 @@
 .star {
   animation: pop 0.3s ease-in-out;
   color: #bbb;
+}
+
+.date-wrapper {
+  display: inline-block;
+  max-width: 140px !important;
+  margin-right: 0px !important;
+}
+
+.custom-date-input {
+  max-width: 140px !important;
+  width: 100% !important;
+  padding: 10px 12px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: white;
+  color: #000;
+  box-sizing: border-box;
+
+  &::placeholder {
+    color: #999;
+  }
 }

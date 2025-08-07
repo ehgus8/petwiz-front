@@ -74,7 +74,7 @@ const ApprovalHome = () => {
           drafts: getTotalElements(draftRes) + getTotalElements(recalledRes),
           scheduled: getTotalElements(scheduledRes),
           cc: getTotalElements(ccRes),
-          completed: getTotalElements(completedWriterRes) + getTotalElements(completedApproverRes),
+          completed: getTotalElements(completedWriterRes),
         };
 
         setCounts(newCounts);

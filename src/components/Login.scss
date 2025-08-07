@@ -103,22 +103,22 @@
   }
 }
 
-@media (max-width: 360px) {
-  .login-box {
-    padding: 1.2rem 0.5rem;
-    max-width: 99vw;
-  }
-  .logo {
-    width: 70px;
-  }
-  .login-form input[type='email'],
-  .login-form input[type='password'],
-  .login-form input[type='text'] {
-    font-size: 0.85rem;
-    padding: 0.35rem;
-  }
-  .login-form button {
-    font-size: 0.9rem;
-    padding: 0.35rem 0.6rem;
-  }
-}
+// @media (max-width: 360px) {
+//   .login-box {
+//     padding: 1.2rem 0.5rem;
+//     max-width: 99vw;
+//   }
+//   .logo {
+//     width: 70px;
+//   }
+//   .login-form input[type='email'],
+//   .login-form input[type='password'],
+//   .login-form input[type='text'] {
+//     font-size: 0.85rem;
+//     padding: 0.35rem;
+//   }
+//   .login-form button {
+//     font-size: 0.9rem;
+//     padding: 0.35rem 0.6rem;
+//   }
+// }

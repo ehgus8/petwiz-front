@@ -11,7 +11,7 @@ import Pagination from '../../components/approval/Pagination';
 import SkeletonCard from '../../components/approval/SkeletonCard';
 
 const ApprovalPendingList = () => {
-  const [scheduledDocs, setScheduledDocs] = useState([]);
+  
   const [pendingReports, setPendingReports] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);

@@ -42,14 +42,18 @@ export const UserContextProvider = (props) => {
 
     try {
       const res = await axiosInstance.get(
-        '${API_BASE_URL}${APPROVAL_SERVICE}/reports/counts',
-        { headers: { Authorization: 'Bearer ${token}' } },
+        `${API_BASE_URL}${APPROVAL_SERVICE}/reports/counts`,
+        { headers: { Authorization: `Bearer ${token}` } },
       );
       if (res.data?.statusCode === 200) {
         const newCounts = res.data.result;
         setCounts(newCounts);
         localStorage.setItem('APPROVAL_COUNTS', JSON.stringify(newCounts));
+        console.log("📦 localStorage counts:", localStorage.getItem('APPROVAL_COUNTS'));
+        console.log("🎯 API counts:", newCounts);
+        console.log("📣 refetchCounts 호출됨");
       }
+
     } catch (err) {
       console.error('문서함 개수 조회 실패:', err);
     }
@@ -200,18 +204,17 @@ export const UserContextProvider = (props) => {
     };
   }, [refetchCounts]);
 
-  const fetchCounts = async (token) => {
+  const fetchCounts = async () => {
     try {
       const res = await axiosInstance.get(
-        `${API_BASE_URL}${APPROVAL_SERVICE}/reports/counts`,
+        `${API_BASE_URL}${APPROVAL_SERVICE}/reports/counts`
       );
-      if (res.data?.statusCode === 200) {
+      if (res.data?.statusCode === 200 && res.data.result) {
         const newCounts = res.data.result;
-
-        console.log('✅ [UserContext] 사이드바 개수 API 응답:', newCounts);
-
         setCounts(newCounts);
         localStorage.setItem('APPROVAL_COUNTS', JSON.stringify(newCounts));
+        console.log("📦 localStorage counts:", localStorage.getItem('APPROVAL_COUNTS'));
+        console.log("🎯 API counts:", newCounts);
       }
     } catch (err) {
       console.error('문서함 개수 조회 실패:', err);

@@ -12,6 +12,10 @@ export default function ApprovalRequestTabs() {
   const [reportList, setReportList] = useState([]);
   const [reportLoading, setReportLoading] = useState(false);
 
+  const truncateTitle = (title, maxLength = 13) => {
+    return title.length > maxLength ? `${title.slice(0, maxLength)}...` : title;
+  };
+
   // 결재요청 목록 API 호출
   useEffect(() => {
     if (approvalTab !== '결재요청' && approvalTab !== '미승인결재') return;
@@ -91,7 +95,7 @@ export default function ApprovalRequestTabs() {
                     <td>
                       <span style={{ color: '#1976d2', cursor: 'pointer', textDecoration: 'underline' }}
                         onClick={() => navigate(`/approval/reports/${report.id}`)}>
-                        {parsedTitle}
+                        {truncateTitle(parsedTitle)}
                       </span>
                     </td>
                     <td>
@@ -107,7 +111,7 @@ export default function ApprovalRequestTabs() {
                     <td>
                       {report.approvalLine && report.approvalLine.length > 0
                         ? report.approvalLine[report.approvalLine.length - 1]
-                            .employeeName
+                          .employeeName
                         : '-'}
                     </td>
                   </tr>
@@ -146,7 +150,7 @@ export default function ApprovalRequestTabs() {
                 }
                 return (
                   <tr key={report.id || idx}>
-                    <td>{parsedTitle}</td>
+                    <td>{truncateTitle(parsedTitle)}</td>
                     <td>
                       {report.reportCreatedAt
                         ? report.reportCreatedAt.slice(0, 10)
@@ -160,7 +164,7 @@ export default function ApprovalRequestTabs() {
                     <td>
                       {report.approvalLine && report.approvalLine.length > 0
                         ? report.approvalLine[report.approvalLine.length - 1]
-                            .employeeName
+                          .employeeName
                         : '-'}
                     </td>
                   </tr>

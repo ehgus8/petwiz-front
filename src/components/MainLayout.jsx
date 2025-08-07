@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import logo from '../assets/hrhub_logo.png';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import './MainLayout.scss';
@@ -23,6 +23,8 @@ import {
 import { getDepartmentNameById } from '../common/hr';
 import { FaUserCircle } from 'react-icons/fa';
 import Swal from 'sweetalert2';
+import ModalPortal from '../components/approval/ModalPortal';
+import NewPendingModal from '../components/approval/NewPendingModal';
 
 const sidebarMenus = [
   {
@@ -106,6 +108,14 @@ export default function MainLayout() {
   const [showSidebar, setShowSidebar] = useState(false); // 모바일 사이드바 상태
   const [isInitialLoad, setIsInitialLoad] = useState(true);
 
+
+  const [prevPendingCount, setPrevPendingCount] = useState(counts?.pending || 0);
+  const [newPendingReportId, setNewPendingReportId] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+
+  const isFirstLoad = useRef(true);
+  const isFirstUpdate = useRef(true);
+
   const sidebarMenus = [
     {
       to: '/notice',
@@ -163,15 +173,13 @@ export default function MainLayout() {
       setDepartmentName('');
     }
   }, [departmentId]);
+
   useEffect(() => {
-    if (!refetchCounts) return; // refetchCounts 함수가 없을 경우를 대비한 방어 코드
+    if (!refetchCounts) return; 
 
     const handleVisibilityChange = () => {
-      // document.hidden이 false이면, 탭이 다시 화면에 보인다는 의미
-      if (document.visibilityState === 'visible') {
-        console.log('👀 Tab is visible again, refetching counts...');
+  
         refetchCounts();
-      }
     };
 
     // 이벤트 리스너 등록
@@ -192,9 +200,61 @@ export default function MainLayout() {
     ADMIN: '관리자',
   };
 
+ useEffect(() => {
+    if (!userId) return; // 유저 정보 준비 전엔 스킵
+
+    // counts.pending이 숫자로 확실히 들어온 뒤에 비교 시작
+    if (typeof counts.pending !== 'number') {
+      return;
+    }
+
+    // 2) 첫 비교는 스킵
+    if (isFirstUpdate.current) {
+      isFirstUpdate.current = false;
+      setPrevPendingCount(counts.pending);
+      return;
+    }
+
+    // 3) 이후에만 pending 증가 감지
+    if (counts.pending > prevPendingCount) {
+      axiosInstance.get(
+        `/reports`,
+        {
+          params: {
+            role: 'approver',
+            status: 'IN_PROGRESS',
+            page: 0,
+            size: 1,
+            sortBy: 'reportCreatedAt',
+            sortOrder: 'desc'
+          },
+          headers: { Authorization: `Bearer ${accessToken}` }
+        }
+      ).then(res => {
+        const latest = res.data?.result?.reports?.[0];
+        if (latest?.id) {
+          setNewPendingReportId(latest.id);
+          setShowModal(true);
+          setTimeout(() => setShowModal(false), 5000);
+        }
+      }).catch(console.error);
+    }
+
+    setPrevPendingCount(counts.pending);
+  }, [counts.pending, userId, accessToken, prevPendingCount]);
+
   return (
+    <>
+    {showModal && newPendingReportId && (
+      <ModalPortal>
+        <NewPendingModal
+          reportId={newPendingReportId}
+          onClose={() => setShowModal(false)}
+        />
+      </ModalPortal>
+    )}
     <div className='layout'>
-      {/* 데스크탑/태블릿 사이드바 */}
+      
       <aside className={`sidebar${showSidebar ? ' sidebar--mobile-open' : ''}`}>
         <div className='logo' onClick={() => navigate('/dashboard')}>
           <img src={logo} alt='hrhub' />
@@ -346,5 +406,6 @@ export default function MainLayout() {
         </div>
       </div>
     </div>
+    </>
   );
 }

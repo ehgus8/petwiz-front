@@ -53,10 +53,28 @@ const CommunityPostsPage = () => {
   const [loading, setLoading] = useState(false);
   const [reportCount, setReportCount] = useState(0);
 
-  // 제목 자르기
-  const truncateTitle = (title, maxLength = 35) => {
-    return title.length > maxLength ? `${title.slice(0, maxLength)}...` : title;
-  };
+    const DateInput = ({ name, value, onChange, placeholder }) => {
+        const [type, setType] = useState('text');
+
+        return (
+            <input
+                className="custom-date-input"
+                type={type}
+                name={name}
+                value={value}
+                placeholder={placeholder}
+                onFocus={() => setType('date')}
+                onBlur={() => {
+                    if (!value) setType('text');
+                }}
+                onChange={onChange}
+            />
+        );
+    };
+
+    const truncateTitle = (title, maxLength = 35) => {
+        return title.length > maxLength ? `${title.slice(0, maxLength)}...` : title;
+    };
 
   // 게시글 불러오는 함수 (비동기, useEffect에서 호출)
   const fetchPosts = async () => {
@@ -179,28 +197,139 @@ const CommunityPostsPage = () => {
     setFilters((prev) => ({ ...prev, [name]: value }));
   };
   const handleSearch = () => setPage(0);
-  const handlePageSizeChange = (e) => {
-    setPageSize(Number(e.target.value));
-    setPage(0);
-  };
 
-  return (
-    <div className='notice-board'>
-      <div className='header'>
-        {userRole === 'HR_MANAGER' &&
-          (userPosition === 'MANAGER' ||
-            userPosition === 'DIRECTOR' ||
-            userPosition === 'CEO') && (
-            <div className='admin-controls'>
-              <button
-                className='manage-button'
-                onClick={() => navigate('/report/admin/list')}
-              >
-                🔧 게시글 관리
-                {reportCount > 0 && (
-                  <span className='report-badge'>{reportCount}</span>
-                )}
-              </button>
+    const handlePageSizeChange = (e) => {
+        console.log('Number(e.target.value) : ', Number(e.target.value));
+        setPageSize(Number(e.target.value));
+        setPage(0); // 첫 페이지로 초기화
+    };
+
+    return (
+        <div className="notice-board">
+            <div className="header">
+                {userRole === 'HR_MANAGER' &&
+                    (userPosition === 'MANAGER' || userPosition === 'DIRECTOR' || userPosition === 'CEO') && (
+                        <div className="admin-controls">
+                            <button
+                                className="manage-button"
+                                onClick={() => navigate('/report/admin/list')}
+                            >
+                                🔧 게시글 관리
+                                {reportCount > 0 && <span className="report-badge">{reportCount}</span>}
+                            </button>
+                        </div>
+                    )}
+                <h2>게시판</h2>
+                <div className="filters">
+                    <div className="date-wrapper">
+                        <DateInput
+                            name="startDate"
+                            value={filters.startDate}
+                            onChange={handleInputChange}
+                            placeholder="시작일"
+                        />
+                    </div>
+                    <div className="date-wrapper">
+                        <DateInput
+                            name="endDate"
+                            value={filters.endDate}
+                            onChange={handleInputChange}
+                            placeholder="종료일"
+                        />
+                    </div>
+                    <input type="text"
+                        name="keyword"
+                        value={filters.keyword}
+                        placeholder="제목 검색"
+                        onChange={handleInputChange}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') handleSearch();
+                        }}
+                    />
+
+                    <div className="sort-options" style={{ display: 'flex', alignItems: 'center' }}>
+                        <select
+                            name="sortBy"
+                            value={filters.sortBy}
+                            onChange={(e) => setFilters(prev => ({ ...prev, sortBy: e.target.value }))}
+                        >
+                            <option value="createdAt">등록일</option>
+                            <option value="title">제목</option>
+                            <option value="viewCount">조회수</option>
+                        </select>
+
+                        <button
+                            onClick={() =>
+                                setFilters(prev => ({
+                                    ...prev,
+                                    sortDir: prev.sortDir === 'asc' ? 'desc' : 'asc'
+                                }))
+                            }
+                            style={{
+                                // marginLeft: '8px',
+                                background: 'none',
+                                border: 'none',
+                                cursor: 'pointer',
+                                fontSize: '1.2em',
+                            }}
+                            title={filters.sortDir === 'asc' ? '오름차순' : '내림차순'}
+                        >
+                            {filters.sortDir === 'asc' ? '⬆️' : '⬇️'}
+                        </button>
+                    </div>
+
+
+                    {/* <button className='search-button' onClick={handleSearch}>검색</button> */}
+                    <button
+                        className="reset-button"
+                        onClick={() => {
+                            setFilters({
+                                startDate: '',
+                                endDate: '',
+                                keyword: '',
+                                sortBy: 'createdAt',
+                                sortDir: 'desc'
+                            });
+                            setPage(0);
+                            setPageSize(10);
+                        }}
+                    >
+                        초기화
+                    </button>
+
+                    <div
+                        className="write-button-wrapper"
+                    // style={{ marginLeft: '270px' }}
+                    >
+                        <button className="write-button" onClick={() => navigate('/community/write')}>작성하기</button>
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginRight: 'auto' }}>
+                        <div className="view-mode-buttons">
+                            <button className={viewMode === 'ALL' ? 'active' : ''} onClick={() => { setViewMode('ALL'); setPage(0); navigate('/community') }}>
+                                전체
+                            </button>
+                            <button className={viewMode === 'MY' ? 'active' : ''} onClick={() => { setViewMode('MY'); setPage(0); navigate('/community/my') }}>
+                                내가 쓴 글
+                            </button>
+                            <button className={viewMode === 'DEPT' ? 'active' : ''} onClick={() => { setViewMode('DEPT'); setPage(0); navigate('/community/mydepartment') }}>
+                                내 부서 글
+                            </button>
+                        </div>
+                        <div className="hide-reported" style={{ display: 'flex', alignItems: 'left', marginRight: '1rem' }}>
+                            <input
+                                type="checkbox"
+                                id="hideReported"
+                                checked={hideReported}
+                                onChange={(e) => setHideReported(e.target.checked)}
+                                style={{ marginRight: '6px' }}
+                            />
+                            <label htmlFor="hideReported" className='hideReported' style={{ fontSize: '0.95rem', color: '#333' }}>
+                                신고된 게시글 제외
+                            </label>
+                        </div>
+                    </div>
+                </div>
             </div>
           )}
         <h2>게시판</h2>

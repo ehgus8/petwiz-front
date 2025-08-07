@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import axiosInstance from '../../configs/axios-config';
 import DraftBoxCard from './DraftBoxCard';
-import styles from './DraftBoxList.module.scss';
+import styles from './ApprovalBoxList.module.scss';
 import { API_BASE_URL, APPROVAL_SERVICE } from '../../configs/host-config';
 import ReportFilter from '../../components/approval/ReportFilter';
 import { useReportFilter } from '../../hooks/useReportFilter';
 import EmptyState from '../../components/approval/EmptyState';
-import Pagination from '../../components/approval/Pagination'; // 페이지네이션 추가
+// Pagination removed: all reports are fetched at once
 import SkeletonCard from '../../components/approval/SkeletonCard';
 
 const DraftBoxList = () => {
@@ -15,14 +15,10 @@ const DraftBoxList = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   
-  // 페이지네이션 상태 추가
-  const [currentPage, setCurrentPage] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
-
   const { filteredReports, handleFilterChange } = useReportFilter(reports);
   const [trueTotalCount, setTrueTotalCount] = useState(0);
 
-  const fetchReports = useCallback(async (page = 0) => {
+  const fetchReports = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
@@ -32,15 +28,15 @@ const DraftBoxList = () => {
         {
           params: {
             role: 'writer',
-            status: 'DRAFT', 
+            status: 'DRAFT',
             sortBy: 'reportCreatedAt',
             sortOrder: 'desc',
-            page: page,
-            size: 10,
+            page: 0,
+            size: 1000,
           },
         }
       );
-      
+
       // 2. 'RECALLED' 상태의 문서를 가져오는 요청
       const recalledPromise = axiosInstance.get(
         `${API_BASE_URL}${APPROVAL_SERVICE}/reports`,
@@ -50,8 +46,8 @@ const DraftBoxList = () => {
             status: 'RECALLED',
             sortBy: 'reportCreatedAt',
             sortOrder: 'desc',
-            page: page,
-            size: 10,
+            page: 0,
+            size: 1000,
           },
         }
       );
@@ -84,12 +80,6 @@ const DraftBoxList = () => {
       const total = draftTotal + recalledTotal;
       setTrueTotalCount(total);
 
-       // 페이지네이션 정보 설정
-      const draftTotalPages = draftRes.data?.result?.totalPages || 0;
-      const recalledTotalPages = recalledRes.data?.result?.totalPages || 0;
-      setTotalPages(Math.max(draftTotalPages, recalledTotalPages)); 
-      setCurrentPage(page);
-
       // ★★★ 최종 계산된 개수 로그 ★★★
       console.log(`📊 [DraftBoxList] DRAFT 문서 개수: ${drafts.length}개`);
       console.log(`📊 [DraftBoxList] RECALLED 문서 개수: ${recalled.length}개`);
@@ -106,10 +96,6 @@ const DraftBoxList = () => {
   useEffect(() => {
     fetchReports();
   }, [fetchReports]);
-
-  const handlePageChange = (newPage) => {
-    fetchReports(newPage);
-  };
   
   return (
     <div className={styles.container}>
@@ -138,11 +124,7 @@ const DraftBoxList = () => {
           ) : (
             <EmptyState icon="🗂️" message="임시 저장된 문서가 없습니다." />
           )}
-          {totalPages > 1 && (
-            <div className={styles.paginationContainer}>
-              <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
-            </div>
-          )}
+          {/* Pagination removed to allow filtering across the full dataset */}
         </>
       )}
     </div>
