@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import styles from './Weather.module.scss';
+import axiosInstance from '../../configs/axios-config';
+import { API_BASE_URL, HR_SERVICE } from '../../configs/host-config';
 
 // 위경도 -> 격자 좌표 변환 스크립트
 const lamcproj = {};
@@ -113,8 +115,8 @@ const Weather = () => {
       try {
         // const url = `/api/getVilageFcst?serviceKey=${KMA_API_KEY}&pageNo=1&numOfRows=1000&dataType=JSON&base_date=${base_date}&base_time=${base_time}&nx=${rs.x}&ny=${rs.y}`;
         // const response = await axios.get(url);
-        const url = `/api/hr/getVilageFcst?pageNo=1&numOfRows=1000&dataType=JSON&base_date=${base_date}&base_time=${base_time}&nx=${rs.x}&ny=${rs.y}`;
-        const response = await axios.get(url);
+        const url = `${API_BASE_URL}${HR_SERVICE}/getVilageFcst?pageNo=1&numOfRows=1000&dataType=JSON&base_date=${base_date}&base_time=${base_time}&nx=${rs.x}&ny=${rs.y}`;
+        const response = await axiosInstance.get(url);
 
         const items = response.data.response.body.items.item;
 
