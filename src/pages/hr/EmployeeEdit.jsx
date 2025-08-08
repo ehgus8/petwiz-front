@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../context/UserContext';
 import { getDepartmentNameById } from '../../common/hr';
 import Swal from 'sweetalert2';
-import { swalConfirm, swalError } from '../../common/common';
+import { succeed, swalConfirm, swalError } from '../../common/common';
 import ModalPortal from '../../components/approval/ModalPortal';
 
 export default function EmployeeEdit({ employee, onClose, hideHeader }) {
@@ -110,7 +110,7 @@ export default function EmployeeEdit({ employee, onClose, hideHeader }) {
           name: newDeptName,
         },
       );
-      alert('부서 등록 성공!');
+      succeed('부서 등록 성공!');
       setNewDeptName('');
       setShowDeptModal(false);
       fetchDepartments();
