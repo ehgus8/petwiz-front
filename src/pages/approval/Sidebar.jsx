@@ -1,6 +1,6 @@
 // /src/pages/approval/Sidebar.jsx
 
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import styles from './Sidebar.module.scss';
 import { UserContext } from '../../context/UserContext';
@@ -12,8 +12,43 @@ const Sidebar = () => {
   const navigate = useNavigate();
   const { userRole, counts } = useContext(UserContext);
   const [isSelectionModalOpen, setIsSelectionModalOpen] = useState(false);
-  
+
   const safeCounts = counts || {};
+  const [newFlags, setNewFlags] = useState({});
+  const STORAGE_KEY = 'approvalCounts';
+
+  useEffect(() => {
+    setNewFlags((prevFlags) => {
+      const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+      let updateStorage = false;
+      const nextFlags = { ...prevFlags };
+
+      Object.keys(safeCounts).forEach((key) => {
+        const current = safeCounts[key] || 0;
+        const prev = stored[key];
+        if (prev === undefined || current < prev) {
+          stored[key] = current;
+          updateStorage = true;
+          delete nextFlags[key];
+        } else if (current > prev) {
+          nextFlags[key] = true;
+        }
+      });
+
+      if (updateStorage) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(stored));
+      }
+
+      return nextFlags;
+    });
+  }, [safeCounts]);
+
+  const handleLinkClick = (key) => {
+    const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+    stored[key] = safeCounts[key] || 0;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(stored));
+    setNewFlags((prev) => ({ ...prev, [key]: false }));
+  };
 
   return (
     <>
@@ -36,45 +71,94 @@ const Sidebar = () => {
             <ul className={styles.menuList}>
               {/* ★★★ data-count 속성을 사용하여 CSS에서 제어하도록 변경 ★★★ */}
               <li>
-                <NavLink to="/approval/pending" className={({ isActive }) => `${styles.menuItem} ${isActive ? styles.active : ''}`}>
+                <NavLink
+                  to="/approval/pending"
+                  className={({ isActive }) => `${styles.menuItem} ${isActive ? styles.active : ''}`}
+                  onClick={() => handleLinkClick('pending')}
+                >
                   <span>결재 예정 문서함</span>
-                  <span className={styles.countBadge} data-count={safeCounts.pending || 0}>{safeCounts.pending || 0}</span>
+                  <span className={styles.badgeContainer}>
+                    <span className={styles.countBadge} data-count={safeCounts.pending || 0}>{safeCounts.pending || 0}</span>
+                    {newFlags.pending && <span className={styles.newBadge}>N</span>}
+                  </span>
                 </NavLink>
               </li>
               <li>
-                <NavLink to="/approval/in-progress" className={({ isActive }) => `${styles.menuItem} ${isActive ? styles.active : ''}`}>
+                <NavLink
+                  to="/approval/in-progress"
+                  className={({ isActive }) => `${styles.menuItem} ${isActive ? styles.active : ''}`}
+                  onClick={() => handleLinkClick('inProgress')}
+                >
                   <span>결재 중 문서함</span>
-                  <span className={styles.countBadge} data-count={safeCounts.inProgress || 0}>{safeCounts.inProgress || 0}</span>
+                  <span className={styles.badgeContainer}>
+                    <span className={styles.countBadge} data-count={safeCounts.inProgress || 0}>{safeCounts.inProgress || 0}</span>
+                    {newFlags.inProgress && <span className={styles.newBadge}>N</span>}
+                  </span>
                 </NavLink>
               </li>
               <li>
-                <NavLink to="/approval/completed" className={({ isActive }) => `${styles.menuItem} ${isActive ? styles.active : ''}`}>
+                <NavLink
+                  to="/approval/completed"
+                  className={({ isActive }) => `${styles.menuItem} ${isActive ? styles.active : ''}`}
+                  onClick={() => handleLinkClick('completed')}
+                >
                   <span>결재 완료 문서함</span>
-                  <span className={styles.countBadge} data-count={safeCounts.completed || 0}>{safeCounts.completed || 0}</span>
+                  <span className={styles.badgeContainer}>
+                    <span className={styles.countBadge} data-count={safeCounts.completed || 0}>{safeCounts.completed || 0}</span>
+                    {newFlags.completed && <span className={styles.newBadge}>N</span>}
+                  </span>
                 </NavLink>
               </li>
               <li>
-                <NavLink to="/approval/rejected" className={({ isActive }) => `${styles.menuItem} ${isActive ? styles.active : ''}`}>
+                <NavLink
+                  to="/approval/rejected"
+                  className={({ isActive }) => `${styles.menuItem} ${isActive ? styles.active : ''}`}
+                  onClick={() => handleLinkClick('rejected')}
+                >
                   <span>반려 문서함</span>
-                  <span className={styles.countBadge} data-count={safeCounts.rejected || 0}>{safeCounts.rejected || 0}</span>
+                  <span className={styles.badgeContainer}>
+                    <span className={styles.countBadge} data-count={safeCounts.rejected || 0}>{safeCounts.rejected || 0}</span>
+                    {newFlags.rejected && <span className={styles.newBadge}>N</span>}
+                  </span>
                 </NavLink>
               </li>
               <li>
-                <NavLink to="/approval/drafts" className={({ isActive }) => `${styles.menuItem} ${isActive ? styles.active : ''}`}>
+                <NavLink
+                  to="/approval/drafts"
+                  className={({ isActive }) => `${styles.menuItem} ${isActive ? styles.active : ''}`}
+                  onClick={() => handleLinkClick('drafts')}
+                >
                   <span>임시 저장 문서함</span>
-                  <span className={styles.countBadge} data-count={safeCounts.drafts || 0}>{safeCounts.drafts || 0}</span>
+                  <span className={styles.badgeContainer}>
+                    <span className={styles.countBadge} data-count={safeCounts.drafts || 0}>{safeCounts.drafts || 0}</span>
+                    {newFlags.drafts && <span className={styles.newBadge}>N</span>}
+                  </span>
                 </NavLink>
               </li>
               <li>
-                <NavLink to="/approval/scheduled" className={({ isActive }) => `${styles.menuItem} ${isActive ? styles.active : ''}`}>
+                <NavLink
+                  to="/approval/scheduled"
+                  className={({ isActive }) => `${styles.menuItem} ${isActive ? styles.active : ''}`}
+                  onClick={() => handleLinkClick('scheduled')}
+                >
                   <span>예약 문서함</span>
-                  <span className={styles.countBadge} data-count={safeCounts.scheduled || 0}>{safeCounts.scheduled || 0}</span>
+                  <span className={styles.badgeContainer}>
+                    <span className={styles.countBadge} data-count={safeCounts.scheduled || 0}>{safeCounts.scheduled || 0}</span>
+                    {newFlags.scheduled && <span className={styles.newBadge}>N</span>}
+                  </span>
                 </NavLink>
               </li>
               <li>
-                <NavLink to="/approval/cc" className={({ isActive }) => `${styles.menuItem} ${isActive ? styles.active : ''}`}>
+                <NavLink
+                  to="/approval/cc"
+                  className={({ isActive }) => `${styles.menuItem} ${isActive ? styles.active : ''}`}
+                  onClick={() => handleLinkClick('cc')}
+                >
                   <span>수신 참조 문서함</span>
-                  <span className={styles.countBadge} data-count={safeCounts.cc || 0}>{safeCounts.cc || 0}</span>
+                  <span className={styles.badgeContainer}>
+                    <span className={styles.countBadge} data-count={safeCounts.cc || 0}>{safeCounts.cc || 0}</span>
+                    {newFlags.cc && <span className={styles.newBadge}>N</span>}
+                  </span>
                 </NavLink>
               </li>
             </ul>

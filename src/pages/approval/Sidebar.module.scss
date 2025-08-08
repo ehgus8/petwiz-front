@@ -110,23 +110,40 @@
     /* 활성 메뉴의 배지(countBadge)도 흰색으로 변경 */
     .countBadge {
       color: white !important;
+      font-weight: 900;
+    }
+    .newBadge {
+      color: white;
     }
   }
 }
 
 .countBadge {
-  font-size: 15px; /* 폰트 크기를 조금 키워 가독성 향상 */
-  font-weight: 700; /* 항상 굵게 표시 */
-  
-  /* ★★★ 3. 기본 배지 색상은 파란색으로 설정합니다. ★★★ */
-  
+  font-size: 18px; /* 폰트 크기를 크게 조정 */
+  font-weight: 900; /* 더 두껍게 */
+
   transition: opacity 0.3s ease, transform 0.3s ease;
-  
+
   &[data-count="0"] {
     opacity: 0;
     transform: scale(0.5);
     pointer-events: none;
   }
+}
+
+.badgeContainer {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.newBadge {
+  background-color: #dc3545;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700 !important;
+  padding: 2px 4px;
+  border-radius: 4px;
 }
 
 /* ★★★ 4. '결재 예정 문서함'에만 특별한 스타일을 적용합니다. ★★★ */
