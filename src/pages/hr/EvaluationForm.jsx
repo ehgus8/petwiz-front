@@ -355,15 +355,6 @@ export default function EvaluationForm({
                   className='datepicker-input'
                   isClearable
                 />
-                <button
-                  type='button'
-                  className='eval-date-clear'
-                  title='날짜 삭제'
-                  onClick={handleDateClear}
-                  tabIndex={-1}
-                >
-                  ❌
-                </button>
               </div>
             </div>
             <div className='eval-field'>
