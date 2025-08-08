@@ -138,7 +138,7 @@ export default function EmployeeList() {
       setEmployees(res.data.result.content);
       setTotalPages(res.data.result.totalPages || 1);
     } catch (error) {
-      alert(error?.response?.data?.statusMessage || error.message);
+      swalError(error?.response?.data?.statusMessage || error.message);
     }
   };
 
@@ -152,7 +152,7 @@ export default function EmployeeList() {
         department: employees.find((e) => e.id === id)?.department,
       });
     } catch (error) {
-      alert(error.response?.data || '시스템에러');
+      swalError(error.response?.data || '시스템에러');
     }
   };
 

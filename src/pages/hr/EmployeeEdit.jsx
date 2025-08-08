@@ -476,10 +476,9 @@ export default function EmployeeEdit({ employee, onClose, hideHeader }) {
           <div className='dept-modal-overlay'>
             <div className='dept-modal'>
               <h3>수정 정보 확인</h3>
-              <div
-                style={{ maxHeight: 320, overflowY: 'auto', marginBottom: 16 }}
-              >
-                <table style={{ width: '100%', fontSize: '1rem' }}>
+              <p className='modal-subtitle'>변경될 내용을 확인해 주세요.</p>
+              <div className='confirm-preview'>
+                <table className='confirm-table'>
                   <tbody>
                     <tr>
                       <th align='left'>이메일</th>

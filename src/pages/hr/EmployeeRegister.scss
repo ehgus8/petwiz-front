@@ -186,7 +186,8 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.3);
+  background: rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(2px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -198,11 +199,13 @@
   padding: 2.2rem 2.2rem 1.5rem 2.2rem;
   border-radius: 12px;
   min-width: 320px;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.13);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.14);
   display: flex;
   flex-direction: column;
   gap: 1.1rem;
-  max-width: 92vw;
+  max-width: 720px;
+  width: 92vw;
+  animation: modal-pop 140ms ease-out;
 }
 
 .dept-modal h3 {
@@ -210,6 +213,12 @@
   font-weight: 700;
   margin: 0 0 0.7rem 0;
   color: #222;
+}
+
+.modal-subtitle {
+  margin: -0.4rem 0 0.4rem 0;
+  color: #6b7280;
+  font-size: 0.95rem;
 }
 
 .dept-modal .reg-input {
@@ -255,7 +264,7 @@
 @media (max-width: 500px) {
   .dept-modal {
     min-width: 0;
-    padding: 1.1rem 0.7rem 1rem 0.7rem;
+    padding: 1.1rem 0.9rem 1rem 0.9rem;
   }
 }
 
@@ -273,6 +282,54 @@
   font-weight: 600;
   letter-spacing: -0.01em;
   user-select: none;
+}
+
+/* 확인 모달 테이블 */
+.confirm-preview {
+  max-height: 340px;
+  overflow: auto;
+  margin-bottom: 0.4rem;
+  border: 1px solid #eef0f3;
+  border-radius: 10px;
+}
+
+.confirm-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.98rem;
+}
+
+.confirm-table tr + tr {
+  border-top: 1px solid #f1f3f5;
+}
+
+.confirm-table th,
+.confirm-table td {
+  padding: 0.8rem 1rem;
+  vertical-align: top;
+}
+
+.confirm-table th {
+  width: 28%;
+  color: #374151;
+  background: #f9fafb;
+  font-weight: 600;
+  border-right: 1px solid #f1f3f5;
+}
+
+.confirm-table td {
+  color: #111827;
+}
+
+@keyframes modal-pop {
+  from {
+    transform: translateY(6px) scale(0.98);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
 }
 
 .excel-upload-row {
