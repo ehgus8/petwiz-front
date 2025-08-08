@@ -241,6 +241,17 @@ export default function EvaluationForm({
   // 제출 등 이벤트 (실제 로직 연결 가능)
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // 면담일시가 미래면 차단
+    if (form.date) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const chosen = new Date(form.date);
+      chosen.setHours(0, 0, 0, 0);
+      if (chosen > today) {
+        swalError('면담일시는 미래 날짜를 선택할 수 없습니다.');
+        return;
+      }
+    }
     try {
       if (isEdit) {
         await axiosInstance.patch(
@@ -331,6 +342,7 @@ export default function EvaluationForm({
                   dateFormat='yyyy.MM.dd'
                   selected={form.date}
                   onChange={(date) => setForm((prev) => ({ ...prev, date }))}
+                  maxDate={new Date()}
                   placeholderText='날짜 선택'
                   className='datepicker-input'
                   isClearable
