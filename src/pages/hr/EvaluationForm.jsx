@@ -69,6 +69,7 @@ export default function EvaluationForm({
   const [criteria, setCriteria] = useState(DEFAULT_CRITERIA);
   const [showAddModal, setShowAddModal] = useState(false);
   const [newCriterion, setNewCriterion] = useState('');
+  const [isComposing, setIsComposing] = useState(false);
 
   const isEdit = !!evaluation;
 
@@ -421,11 +422,23 @@ export default function EvaluationForm({
                     value={newCriterion}
                     onChange={(e) => {
                       const raw = e.target.value || '';
+                      if (isComposing) {
+                        setNewCriterion(raw);
+                        return;
+                      }
+                      const onlyKr = raw.replace(/[^가-힣]/g, '');
+                      setNewCriterion(onlyKr.slice(0, 7));
+                    }}
+                    onCompositionStart={() => setIsComposing(true)}
+                    onCompositionEnd={(e) => {
+                      setIsComposing(false);
+                      const raw = e.target.value || '';
                       const onlyKr = raw.replace(/[^가-힣]/g, '');
                       setNewCriterion(onlyKr.slice(0, 7));
                     }}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter') {
+                        if (isComposing) return;
                         e.preventDefault();
                         e.stopPropagation();
                         handleAddCriterion();
