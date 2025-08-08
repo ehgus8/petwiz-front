@@ -58,6 +58,8 @@ export default function EvaluationForm({
     },
     comment: '',
   });
+  const MAX_COMMENT_BYTES = 255;
+  const [commentBytes, setCommentBytes] = useState(0);
 
   // 평가자 이름 상태 추가
   const [evaluatorName, setEvaluatorName] = useState('');
@@ -171,6 +173,46 @@ export default function EvaluationForm({
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
+
+  // UTF-8 바이트 계산
+  const getUtf8ByteLength = (text) => {
+    let total = 0;
+    for (const ch of text) {
+      const code = ch.codePointAt(0);
+      if (code <= 0x7f) total += 1;
+      else if (code <= 0x7ff) total += 2;
+      else if (code <= 0xffff) total += 3;
+      else total += 4;
+    }
+    return total;
+  };
+
+  // UTF-8 바이트 기준 잘라내기
+  const truncateByUtf8Bytes = (text, maxBytes) => {
+    let used = 0;
+    let out = '';
+    for (const ch of text) {
+      const code = ch.codePointAt(0);
+      const need =
+        code <= 0x7f ? 1 : code <= 0x7ff ? 2 : code <= 0xffff ? 3 : 4;
+      if (used + need > maxBytes) break;
+      out += ch;
+      used += need;
+    }
+    return out;
+  };
+
+  // 총평 전용 입력 처리 (바이트 제한)
+  const handleCommentChange = (e) => {
+    const next = e.target.value || '';
+    const truncated = truncateByUtf8Bytes(next, MAX_COMMENT_BYTES);
+    setForm((prev) => ({ ...prev, comment: truncated }));
+  };
+
+  // 총평 바이트 카운트 업데이트
+  useEffect(() => {
+    setCommentBytes(getUtf8ByteLength(form.comment || ''));
+  }, [form.comment]);
 
   // 항목 삭제
   const handleRemoveCriterion = (key) => {
@@ -386,8 +428,11 @@ export default function EvaluationForm({
               <textarea
                 name='comment'
                 value={form.comment}
-                onChange={handleChange}
+                onChange={handleCommentChange}
               />
+              <div className='byte-hint'>
+                {commentBytes} / {MAX_COMMENT_BYTES} bytes
+              </div>
             </div>
             <div className='eval-field avg'>
               <span>평균 점수</span>
