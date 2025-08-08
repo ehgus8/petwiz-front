@@ -226,8 +226,11 @@ export default function EvaluationForm({
 
   // 항목 추가
   const handleAddCriterion = () => {
-    if (!newCriterion.trim()) return;
-    const key = newCriterion.trim();
+    const key = (newCriterion || '').trim();
+    if (!/^[가-힣]{1,7}$/.test(key)) {
+      swalError('평가 항목 이름은 한글 1~7자만 가능합니다.');
+      return;
+    }
     if (criteria.find((c) => c.key === key)) return;
     setCriteria((prev) => [...prev, { key, label: key }]);
     setForm((prev) => ({
@@ -241,6 +244,10 @@ export default function EvaluationForm({
   // 제출 등 이벤트 (실제 로직 연결 가능)
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // 항목 추가 모달이 열려있다면 평가 제출을 막음
+    if (showAddModal) {
+      return;
+    }
     // 면담일시가 미래면 차단
     if (form.date) {
       const today = new Date();
@@ -412,8 +419,19 @@ export default function EvaluationForm({
                   <input
                     type='text'
                     value={newCriterion}
-                    onChange={(e) => setNewCriterion(e.target.value)}
-                    placeholder='항목 이름 입력'
+                    onChange={(e) => {
+                      const raw = e.target.value || '';
+                      const onlyKr = raw.replace(/[^가-힣]/g, '');
+                      setNewCriterion(onlyKr.slice(0, 7));
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleAddCriterion();
+                      }
+                    }}
+                    placeholder='항목 이름 (한글 1~7자)'
                     autoFocus
                   />
                   <div className='modal-btns'>
