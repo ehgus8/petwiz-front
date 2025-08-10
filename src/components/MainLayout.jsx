@@ -108,13 +108,10 @@ export default function MainLayout() {
   const [showSidebar, setShowSidebar] = useState(false); // 모바일 사이드바 상태
   const [isInitialLoad, setIsInitialLoad] = useState(true);
 
-
-  const [prevPendingCount, setPrevPendingCount] = useState(counts?.pending || 0);
+  const prevPendingCountRef = useRef(counts.pending);
   const [newPendingReportId, setNewPendingReportId] = useState(null);
   const [showModal, setShowModal] = useState(false);
-
-  const isFirstLoad = useRef(true);
-  const isFirstUpdate = useRef(true);
+  const didInitRef = useRef(false);
 
   const sidebarMenus = [
     {
@@ -175,11 +172,10 @@ export default function MainLayout() {
   }, [departmentId]);
 
   useEffect(() => {
-    if (!refetchCounts) return; 
+    if (!refetchCounts) return;
 
     const handleVisibilityChange = () => {
-  
-        refetchCounts();
+      refetchCounts();
     };
 
     // 이벤트 리스너 등록
@@ -200,212 +196,213 @@ export default function MainLayout() {
     ADMIN: '관리자',
   };
 
- useEffect(() => {
+  useEffect(() => {
     if (!userId) return; // 유저 정보 준비 전엔 스킵
 
-    // counts.pending이 숫자로 확실히 들어온 뒤에 비교 시작
-    if (typeof counts.pending !== 'number') {
-      return;
-    }
+    if (typeof counts.pending !== 'number') return;
 
-    // 2) 첫 비교는 스킵
-    if (isFirstUpdate.current) {
-      isFirstUpdate.current = false;
-      setPrevPendingCount(counts.pending);
+    if (!didInitRef.current) {
+      prevPendingCountRef.current = counts.pending;
+      didInitRef.current = true;
       return;
     }
 
     // 3) 이후에만 pending 증가 감지
-    if (counts.pending > prevPendingCount) {
-      axiosInstance.get(
-        `/reports`,
-        {
+    if (counts.pending > prevPendingCountRef.current) {
+      axiosInstance
+        .get(`/reports`, {
           params: {
             role: 'approver',
             status: 'IN_PROGRESS',
             page: 0,
             size: 1,
             sortBy: 'reportCreatedAt',
-            sortOrder: 'desc'
+            sortOrder: 'desc',
           },
-          headers: { Authorization: `Bearer ${accessToken}` }
-        }
-      ).then(res => {
-        const latest = res.data?.result?.reports?.[0];
-        if (latest?.id) {
-          setNewPendingReportId(latest.id);
-          setShowModal(true);
-          setTimeout(() => setShowModal(false), 5000);
-        }
-      }).catch(console.error);
+          headers: { Authorization: `Bearer ${accessToken}` },
+        })
+        .then((res) => {
+          const latest = res.data?.result?.reports?.[0];
+          if (latest?.id) {
+            setNewPendingReportId(latest.id);
+            setShowModal(true);
+            setTimeout(() => setShowModal(false), 5000);
+          }
+        })
+        .catch(console.error);
     }
 
-    setPrevPendingCount(counts.pending);
-  }, [counts.pending, userId, accessToken, prevPendingCount]);
+    prevPendingCountRef.current = counts.current;
+  }, [counts.pending, userId, accessToken]);
 
   return (
     <>
-    {showModal && newPendingReportId && (
-      <ModalPortal>
-        <NewPendingModal
-          reportId={newPendingReportId}
-          onClose={() => setShowModal(false)}
-        />
-      </ModalPortal>
-    )}
-    <div className='layout'>
-      
-      <aside className={`sidebar${showSidebar ? ' sidebar--mobile-open' : ''}`}>
-        <div className='logo' onClick={() => navigate('/dashboard')}>
-          <img src={logo} alt='hrhub' />
-        </div>
-        <nav className='nav'>
-          {sidebarMenus.map((menu) => (
-            <Link
-              key={menu.to}
-              to={menu.to}
-              className={location.pathname.startsWith(menu.to) ? 'active' : ''}
-              onClick={() => setShowSidebar(false)} // 모바일에서 메뉴 클릭 시 닫힘
-            >
-              <span className='menu-icon'>{menu.icon}</span>
-              <span className='menu-label'>{menu.label}</span>
-              {menu.to === '/approval' && pendingCount > 0 && (
-                <span className='sidebar-badge'>{pendingCount}</span>
-              )}
-            </Link>
-          ))}
-        </nav>
-        {/* 모바일 사이드바에서만 로그아웃 버튼 노출 */}
-        <div className='sidebar-logout-mobile'>
-          <button className='logout-btn' onClick={handleLogoutClick}>
-            Logout
-          </button>
-        </div>
-      </aside>
-      {/* 모바일 오버레이 */}
-      {showSidebar && (
-        <div
-          className='sidebar-overlay'
-          onClick={() => setShowSidebar(false)}
-        ></div>
+      {showModal && newPendingReportId && (
+        <ModalPortal>
+          <NewPendingModal
+            reportId={newPendingReportId}
+            onClose={() => setShowModal(false)}
+          />
+        </ModalPortal>
       )}
-      <div className='main'>
-        <header className='header'>
-          {/* 모바일 햄버거 버튼 */}
-          <button
-            className='hamburger-btn'
-            onClick={() => setShowSidebar((prev) => !prev)}
-            aria-label='메뉴 열기'
-          >
-            <FaBars />
-          </button>
-          <div className='menu'>
-            {headerMenus.map((menu) => (
+      <div className='layout'>
+        <aside
+          className={`sidebar${showSidebar ? ' sidebar--mobile-open' : ''}`}
+        >
+          <div className='logo' onClick={() => navigate('/dashboard')}>
+            <img src={logo} alt='hrhub' />
+          </div>
+          <nav className='nav'>
+            {sidebarMenus.map((menu) => (
               <Link
                 key={menu.to}
                 to={menu.to}
                 className={
                   location.pathname.startsWith(menu.to) ? 'active' : ''
                 }
+                onClick={() => setShowSidebar(false)} // 모바일에서 메뉴 클릭 시 닫힘
               >
-                <span className='header-menu-icon'>{menu.icon}</span>
-                <span className='header-menu-label'>{menu.label}</span>
+                <span className='menu-icon'>{menu.icon}</span>
+                <span className='menu-label'>{menu.label}</span>
+                {menu.to === '/approval' && pendingCount > 0 && (
+                  <span className='sidebar-badge'>{pendingCount}</span>
+                )}
               </Link>
             ))}
-          </div>
-
-          <div
-            className='notice-icon'
-            onClick={() => navigate('/notice/alert')}
-          >
-            <FaBullhorn
-              color='#ff5252'
-              style={{ verticalAlign: 'middle', fontSize: '20px' }}
-            />
-            {(unreadCount > 0 || pendingCount > 0) && (
-              <span className='badge'>{unreadCount + pendingCount}</span>
-            )}
-          </div>
-          {/* 데스크탑/태블릿에서만 사용자 정보와 로그아웃 버튼 노출, 모바일(430px 이하)에서는 숨김 */}
-          <div className='header-user-desktop'>
-            {userName && departmentName && (
-              <div className='user-info'>
-                <FaUserCircle className='user-icon' />
-                <span className='user-name'>{userName}</span>
-                {userPosition && (
-                  <span className='user-position'>{userPosition}</span>
-                )}
-                <span className='user-dept'>({departmentName})</span>
-                {userRole && (
-                  <span className='user-role'>
-                    {roleMap[userRole] || userRole}
-                  </span>
-                )}
-              </div>
-            )}
+          </nav>
+          {/* 모바일 사이드바에서만 로그아웃 버튼 노출 */}
+          <div className='sidebar-logout-mobile'>
             <button className='logout-btn' onClick={handleLogoutClick}>
               Logout
             </button>
           </div>
-        </header>
+        </aside>
+        {/* 모바일 오버레이 */}
+        {showSidebar && (
+          <div
+            className='sidebar-overlay'
+            onClick={() => setShowSidebar(false)}
+          ></div>
+        )}
+        <div className='main'>
+          <header className='header'>
+            {/* 모바일 햄버거 버튼 */}
+            <div className='header-wrapper'>
+              <button
+                className='hamburger-btn'
+                onClick={() => setShowSidebar((prev) => !prev)}
+                aria-label='메뉴 열기'
+              >
+                <FaBars />
+              </button>
+              <div className='menu'>
+                {headerMenus.map((menu) => (
+                  <Link
+                    key={menu.to}
+                    to={menu.to}
+                    className={
+                      location.pathname.startsWith(menu.to) ? 'active' : ''
+                    }
+                  >
+                    <span className='header-menu-icon'>{menu.icon}</span>
+                    <span className='header-menu-label'>{menu.label}</span>
+                  </Link>
+                ))}
+              </div>
 
-        <main className='content'>
-          <Outlet />
-        </main>
-        {/* 챗봇 플로팅 버튼 및 챗봇 카드 */}
-        <div className={isApprovalPage ? 'fab-raised' : ''}>
-          {/* 플로팅 버튼 */}
-          <button
-            className='chatbot-fab'
-            onClick={() => setShowChatbot((prev) => !prev)}
-            aria-label='챗봇 열기'
-            style={{
-              position: 'fixed',
-              right: '2.5rem',
-              bottom: '2.5rem',
-              zIndex: 1000,
-              width: '60px',
-              height: '60px',
-              borderRadius: '50%',
-              background: '#2b80ff',
-              color: '#fff',
-              border: 'none',
-              boxShadow: '0 4px 16px rgba(30,65,112,0.18)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '2rem',
-              cursor: 'pointer',
-            }}
-          >
-            <FaComments />
-          </button>
-          {/* 챗봇 카드 팝업 */}
-          {showChatbot && (
-            <div
+              <div
+                className='notice-icon'
+                onClick={() => navigate('/notice/alert')}
+              >
+                <FaBullhorn
+                  color='#ff5252'
+                  style={{ verticalAlign: 'middle', fontSize: '20px' }}
+                />
+                {(unreadCount > 0 || pendingCount > 0) && (
+                  <span className='badge'>{unreadCount + pendingCount}</span>
+                )}
+              </div>
+            </div>
+            {/* 데스크탑/태블릿에서만 사용자 정보와 로그아웃 버튼 노출, 모바일(430px 이하)에서는 숨김 */}
+            <div className='header-user-desktop'>
+              {userName && departmentName && (
+                <div className='user-info'>
+                  <FaUserCircle className='user-icon' />
+                  <span className='user-name'>{userName}</span>
+                  {userPosition && (
+                    <span className='user-position'>{userPosition}</span>
+                  )}
+                  <span className='user-dept'>({departmentName})</span>
+                  {userRole && (
+                    <span className='user-role'>
+                      {roleMap[userRole] || userRole}
+                    </span>
+                  )}
+                </div>
+              )}
+              <button className='logout-btn' onClick={handleLogoutClick}>
+                Logout
+              </button>
+            </div>
+          </header>
+
+          <main className='content'>
+            <Outlet />
+          </main>
+          {/* 챗봇 플로팅 버튼 및 챗봇 카드 */}
+          <div className={isApprovalPage ? 'fab-raised' : ''}>
+            {/* 플로팅 버튼 */}
+            <button
+              className='chatbot-fab'
+              onClick={() => setShowChatbot((prev) => !prev)}
+              aria-label='챗봇 열기'
               style={{
                 position: 'fixed',
                 right: '2.5rem',
-                bottom: '6.5rem',
-                zIndex: 1001,
-                boxShadow: '0 8px 32px rgba(30,65,112,0.18)',
+                bottom: '2.5rem',
+                zIndex: 1000,
+                width: '60px',
+                height: '60px',
+                borderRadius: '50%',
+                background: '#2b80ff',
+                color: '#fff',
+                border: 'none',
+                boxShadow: '0 4px 16px rgba(30,65,112,0.18)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '2rem',
+                cursor: 'pointer',
               }}
             >
-              <ChatbotCard
-                messages={chatbotMessages}
-                setMessages={setChatbotMessages}
-                question={chatbotQuestion}
-                setQuestion={setChatbotQuestion}
-                loading={chatbotLoading}
-                setLoading={setChatbotLoading}
-                error={chatbotError}
-                setError={setChatbotError}
-              />
-            </div>
-          )}
+              <FaComments />
+            </button>
+            {/* 챗봇 카드 팝업 */}
+            {showChatbot && (
+              <div
+                style={{
+                  position: 'fixed',
+                  right: '2.5rem',
+                  bottom: '6.5rem',
+                  zIndex: 1001,
+                  boxShadow: '0 8px 32px rgba(30,65,112,0.18)',
+                }}
+              >
+                <ChatbotCard
+                  messages={chatbotMessages}
+                  setMessages={setChatbotMessages}
+                  question={chatbotQuestion}
+                  setQuestion={setChatbotQuestion}
+                  loading={chatbotLoading}
+                  setLoading={setChatbotLoading}
+                  error={chatbotError}
+                  setError={setChatbotError}
+                />
+              </div>
+            )}
+          </div>
         </div>
       </div>
-    </div>
     </>
   );
 }

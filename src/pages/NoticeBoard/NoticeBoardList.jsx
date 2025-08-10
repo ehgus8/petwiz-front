@@ -32,6 +32,7 @@ const fileIconMap = {
     ppt: '/icons/ppt.png',
     exe: '/icons/exe.png',
     svg: '/icons/svg.png',
+    webp: '/icons/webp.jpg',
 };
 
 const NoticeBoardList = () => {
@@ -379,7 +380,15 @@ const NoticeBoardList = () => {
                                         >
                                             <span className="star-icon">{favoriteList.includes(post.noticeId) ? '★' : '☆'}</span>
                                         </button>}
+
                                         <span onClick={() => navigate(`/notice/${post.noticeId}`)}>
+                                            {post.departmentId === 0 ? (
+                                                <span style={{ 'color': 'red', 'fontWeight': 'bold', 'marginRight': '4px' }}>
+                                                    [전체]
+                                                </span>
+                                            ) : (
+                                                <span></span>
+                                            )}
                                             {post.commentCount === 0 ? (
                                                 truncateTitle(`${post.title}`)
                                             ) : (
@@ -488,6 +497,13 @@ const NoticeBoardList = () => {
                                             <span className="star-icon">{favoriteList.includes(post.noticeId) ? '★' : '☆'}</span>
                                         </button>}
                                         <span onClick={() => navigate(`/notice/${post.noticeId}`)}>
+                                            {post.departmentId === 0 ? (
+                                                <span style={{ 'color': 'red', 'fontWeight': 'bold', 'marginRight': '4px' }}>
+                                                    [전체]
+                                                </span>
+                                            ) : (
+                                                <span></span>
+                                            )}
                                             {post.commentCount === 0 ? (
                                                 truncateTitle(`${post.title}`)
                                             ) : (

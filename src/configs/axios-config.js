@@ -41,7 +41,7 @@ axiosInstance.interceptors.response.use(
     }
 
     if (error.response?.data.message === 'NO_LOGIN') {
-      console.log('아예 로그인을 하지 않아서 재발급 요청 들어갈 수 없음!');
+      console.log('아예 로그인을 하지 않아서 재발급 요청 들어갈 수 없습니다.');
       return Promise.reject(error);
     }
 
@@ -50,7 +50,7 @@ axiosInstance.interceptors.response.use(
 
     // 토큰 재발급 로직 작성
     if (error.response.status === 401) {
-      console.log('응답상태 401 발생! 토큰 재발급 필요!');
+      console.log('응답상태 401 발생. 토큰 재발급 필요.');
 
       try {
         const id = localStorage.getItem('USER_ID');

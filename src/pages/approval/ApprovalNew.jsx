@@ -40,8 +40,16 @@ function ApprovalNew() {
 
   // resubmitId가 있으면 reportId 대신 사용
   const effectiveReportId = resubmitId || reportId;
+  console.log('[ApprovalNew] params:', {
+    reportId,
+    templateIdFromQuery,
+    resubmitId,
+    effectiveReportId,
+  });
   const {
     template,
+    templateId,
+    setTemplateId,
     formData,
     setFormData,
     approvalLine,
@@ -66,8 +74,18 @@ function ApprovalNew() {
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false); // 예약 상신 모달
   const [isScheduling, setIsScheduling] = useState(false); // 예약 상신 중 상태
 
-  
+  useEffect(() => {
+    console.log('[ApprovalNew] template state updated:', template);
+    console.log('[ApprovalNew] current templateId:', template?.templateId);
+  }, [template]);
+
+
   const handleFinalSubmit = useCallback(async (isSubmit = false, isMovingAway = false) => {
+    console.log('[ApprovalNew] handleFinalSubmit invoked', {
+      isSubmit,
+      template,
+      templateId: template?.templateId,
+    });
     // 필수값 유효성 검사
     if (!formData.title || formData.title.trim() === '') {
       await warn({ icon: 'warning', title: '제목은 필수 입력 항목입니다.' });
@@ -100,23 +118,26 @@ function ApprovalNew() {
       method = 'post';
       url = `${API_BASE_URL}${APPROVAL_SERVICE}/reports/${resubmitId}/resubmit`;
       const resubmitDto = {
-        newTitle: formData.title,
-        newContent: contentValue,
+        newTitle: (formData.title || '').trim(),
+        newContent: (contentValue ?? '').toString().trim(),
+        templateId,
+        reportTemplateData: JSON.stringify(formData || {}),
         approvalLine: approvalLine.map(a => ({ employeeId: a.id || a.employeeId, approvalContext: a.approvalContext })),
         attachments: attachments.map(f => ({ fileName: f.fileName || f.name, url: f.url })),
         references: references.map(r => ({ employeeId: r.id || r.employeeId })),
       };
-      submissionData = JSON.stringify(resubmitDto);
+      submissionData = resubmitDto;
       console.log('[ApprovalNew] 재상신 API 호출 준비:', url, resubmitDto);
 
     } else if (effectiveReportId) {
       // 시나리오 2: 수정 후 '임시 저장' (PUT .../reports/{id})
       method = 'put';
       url = `${API_BASE_URL}${APPROVAL_SERVICE}/reports/${effectiveReportId}`;
+      console.log('[ApprovalNew] using templateId for update:', template?.templateId);
       const updateDto = {
         title: formData.title,
         content: contentValue,
-        templateId: template?.id,
+        templateId: templateId,
         reportTemplateData: JSON.stringify(formData),
         approvalLine: approvalLine.map(a => ({ employeeId: a.id || a.employeeId, approvalContext: a.approvalContext })),
         references: references.map(r => ({ employeeId: r.id || r.employeeId })),
@@ -135,10 +156,11 @@ function ApprovalNew() {
         ? `${API_BASE_URL}${APPROVAL_SERVICE}/submit` // 상신 API
         : `${API_BASE_URL}${APPROVAL_SERVICE}/save`;   // 신규 임시저장 API
 
+      console.log('[ApprovalNew] using templateId for new submission:', template?.templateId);
       const reqDto = {
         title: formData.title,
         content: contentValue,
-        templateId: template?.id,
+        templateId: templateId,
         reportTemplateData: JSON.stringify(formData),
         approvalLine: approvalLine.map(a => ({ employeeId: a.id || a.employeeId, approvalContext: a.approvalContext })),
         references: references.map(r => ({ employeeId: r.id || r.employeeId })),
@@ -164,7 +186,7 @@ function ApprovalNew() {
         : {};
 
       if (method === 'post') {
-        res = await axiosInstance.post(url, submissionData, { headers });
+        res = await axiosInstance.post(url, submissionData, {params: {submit: isSubmit}});
       } else { // method === 'put'
         res = await axiosInstance.put(url, submissionData);
       }
@@ -174,7 +196,9 @@ function ApprovalNew() {
       if (res.data && (res.data.statusCode === 201 || res.data.statusCode === 200)) {
         setIsDirty(false);
         await Swal.fire({ icon: 'success', title: successMessage });
+        if(!isMovingAway){
         navigate(isSubmit ? '/approval/home' : '/approval/drafts');
+        }
       } else {
         throw new Error(res.data?.statusMessage || '요청에 실패했습니다.');
       }
@@ -328,6 +352,11 @@ function ApprovalNew() {
 
   // 예약 상신 API 호출 함수
   const handleScheduleSubmit = async (scheduledAt) => {
+    console.log('[ApprovalNew] handleScheduleSubmit invoked', {
+      scheduledAt,
+      template,
+      templateId: template?.templateId,
+    });
     // 필수값 유효성 검사
     if (!formData.title || formData.title.trim() === '') {
       await Swal.fire({
@@ -382,12 +411,14 @@ function ApprovalNew() {
           ),
         };
       }
+      console.log('[ApprovalNew] fixedTemplate for scheduling:', fixedTemplate);
+      console.log('[ApprovalNew] fixedTemplate templateId:', fixedTemplate?.templateId);
 
       // 예약 상신 요청 데이터 구성
       reqDto = {
         title: formData.title.trim(),
         content: contentValue.trim(),
-        templateId: fixedTemplate?.id,
+        templateId: templateId,
         reportTemplateData: JSON.stringify(formData),
         approvalLine: approvalLine.map(a => ({ 
           employeeId: a.id || a.employeeId, 

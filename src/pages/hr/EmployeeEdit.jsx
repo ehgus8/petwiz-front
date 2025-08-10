@@ -153,7 +153,7 @@ export default function EmployeeEdit({ employee, onClose, hideHeader }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!isValidEmail(email)) {
-      alert('유효하지 않은 이메일 형식입니다!');
+      alert('유효하지 않은 이메일 형식입니다.');
       return;
     }
     if (!hireDate.trim()) {

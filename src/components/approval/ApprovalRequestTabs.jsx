@@ -49,7 +49,8 @@ export default function ApprovalRequestTabs() {
   return (
     <div className='hr-card hr-tab-card'>
       <div className='tabs'>
-        <button 원비
+        <button
+          원비
           className={approvalTab === '결재요청' ? 'active' : ''}
           onClick={() => setApprovalTab('결재요청')}
         >
@@ -61,7 +62,13 @@ export default function ApprovalRequestTabs() {
         >
           미승인결재
         </button>
-        <div className='menu-icon' style={{ cursor: 'pointer' }} onClick={() => navigate('/approval/home')}>≡</div>
+        <div
+          className='menu-icon'
+          style={{ cursor: 'pointer' }}
+          onClick={() => navigate('/approval/home')}
+        >
+          ≡
+        </div>
       </div>
       {approvalTab === '결재요청' && (
         <table className='mini-table'>
@@ -91,12 +98,13 @@ export default function ApprovalRequestTabs() {
                   parsedTitle = report.title;
                 }
                 return (
-                  <tr key={report.id || idx}>
+                  <tr
+                    key={report.id || idx}
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => navigate(`/approval/reports/${report.id}`)}
+                  >
                     <td>
-                      <span style={{ color: '#1976d2', cursor: 'pointer', textDecoration: 'underline' }}
-                        onClick={() => navigate(`/approval/reports/${report.id}`)}>
-                        {truncateTitle(parsedTitle)}
-                      </span>
+                      <span>{truncateTitle(parsedTitle)}</span>
                     </td>
                     <td>
                       {report.reportCreatedAt
@@ -111,7 +119,7 @@ export default function ApprovalRequestTabs() {
                     <td>
                       {report.approvalLine && report.approvalLine.length > 0
                         ? report.approvalLine[report.approvalLine.length - 1]
-                          .employeeName
+                            .employeeName
                         : '-'}
                     </td>
                   </tr>
@@ -164,7 +172,7 @@ export default function ApprovalRequestTabs() {
                     <td>
                       {report.approvalLine && report.approvalLine.length > 0
                         ? report.approvalLine[report.approvalLine.length - 1]
-                          .employeeName
+                            .employeeName
                         : '-'}
                     </td>
                   </tr>

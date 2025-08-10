@@ -16,7 +16,7 @@ export const handleAxiosError = async (error, onLogout, navigate) => {
     await Swal.fire({
       icon: 'warning',
       title: '로그인 필요',
-      text: '아예 로그인을 하지 않아서 재발급 요청 들어갈 수 없음!',
+      text: '아예 로그인을 하지 않아서 재발급 요청 들어갈 수 없습니다.',
       confirmButtonColor: '#3085d6',
     });
     navigate('/');

@@ -69,7 +69,7 @@ export default function EmployeeRegister() {
       return false;
     }
     if (!isValidEmail(email)) {
-      warn('유효하지 않은 이메일 형식입니다!');
+      warn('유효하지 않은 이메일 형식입니다.');
       return false;
     }
     if (!isValidPhone(phone)) {
@@ -98,7 +98,7 @@ export default function EmployeeRegister() {
         hireDate,
         position, // 추가
       });
-      succeed('등록 성공!');
+      succeed('등록 성공');
       navigate('/hr/employee-list');
     } catch (error) {
       swalError(error.response?.data?.statusMessage || '등록 실패');
@@ -130,7 +130,7 @@ export default function EmployeeRegister() {
           name: newDeptName,
         },
       );
-      succeed('부서 등록 성공!');
+      succeed('부서 등록 성공');
       setNewDeptName('');
       setShowDeptModal(false);
       fetchDepartments();

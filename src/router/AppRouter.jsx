@@ -29,7 +29,7 @@ import ApprovalPendingList from '../pages/approval/ApprovalPendingList';
 import TemplateAdminPage from '../pages/approval/TemplateAdminPage';
 import TemplateForm from '../pages/approval/TemplateForm';
 import AdminRoute from './AdminRoute';
-import ApprovalScheduled from "../pages/approval/ScheduledBox";
+import ApprovalScheduled from '../pages/approval/ScheduledBox';
 // (사용하지 않는 ApprovalForm, TemplateList 등은 제외했습니다)
 
 // 공지사항
@@ -42,7 +42,6 @@ import NoticeAlertPage from '../pages/NoticeBoard/NoticeAlertPage';
 import CommunityPostsPage from '../pages/NoticeBoard/CommunityPostsPage';
 import CommunityReport from '../pages/NoticeBoard/CommunityReport';
 import AdminReportList from '../pages/NoticeBoard/AdminReportList';
-
 
 // 주소록
 import ContactList from '../pages/contacts/ContactList';
@@ -66,7 +65,7 @@ const AppRouter = [
       {
         path: 'hr',
         children: [
-          { index: true, element: <EmployeeList /> }, // '/hr' 접속 시 기본 페이지
+          { index: true, element: <Navigate to='employee-list' replace /> }, // '/hr' 접속 시 인사조회로 리디렉션
           { path: 'employee-list', element: <EmployeeList /> },
           { path: 'employee-register', element: <EmployeeRegister /> },
           { path: 'employee-edit', element: <EmployeeEdit /> },
@@ -117,7 +116,10 @@ const AppRouter = [
           { path: 'my', element: <NoticeBoardList /> },
           { path: 'schedule', element: <NoticeBoardList /> },
           { path: 'write', element: <NoticeBoardWrite isEdit={false} /> },
-          { path: 'edit/:noticeId', element: <NoticeBoardWrite isEdit={true} /> },
+          {
+            path: 'edit/:noticeId',
+            element: <NoticeBoardWrite isEdit={true} />,
+          },
           { path: ':noticeId', element: <NoticeBoardDetail /> },
           { path: 'alert', element: <NoticeAlertPage /> },
           { path: ':noticeId', element: <NoticeBoardDetail /> },

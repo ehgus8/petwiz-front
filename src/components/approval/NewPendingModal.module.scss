@@ -1,53 +1,37 @@
 /* src/components/approval/NewPendingModal.module.scss */
-@keyframes slideIn {
-  from { opacity: 0; transform: translateY(-10px) scale(0.95); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-.toast {
+.new-pending-modal {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  padding: 16px;
+  width: 260px;
   position: fixed;
   top: 1rem;
   right: 1rem;
-  width: 250px;
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  padding: 12px 16px;
   z-index: 10000;
-  animation: slideIn 0.2s ease-out;
-  font-family: 'Noto Sans KR', sans-serif;
-}
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 
-.closeBtn {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  background: transparent;
-  border: none;
-  font-size: 1.1rem;
-  color: #999;
-  cursor: pointer;
-}
+  .message {
+    margin: 0 0 12px;
+    font-size: 1rem;
+    text-align: center;
+  }
 
-.message {
-  margin: 0 0 8px;
-  font-size: 0.95rem;
-  color: #333;
-}
+  .view-btn {
+    padding: 6px 12px;
+    border: none;
+    background: #007bff;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-bottom: 8px;
+  }
 
-.goBtn {
-  display: block;
-  width: 100%;
-  padding: 6px 0;
-  background-color: #2b80ff;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.goBtn:hover {
-  background-color: #1f5fcc;
+  .auto-close-info {
+    font-size: 0.85rem;
+    color: #555;
+    text-align: center;
+  }
 }
