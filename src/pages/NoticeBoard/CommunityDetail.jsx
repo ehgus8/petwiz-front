@@ -136,7 +136,7 @@ const CommunityDetail = () => {
               },
             },
           );
-        } catch (_) {}
+        } catch (_) { }
 
         // 댓글 로드
         await fetchComments();
@@ -385,8 +385,7 @@ const CommunityDetail = () => {
       <div key={top.communityComentId} className='comment-item'>
         <span className='writerAndOption'>
           <strong>{top.writerName}</strong>
-          {(String(userId) === String(posts?.employeeId) ||
-            top.writerName === userName) && (
+          {top.writerName === userName && (
             <div className='comment-options'>
               <BsThreeDotsVertical
                 onClick={() =>
@@ -475,8 +474,7 @@ const CommunityDetail = () => {
             <div key={reply.communityComentId} className='reply-item'>
               <p className='writerAndOption'>
                 <strong>{reply.writerName}</strong>
-                {(String(userId) === String(posts?.employeeId) ||
-                  reply.writerName === userName) && (
+                {reply.writerName === userName && (
                   <div className='comment-options'>
                     <BsThreeDotsVertical
                       onClick={() =>

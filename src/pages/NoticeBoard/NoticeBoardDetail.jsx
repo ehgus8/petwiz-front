@@ -129,7 +129,7 @@ const NoticeBoardDetail = () => {
               Authorization: `Bearer ${accessToken}`,
             },
           });
-        } catch (_) {}
+        } catch (_) { }
 
         await fetchComments(); // 댓글 로드
       } catch (err) {
@@ -374,8 +374,7 @@ const NoticeBoardDetail = () => {
       <div key={top.noticeCommentId} className='comment-item'>
         <p className='writerAndOption'>
           <strong>{top.writerName}</strong>
-          {(String(userId) === String(posts?.employeeId) ||
-            top.writerName === userName) && (
+          {top.writerName === userName && (
             <div className='comment-options'>
               <BsThreeDotsVertical
                 onClick={() =>
@@ -466,8 +465,7 @@ const NoticeBoardDetail = () => {
             <div key={reply.noticeCommentId} className='reply-item'>
               <span className='writerAndOption'>
                 <strong>{reply.writerName}</strong>
-                {(String(userId) === String(posts?.employeeId) ||
-                  reply.writerName === userName) && (
+                {reply.writerName === userName && (
                   <div className='comment-options'>
                     <BsThreeDotsVertical
                       onClick={() =>
