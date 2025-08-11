@@ -417,10 +417,12 @@ const NoticeBoardDetail = () => {
               value={editContent}
               onChange={(e) => setEditContent(e.target.value)}
             />
-            <button onClick={() => handleEditComment(top.noticeCommentId)}>
-              저장
-            </button>
-            <button onClick={() => setEditCommentId(null)}>취소</button>
+            <div className='edit-button'>
+              <button onClick={() => handleEditComment(top.noticeCommentId)}>
+                수정
+              </button>
+              <button onClick={() => setEditCommentId(null)}>취소</button>
+            </div>
           </div>
         ) : (
           <>
@@ -444,13 +446,13 @@ const NoticeBoardDetail = () => {
 
         {/* 대댓글 입력창 */}
         {replyTargetId === top.noticeCommentId && (
-          <div className='reply-input'>
+          <div className='edit-input'>
             <textarea
               placeholder='답글을 입력하세요...'
               value={replyContent}
               onChange={(e) => setReplyContent(e.target.value)}
             />
-            <div className='reply-input-buttons'>
+            <div className='edit-button'>
               <button onClick={() => handleAddReply(top.noticeCommentId)}>
                 등록
               </button>
@@ -508,12 +510,14 @@ const NoticeBoardDetail = () => {
                     value={editContent}
                     onChange={(e) => setEditContent(e.target.value)}
                   />
-                  <button
-                    onClick={() => handleEditComment(reply.noticeCommentId)}
-                  >
-                    저장
-                  </button>
-                  <button onClick={() => setEditCommentId(null)}>취소</button>
+                  <div className='edit-button'>
+                    <button
+                      onClick={() => handleEditComment(reply.noticeCommentId)}
+                    >
+                      수정
+                    </button>
+                    <button onClick={() => setEditCommentId(null)}>취소</button>
+                  </div>
                 </div>
               ) : (
                 <>
@@ -526,7 +530,7 @@ const NoticeBoardDetail = () => {
             </div>
           ))}
         </div>
-      </div>
+      </div >
     ));
 
   if (loading)

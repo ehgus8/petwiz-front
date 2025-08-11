@@ -310,18 +310,18 @@ export default function MainLayout() {
                 ))}
               </div>
 
-              <div
-                className='notice-icon'
-                onClick={() => navigate('/notice/alert')}
-              >
-                <FaBullhorn
-                  color='#ff5252'
-                  style={{ verticalAlign: 'middle', fontSize: '20px' }}
-                />
-                {(unreadCount > 0 || pendingCount > 0) && (
-                  <span className='badge'>{unreadCount + pendingCount}</span>
-                )}
-              </div>
+            </div>
+            <div
+              className='notice-icon'
+              onClick={() => navigate('/notice/alert')}
+            >
+              <FaBullhorn
+                color='#ff5252'
+                style={{ verticalAlign: 'middle', fontSize: '20px' }}
+              />
+              {(unreadCount > 0 || pendingCount > 0) && (
+                <span className='badge'>{unreadCount + pendingCount}</span>
+              )}
             </div>
             {/* 데스크탑/태블릿에서만 사용자 정보와 로그아웃 버튼 노출, 모바일(430px 이하)에서는 숨김 */}
             <div className='header-user-desktop'>

@@ -428,10 +428,12 @@ const CommunityDetail = () => {
               value={editContent}
               onChange={(e) => setEditContent(e.target.value)}
             />
-            <button onClick={() => handleEditComment(top.communityComentId)}>
-              저장
-            </button>
-            <button onClick={() => setEditCommentId(null)}>취소</button>
+            <div className='edit-button'>
+              <button onClick={() => handleEditComment(top.communityComentId)}>
+                수정
+              </button>
+              <button onClick={() => setEditCommentId(null)}>취소</button>
+            </div>
           </div>
         ) : (
           <>
@@ -455,16 +457,18 @@ const CommunityDetail = () => {
 
         {/* 대댓글 입력창 */}
         {replyTargetId === top.communityComentId && (
-          <div className='reply-input'>
+          <div className='edit-input'>
             <textarea
               placeholder='답글을 입력하세요...'
               value={replyContent}
               onChange={(e) => setReplyContent(e.target.value)}
             />
-            <button onClick={() => handleAddReply(top.communityComentId)}>
-              등록
-            </button>
-            <button onClick={() => setReplyTargetId(null)}>취소</button>
+            <div className='edit-button'>
+              <button onClick={() => handleAddReply(top.communityComentId)}>
+                등록
+              </button>
+              <button onClick={() => setReplyTargetId(null)}>취소</button>
+            </div>
           </div>
         )}
 
@@ -517,12 +521,14 @@ const CommunityDetail = () => {
                     value={editContent}
                     onChange={(e) => setEditContent(e.target.value)}
                   />
-                  <button
-                    onClick={() => handleEditComment(reply.communityComentId)}
-                  >
-                    저장
-                  </button>
-                  <button onClick={() => setEditCommentId(null)}>취소</button>
+                  <div className='edit-button'>
+                    <button
+                      onClick={() => handleEditComment(reply.communityComentId)}
+                    >
+                      수정
+                    </button>
+                    <button onClick={() => setEditCommentId(null)}>취소</button>
+                  </div>
                 </div>
               ) : (
                 <>
