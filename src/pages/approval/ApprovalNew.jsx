@@ -9,6 +9,7 @@ import EmployeeSelectModal from '../../components/approval/EmployeeSelectModal';
 import VisualApprovalLine from '../../components/approval/VisualApprovalLine';
 import { warn, swalConfirm, swalError } from '../../common/common';
 import styles from './ApprovalNew.module.scss';
+import { FullPageSkeleton } from '../../components/common/Skeleton';
 import FormField from './FormField';
 import ModalPortal from '../../components/approval/ModalPortal';
 import Swal from 'sweetalert2'; // MySwal 대신 Swal을 직접 import
@@ -710,7 +711,7 @@ function ApprovalNew() {
     );
   };
 
-  if (loading) return <p>로딩 중...</p>;
+  if (loading) return <FullPageSkeleton lines={10} />;
   if (error) return <p>오류: {error}</p>;
 
   return (

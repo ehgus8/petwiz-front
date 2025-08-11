@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react'; // useContext 추가
+import React, { useEffect, useMemo, useState, useContext } from 'react'; // useContext 추가
 import axiosInstance from '../../configs/axios-config';
 import DraftBoxCard from './DraftBoxCard';
 import styles from './ApprovalBoxList.module.scss';
@@ -16,27 +16,34 @@ const ScheduledBox = () => {
   const [scheduledDocs, setScheduledDocs] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [totalCount, setTotalCount] = useState(0);
-  const [currentPage, setCurrentPage] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
   const { user, refetchCounts  } = useContext(UserContext); // user 가져오기
   
   const { filteredReports, handleFilterChange } = useReportFilter(scheduledDocs);
 
-  const fetchScheduledDocs = async (page = 0) => {
+  // client-side pagination
+  const [currentPage, setCurrentPage] = useState(0);
+  const pageSize = 10;
+  const totalPages = useMemo(() => Math.max(1, Math.ceil(filteredReports.length / pageSize)), [filteredReports.length]);
+  const pagedReports = useMemo(() => {
+    const start = currentPage * pageSize;
+    return filteredReports.slice(start, start + pageSize);
+  }, [filteredReports, currentPage]);
+
+  useEffect(() => {
+    setCurrentPage(0);
+  }, [filteredReports.length]);
+
+  const fetchScheduledDocs = async () => {
     setLoading(true);
     setError(null);
     try {
       const response = await axiosInstance.get(
         `${API_BASE_URL}${APPROVAL_SERVICE}/reports/list/scheduled`,
-        { params: { page, size: 10 } }
+        { params: { page: 0, size: 1000 } }
       );
       if (response.data?.statusCode === 200) {
-        const { reports, totalElements, totalPages, number } = response.data.result;
+        const { reports } = response.data.result;
         setScheduledDocs(reports || []);
-        setTotalCount(totalElements || 0);
-        setTotalPages(totalPages || 0);
-        setCurrentPage(number || 0);
       } else {
         throw new Error('예약 문서를 불러오는 데 실패했습니다.');
       }
@@ -51,9 +58,6 @@ const ScheduledBox = () => {
     if (user?.id) fetchScheduledDocs();
   }, [user?.id]); // 의존성 배열 수정
 
-  const handlePageChange = (newPage) => {
-    fetchScheduledDocs(newPage);
-  };
   const handleCancelSchedule = async (reportId) => {
     const result = await Swal.fire({
       title: '예약을 취소하시겠습니까?',
@@ -77,7 +81,7 @@ const ScheduledBox = () => {
             text: '문서가 회수되어 임시저장 상태로 변경되었습니다.'
           });
           await refetchCounts();
-          fetchScheduledDocs(currentPage);
+          fetchScheduledDocs();
         } else {
           throw new Error(response.data?.statusMessage || '예약 취소에 실패했습니다.');
         }
@@ -106,12 +110,9 @@ const ScheduledBox = () => {
   
       {!loading && !error && (
         <>
-          {totalCount > 0 && (
-            <div className={styles.resultInfo}>총 {totalCount}건의 문서가 있습니다.</div>
-          )}
-          {filteredReports.length > 0 ? (
+          {pagedReports.length > 0 ? (
             <div className={styles.list}>
-              {filteredReports.map((doc) => (
+              {pagedReports.map((doc) => (
                 <DraftBoxCard
                   key={doc.id}
                   draft={doc}
@@ -128,7 +129,7 @@ const ScheduledBox = () => {
           )}
           {totalPages > 1 && (
             <div className={styles.paginationContainer}>
-              <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+              <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
             </div>
           )}
         </>

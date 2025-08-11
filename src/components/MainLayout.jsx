@@ -261,6 +261,7 @@ export default function MainLayout() {
                   location.pathname.startsWith(menu.to) ? 'active' : ''
                 }
                 onClick={() => setShowSidebar(false)} // 모바일에서 메뉴 클릭 시 닫힘
+                title={menu.to === '/approval' ? '전자결재 홈으로 이동' : undefined}
               >
                 <span className='menu-icon'>{menu.icon}</span>
                 <span className='menu-label'>{menu.label}</span>

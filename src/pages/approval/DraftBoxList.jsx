@@ -8,6 +8,7 @@ import { useReportFilter } from '../../hooks/useReportFilter';
 import EmptyState from '../../components/approval/EmptyState';
 // Pagination removed: all reports are fetched at once
 import SkeletonCard from '../../components/approval/SkeletonCard';
+import Pagination from '../../components/approval/Pagination';
 
 const DraftBoxList = () => {
   const [scheduledDocs, setScheduledDocs] = useState([]);
@@ -17,6 +18,20 @@ const DraftBoxList = () => {
   
   const { filteredReports, handleFilterChange } = useReportFilter(reports);
   const [trueTotalCount, setTrueTotalCount] = useState(0);
+
+  // client-side pagination state
+  const [currentPage, setCurrentPage] = useState(0); // zero-based
+  const pageSize = 10;
+  const totalPages = useMemo(() => Math.max(1, Math.ceil(filteredReports.length / pageSize)), [filteredReports.length]);
+  const pagedReports = useMemo(() => {
+    const start = currentPage * pageSize;
+    return filteredReports.slice(start, start + pageSize);
+  }, [filteredReports, currentPage]);
+
+  useEffect(() => {
+    // reset to first page when filter result size changes
+    setCurrentPage(0);
+  }, [filteredReports.length]);
 
   const fetchReports = useCallback(async () => {
     setLoading(true);
@@ -115,16 +130,24 @@ const DraftBoxList = () => {
           {trueTotalCount > 0 && (
             <div className={styles.resultInfo}>총 {trueTotalCount}건의 문서가 있습니다.</div>
           )}
-          {filteredReports.length > 0 ? (
+          {pagedReports.length > 0 ? (
             <div className={styles.list}>
-              {filteredReports.map((report) => (
-                <DraftBoxCard key={report.id} draft={report} />
-              ))}
+              {pagedReports.map((report) => (
+                <DraftBoxCard key={report.id} draft={report} />)
+              )}
             </div>
           ) : (
             <EmptyState icon="🗂️" message="임시 저장된 문서가 없습니다." />
           )}
-          {/* Pagination removed to allow filtering across the full dataset */}
+          {totalPages > 1 && (
+            <div className={styles.paginationContainer}>
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+              />
+            </div>
+          )}
         </>
       )}
     </div>

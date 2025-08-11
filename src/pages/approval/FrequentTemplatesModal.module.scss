@@ -281,3 +281,16 @@
   font-size: 14px;
   text-align: center;
 }
+
+@media (max-width: 768px) {
+  .modalContent { width: 95vw; height: 85vh; }
+  .modalBody { padding: 16px; }
+  .selectedSection .selectedList { padding: 8px; }
+  .selectionSection .sectionHeader { flex-direction: column; align-items: stretch; gap: 8px; }
+  .selectionSection .searchBar input { width: 100%; }
+  .selectionSection .templateGrid { grid-template-columns: repeat(2, 1fr); }
+  .modalFooter { flex-direction: column; align-items: stretch; gap: 8px; }
+}
+@media (max-width: 480px) {
+  .selectionSection .templateGrid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+}

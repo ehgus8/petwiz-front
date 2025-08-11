@@ -321,7 +321,6 @@
   text-align: center;
 }
 
-
 /* --- 승인/반려 확인 모달 --- */
 .confirmModalOverlay {
   position: fixed;
@@ -426,4 +425,17 @@
   .printButton {
     display: none;
   }
+}
+
+/* --- 📱 모바일 반응형 --- */
+@media (max-width: 768px) {
+  .approvalContainer { padding: 16px; }
+  .detailMainBox { padding: 20px; }
+  .title { font-size: 22px; }
+  .infoRow { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .buttonGroup { width: 100%; justify-content: stretch; gap: 10px; 
+    & > button { flex: 1; }
+  }
+  .fieldLabel { width: 110px; }
+  .imageGallery { grid-template-columns: repeat( auto-fill, minmax(120px, 1fr) ); }
 }

@@ -9,11 +9,24 @@
   padding: 16px 24px;
   border-bottom: 1px solid #f0f0f0;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: background-color 0.2s, transform 0.12s ease-out, box-shadow 0.12s ease-out;
   overflow: visible; // 결재선이 잘리지 않도록 visible로 설정
 
   &:hover {
     background-color: #f8f9fa;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  }
+
+  &:focus-within {
+    outline: 2px solid #1976d2;
+    outline-offset: -2px;
+    background-color: #f3f8ff;
   }
 }
 

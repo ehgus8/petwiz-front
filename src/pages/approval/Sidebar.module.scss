@@ -11,50 +11,113 @@
 .menuHeader {
   font-size: 24px;
   font-weight: 700;
-  padding-bottom: 20px;
-  margin-bottom: 20px;
-  border-bottom: 2px solid #343a40;
-  color: #343a40;
+  color: #222;
+  padding: 8px 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+}
+
+.menuHeaderHint {
+  font-size: 12px;
+  color: #6c757d;
+  margin-left: 8px;
+  opacity: 0;
+  transform: translateY(-2px);
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  white-space: nowrap;
+}
+
+.menuHeader:hover .menuHeaderHint,
+.menuHeader:focus .menuHeaderHint,
+.menuHeader:focus-within .menuHeaderHint {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.actionBtn {
+  width: 100%;
+  height: 40px;
+  padding: 0 14px;
+  border-radius: 10px;
+  border: 1px solid #dfe3e6;
+  background: linear-gradient(180deg, #ffffff 0%, #f7f9fb 100%);
+  color: #1f2d3d;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: .2px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: transform .12s ease, box-shadow .12s ease, background .2s ease, border-color .2s ease;
+  box-shadow: 0 1px 2px rgba(16,24,40,0.06);
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(16,24,40,0.10);
+    background: linear-gradient(180deg, #ffffff 0%, #f3f6f9 100%);
+  }
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(16,24,40,0.08);
+  }
+  &:focus-visible {
+    outline: 2px solid #2b80ff;
+    outline-offset: 2px;
+  }
+  &:disabled {
+    opacity: .6;
+    cursor: not-allowed;
+  }
 }
 
 .newApprovalBtn {
   width: 100%;
-  padding: 12px;
-  margin-bottom: 20px;
-  background-color: #007bff;
-  color: white;
-  border: none;
+  padding: 12px 14px;
+  margin: 10px 0 16px 0;
   border-radius: 8px;
-  font-size: 16px;
+  border: none;
+  background-color: #007bff;
+  color: #fff;
+  font-size: 15px;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s;
-  &:hover {
-    background-color: #0056b3;
-  }
+  transition: background-color 0.2s ease;
+  box-shadow: none;
+
+  &:hover { background-color: #0056b3; }
+  &:active { background-color: #004a99; }
+  &:focus-visible { outline: 2px solid #90caf9; outline-offset: 2px; }
 }
 
 .adminSettingsBtn {
   width: 100%;
-  padding: 12px 15px;
-  margin: 10px 0 20px 0;
-  border-radius: 6px;
-  background-color: #6c757d;
-  color: white;
-  font-size: 1rem;
-  font-weight: bold;
+  padding: 12px 14px;
+  margin: 0 0 20px 0;
+  border-radius: 8px;
   border: none;
+  background-color: #6c757d;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
   cursor: pointer;
-  text-align: center;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  transition: background-color 0.2s;
-  &:hover {
-    background-color: #5a6268;
-  }
+  transition: background-color 0.2s ease;
+  box-shadow: none;
+
+  &:hover { background-color: #5a6268; }
+  &:active { background-color: #4e555b; }
+  &:focus-visible { outline: 2px solid #cfd8dc; outline-offset: 2px; }
 }
+
+.adminSettingsBtn svg { opacity: .9; }
 
 .menuGroup {
   margin-bottom: 20px;
@@ -89,8 +152,10 @@
 
   /* ★★★ 1. 메뉴 이름(span)은 항상 기본 색상을 유지합니다. ★★★ */
   span {
-    color: #495057; /* 기본 텍스트 색상 (원래의 검은색 계열) */
-    font-weight: 500; /* 기본 굵기 */
+    span:not(.countBadge):not(.newBadge) {
+      color: #495057;
+      font-weight: 500;
+    }
   }
 
   &:hover {

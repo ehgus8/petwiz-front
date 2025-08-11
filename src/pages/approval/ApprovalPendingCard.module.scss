@@ -7,51 +7,41 @@
   flex-direction: column;
   gap: 12px;
   border: 1.5px solid #2196f3;
-  transition: box-shadow 0.2s, border 0.2s;
-  overflow: visible; // 결재선이 잘리지 않도록 visible로 설정
-  
+  transition: box-shadow 0.2s, border 0.2s, transform 0.12s ease-out;
+  overflow: visible;
+  cursor: pointer;
+
+  &:hover {
+    box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+    transform: translateY(-1px);
+  }
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+  &:focus-within {
+    outline: 2px solid #1976d2;
+    outline-offset: 2px;
+  }
+
   .approvalpending-title {
     font-size: 18px;
     font-weight: 600;
     color: #222;
     margin-bottom: 6px;
   }
-  
   .approvalpending-info {
     display: flex;
     align-items: center;
     gap: 24px;
-    overflow: visible; // 결재선이 잘리지 않도록 visible로 설정
-    
-    .approvalpending-status {
-      font-size: 15px;
-      font-weight: 600;
-      color: #2196f3;
-    }
-    
-    .approvalpending-date {
-      font-size: 14px;
-      color: #888;
-    }
-    
-    .approvalpending-writer {
-      font-size: 15px;
-      color: #2196f3;
-      font-weight: 600;
-    }
+    overflow: visible;
+    .approvalpending-status { font-size: 15px; font-weight: 600; color: #2196f3; }
+    .approvalpending-date { font-size: 14px; color: #888; }
+    .approvalpending-writer { font-size: 15px; color: #2196f3; font-weight: 600; }
   }
 }
 
-/* --- 📱 모바일 반응형 스타일 (768px 미만일 때 적용) --- */
 @media (max-width: 768px) {
-  .approvalpending-card {
-    padding: 16px;
-    overflow: visible; // 결재선이 잘리지 않도록 visible로 설정
-  }
-  
-  .approvalpending-info {
-    flex-direction: column;
-    gap: 8px;
-    align-items: flex-start;
-  }
+  .approvalpending-card { padding: 16px; overflow: visible; }
+  .approvalpending-info { flex-direction: column; gap: 8px; align-items: flex-start; }
 } 

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import styles from './ApprovalLineModal.module.scss';
+import { SkeletonBlock } from '../common/Skeleton';
 import VisualApprovalLine from './VisualApprovalLine';
 import axiosInstance from '../../configs/axios-config';
 import { API_BASE_URL, HR_SERVICE } from '../../configs/host-config';
@@ -93,7 +94,11 @@ const ApprovalLineModal = ({ approvalLine, reportStatus, onClose }) => {
           </div>
 
           {loading ? (
-            <div className={styles.loading}>로딩 중...</div>
+            <div style={{padding: '12px 0'}}>
+              <SkeletonBlock height={14} style={{ width: '35%', marginBottom: 8 }} />
+              <SkeletonBlock height={14} style={{ width: '70%', marginBottom: 8 }} />
+              <SkeletonBlock height={14} style={{ width: '50%' }} />
+            </div>
           ) : (
             <ul className={styles.approverList}>
               {approverDetails.map((approver) => (

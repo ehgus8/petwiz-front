@@ -12,6 +12,8 @@ import useWindowDimensions from '../../hooks/useWindowDimensions';
 const ApprovalBoxList = () => {
   const { user } = useContext(UserContext);
   const navigate = useNavigate();
+  const { width } = useWindowDimensions();
+  const isMobile = (width || 0) <= 768;
   
   const [pageData, setPageData] = useState({
     reports: [],
@@ -39,7 +41,6 @@ const ApprovalBoxList = () => {
 
   // fetchReports 함수를 useCallback으로 최적화
   const fetchReports = useCallback(async () => {
-    // 로그인 상태가 아니면 API를 호출하지 않습니다.
     if (!user || !user.id) {
       setLoading(false);
       return;
@@ -54,7 +55,6 @@ const ApprovalBoxList = () => {
         page: 0,
         size: 50,
       };
-      // '진행중' 탭일 때만 status 파라미터를 추가합니다.
       if (activeTab === 'IN_PROGRESS') {
         params.status = 'IN_PROGRESS';
       }
@@ -64,7 +64,6 @@ const ApprovalBoxList = () => {
         { params },
       );
 
-      // 백엔드의 CommonResDto는 데이터를 'result' 필드로 제공한다.
       if (response.data?.result) {
         setPageData({
           reports: response.data.result.reports || [],
@@ -112,12 +111,10 @@ const ApprovalBoxList = () => {
     setActiveTab(tabId);
   }, []);
 
-  // 문서 클릭 핸들러를 useCallback으로 최적화
   const handleReportClick = useCallback((reportId) => {
     navigate(`/approval/reports/${reportId}`);
   }, [navigate]);
 
-  // 리스트 아이템 렌더러를 useCallback으로 최적화
   const renderListItem = useCallback(({ index, style }) => {
     const report = pageData.reports[index];
     return (
@@ -152,7 +149,6 @@ const ApprovalBoxList = () => {
     );
   }, [pageData.reports, reportStatusMap, handleReportClick]);
 
-  // 스켈레톤 로딩 컴포넌트
   const SkeletonLoader = () => (
     <div className={styles.skeletonContainer}>
       {Array.from({ length: 10 }).map((_, index) => (
@@ -184,24 +180,48 @@ const ApprovalBoxList = () => {
           ))}
         </div>
 
-        <div className={styles.listHeader}>
-          <div className={styles.headerCell} style={{ flex: 3 }}>문서제목</div>
-          <div className={styles.headerCell} style={{ flex: 1 }}>기안자</div>
-          <div className={styles.headerCell} style={{ flex: 1 }}>기안일</div>
-          <div className={styles.headerCell} style={{ flex: 1 }}>문서상태</div>
-        </div>
+        {!isMobile && (
+          <div className={styles.listHeader}>
+            <div className={styles.headerCell} style={{ flex: 3 }}>문서제목</div>
+            <div className={styles.headerCell} style={{ flex: 1 }}>기안자</div>
+            <div className={styles.headerCell} style={{ flex: 1 }}>기안일</div>
+            <div className={styles.headerCell} style={{ flex: 1 }}>문서상태</div>
+          </div>
+        )}
 
         <div className={styles.reportList}>
           {pageData.reports.length > 0 ? (
-            <List
-              height={Math.min(600, pageData.reports.length * 72)}
-              itemCount={pageData.reports.length}
-              itemSize={72}
-              width={'100%'}
-              style={{ maxWidth: '100%' }}
-            >
-              {renderListItem}
-            </List>
+            isMobile ? (
+              <div className={styles.mobileList}>
+                {pageData.reports.map((report) => (
+                  <div key={report.id} className={styles.mobileCard} onClick={() => handleReportClick(report.id)}>
+                    <div className={styles.mobileTitle}>{report.title}</div>
+                    <div className={styles.mobileMetaRow}>
+                      <span className={styles.mobileMeta}>{report.name || '정보 없음'}</span>
+                      <span className={styles.mobileMeta}>{new Date(report.reportCreatedAt || report.createdAt).toLocaleDateString('ko-KR')}</span>
+                    </div>
+                    <div className={styles.mobileFooter}>
+                      <span className={`${styles.statusChip} ${styles[report.reportStatus?.toLowerCase() || '']}`}>
+                        {reportStatusMap[report.reportStatus] || report.reportStatus || '상태 없음'}
+                      </span>
+                      {report.attachments && report.attachments.length > 0 && (
+                        <span className={styles.mobileAttach}>📎 {report.attachments.length}</span>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <List
+                height={Math.min(600, pageData.reports.length * 72)}
+                itemCount={pageData.reports.length}
+                itemSize={72}
+                width={'100%'}
+                style={{ maxWidth: '100%' }}
+              >
+                {renderListItem}
+              </List>
+            )
           ) : (
             <EmptyState icon="❌" message="반려된 문서가 없습니다." />
           )}

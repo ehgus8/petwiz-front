@@ -215,3 +215,10 @@
   color: #333;
   white-space: pre-line;
 }
+
+@media (max-width: 768px) {
+  .container { padding: 16px; margin: 16px; }
+  .buttonGroup { flex-direction: column; align-items: stretch; }
+  .contentField { flex-direction: column; align-items: stretch; }
+  .contentField select { flex: none; width: 100%; }
+}

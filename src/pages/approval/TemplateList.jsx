@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../../configs/axios-config';
 import { API_BASE_URL, APPROVAL_SERVICE } from '../../configs/host-config';
 import styles from './TemplateList.module.scss';
+import ListSkeleton from '../../components/common/Skeleton';
 import { UserContext } from '../../context/UserContext';
 import Swal from 'sweetalert2';
 
@@ -65,7 +66,7 @@ const TemplateList = () => {
     }
   };
 
-  if (loading) return <p>로딩 중...</p>;
+  if (loading) return <ListSkeleton items={6} />;
   if (error) return <p className={styles.error}>{error}</p>;
 
   return (

@@ -92,3 +92,11 @@
   color: #d32f2f;
   text-align: center;
 }
+
+@media (max-width: 768px) {
+  .container { padding: 16px; margin: 16px; }
+  .header { flex-direction: column; align-items: stretch; gap: 12px; }
+  .templateItem { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .buttonGroup { width: 100%; display: flex; justify-content: flex-end; gap: 8px; }
+  .buttonGroup button { flex: 1; }
+}

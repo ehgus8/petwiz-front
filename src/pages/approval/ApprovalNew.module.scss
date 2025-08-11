@@ -389,3 +389,12 @@
     }
   }
 }
+
+@media (max-width: 480px) {
+  .pageContainer { padding: 12px; }
+  .section { padding: 12px; }
+  .formLabel { width: auto; min-width: auto; font-size: 14px; }
+  .submitButton, .scheduleButton, .draftButton, .cancelButton { padding: 10px 16px; font-size: 15px; }
+  .timeSelector { flex-wrap: wrap; }
+  .timeSelect { min-width: 70px; }
+}

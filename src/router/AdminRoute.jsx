@@ -1,12 +1,13 @@
 import React, { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import { Navigate, Outlet } from 'react-router-dom';
+import { FullPageSkeleton } from '../components/common/Skeleton';
 
 const AdminRoute = () => {
   const { isLoggedIn, userRole, isInit } = useContext(UserContext);
 
   if (!isInit) {
-    return <div>Loading...</div>; // Or a proper loading spinner
+    return <FullPageSkeleton lines={6} />;
   }
 
   if (!isLoggedIn) {

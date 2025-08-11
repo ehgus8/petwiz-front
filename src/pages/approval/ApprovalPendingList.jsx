@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useMemo, useState, useContext } from 'react';
 import axiosInstance from '../../configs/axios-config';
 import styles from './ApprovalBoxList.module.scss';
 import ApprovalPendingCard from './ApprovalPendingCard';
@@ -17,13 +17,19 @@ const ApprovalPendingList = () => {
   const [error, setError] = useState(null);
   const { user } = useContext(UserContext);
 
-  const [currentPage, setCurrentPage] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
-  const [totalCount, setTotalCount] = useState(0);
-  
   const { filteredReports, handleFilterChange } = useReportFilter(pendingReports);
 
-  const fetchPending = async (page = 0) => {
+  // client-side pagination
+  const [currentPage, setCurrentPage] = useState(0);
+  const pageSize = 10;
+  const totalPages = useMemo(() => Math.max(1, Math.ceil(filteredReports.length / pageSize)), [filteredReports.length]);
+  const pagedReports = useMemo(() => {
+    const start = currentPage * pageSize;
+    return filteredReports.slice(start, start + pageSize);
+  }, [filteredReports, currentPage]);
+  useEffect(() => { setCurrentPage(0); }, [filteredReports.length]);
+
+  const fetchPending = async () => {
     setLoading(true);
     setError(null);
     try {
@@ -35,18 +41,15 @@ const ApprovalPendingList = () => {
             status: 'IN_PROGRESS',
             sortBy: 'reportCreatedAt', 
             sortOrder: 'desc',
-            page: page,
-            size: 10,
+            page: 0,
+            size: 1000,
           },
         },
       );
       if (res.data?.result) {
-        const { reports, totalPages, number, totalElements } = res.data.result;
-        // 백엔드가 이미 '내 차례'인 문서만 주므로 프론트 필터링 제거
+        const { reports } = res.data.result;
+        // 백엔드가 이미 '내 차례'인 문서만 주므로 프론트 필터링은 검색/기간만
         setPendingReports(reports || []);
-        setTotalPages(totalPages || 0);
-        setCurrentPage(number || 0);
-        setTotalCount(totalElements || 0);
       } else {
         throw new Error('결재 예정 문서를 불러오는 데 실패했습니다.');
       }
@@ -60,10 +63,6 @@ const ApprovalPendingList = () => {
   useEffect(() => {
     if(user?.id) fetchPending();
   }, [user?.id]);
-
-  const handlePageChange = (newPage) => {
-    fetchPending(newPage);
-  };
 
   return (
     <div className={styles.container}>
@@ -80,12 +79,9 @@ const ApprovalPendingList = () => {
   
       {!loading && !error && (
         <>
-          {totalCount > 0 && (
-            <div className={styles.resultInfo}>총 {totalCount}건의 문서가 있습니다.</div>
-          )}
-          {filteredReports.length > 0 ? (
+          {pagedReports.length > 0 ? (
             <div className={styles.list}>
-              {filteredReports.map((report) => (
+              {pagedReports.map((report) => (
                 <ApprovalPendingCard key={report.id} report={report} />
               ))}
             </div>
@@ -94,7 +90,7 @@ const ApprovalPendingList = () => {
           )}
           {totalPages > 1 && (
             <div className={styles.paginationContainer}>
-              <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+              <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
             </div>
           )}
         </>

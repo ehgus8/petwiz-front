@@ -8,6 +8,7 @@ import { BsThreeDotsVertical } from 'react-icons/bs';
 import { API_BASE_URL, NOTICE_SERVICE } from '../../configs/host-config';
 import { UserContext } from '../../context/UserContext';
 import './NoticeBoardDetail.scss';
+import ListSkeleton from '../../components/common/Skeleton';
 
 const fileIconMap = {
   txt: '/icons/txt.png',
@@ -536,7 +537,9 @@ const NoticeBoardDetail = () => {
   if (loading)
     return (
       <div className='notice-detail'>
-        <p>불러오는 중...</p>
+        <div style={{ padding: '16px 0' }}>
+          <ListSkeleton items={6} />
+        </div>
       </div>
     );
   if (!posts)

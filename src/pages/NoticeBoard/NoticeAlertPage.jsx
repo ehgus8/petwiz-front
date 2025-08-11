@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import './NoticeAlertPage.scss';
 import ApprovalPendingCard from '../approval/ApprovalPendingCard.jsx';
 import axiosInstance from '../../configs/axios-config';
+import ListSkeleton from '../../components/common/Skeleton';
 
 
 
@@ -125,7 +126,11 @@ const NoticeAlertPage = () => {
             <section>
                 <h3>📌 결재 알림</h3>
 
-                {!loading && !error && pendingReports.length > 0 ? (
+                {loading ? (
+                    <div style={{ padding: '8px 0' }}>
+                        <ListSkeleton items={4} />
+                    </div>
+                ) : !error && pendingReports.length > 0 ? (
                     pendingReports.map((report) => (
                         <ul>
                             <li key={report.id} onClick={() => navigate(`/approval/reports/${report.id}`)}>
@@ -134,10 +139,9 @@ const NoticeAlertPage = () => {
                                 <div className="date">{report.createdAt?.substring(0, 10)}</div>
                             </li>
                         </ul>
-                        // <ApprovalPendingCard key={report.id} report={report} />
                     ))
                 ) : (
-                    !loading && !error && <p>결재 예정 문서가 없습니다.</p>
+                    !error && <p>결재 예정 문서가 없습니다.</p>
                 )}
             </section>
 

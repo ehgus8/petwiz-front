@@ -5,6 +5,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axiosInstance from '../../configs/axios-config';
 import { API_BASE_URL, APPROVAL_SERVICE, HR_SERVICE } from '../../configs/host-config';
 import styles from './ApprovalDetail.module.scss';
+import { FullPageSkeleton } from '../../components/common/Skeleton';
 import { UserContext } from '../../context/UserContext';
 import VisualApprovalLine from '../../components/approval/VisualApprovalLine';
 import ApprovalLineModal from '../../components/approval/ApprovalLineModal';
@@ -218,7 +219,7 @@ const ApprovalDetail = () => {
     }
   };
 
-  if (loading) return <div className={styles.loading}>로딩 중...</div>;
+  if (loading) return <FullPageSkeleton lines={8} />;
   if (error) return <div className={styles.error}>에러: {error}</div>;
   if (!report) return <div className={styles.noData}>데이터가 없습니다.</div>;
 

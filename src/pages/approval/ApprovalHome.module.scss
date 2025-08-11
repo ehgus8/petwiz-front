@@ -21,8 +21,9 @@
 .reportListContainer {
   flex: 1; // 남은 공간을 모두 차지
   min-height: 0; // flex 아이템의 최소 높이 제한 해제
-  max-height: calc(100vh - 300px); // 최대 높이 제한
-  overflow-y: auto; // 세로 스크롤 활성화
+  height: auto; // 내용에 맞춰 높이 확장
+  max-height: none; // 최대 높이 제한 해제
+  overflow: visible; // 내용에 맞춰 배경 박스도 함께 확장
   overflow-x: visible; // 가로 스크롤 허용하여 결재선이 잘리지 않도록
 }
   
@@ -158,15 +159,15 @@
   .approvalHomeContainer {
     padding: 16px; // 전체 여백 줄이기
     gap: 20px;
-    height: calc(100vh - 100px); // 모바일에서 높이 조정
-    overflow-y: auto; // 세로 스크롤 활성화
-    overflow-x: visible; // 결재선이 잘리지 않도록 visible로 설정
+    height: auto; // 콘텐츠에 맞춰 확장
+    overflow: visible; // 섹션이 함께 늘어나도록
   }
 
   .frequentTemplatesSection,
   .reportListContainer {
     padding: 20px 16px; // 섹션 내부 여백 줄이기
     max-height: none; // 모바일에서는 최대 높이 제한 해제
+    height: auto; // 콘텐츠에 맞춰 확장
     overflow: visible; // 결재선이 잘리지 않도록 visible로 설정
   }
 

@@ -51,6 +51,7 @@ const Sidebar = () => {
         <nav className={styles.menu}>
           <div className={styles.menuHeader} onClick={() => navigate('/approval/home')}>
             전자결재
+            <span className={styles.menuHeaderHint}>홈으로 이동하려면 클릭</span>
           </div>
           <button className={styles.newApprovalBtn} onClick={() => setIsSelectionModalOpen(true)}>
             + 새 결재 작성

@@ -49,6 +49,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative; /* 배지 포지셔닝 기준 */
   }
   
   .icon {
@@ -56,4 +57,33 @@
     height: 24px;
     opacity: 0.8;
   } 
+
+.mobileBadge {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .summaryCard { padding: 14px; }
+  .title { font-size: 13px; }
+  .count { font-size: 22px; }
+  .iconWrapper { width: 40px; height: 40px; }
+  .icon { width: 20px; height: 20px; }
+  .mobileBadge {
+    display: inline-flex;
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 4px;
+    background: #ff3b30;
+    color: #fff;
+    border-radius: 999px;
+    font-size: 10px;
+    line-height: 18px;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+  }
+} 
   

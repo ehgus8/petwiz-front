@@ -8,6 +8,7 @@ import { UserContext, UserContextProvider } from '../../context/UserContext'; //
 import { fetchFavoriteNotices, toggleFavoriteNotice } from '../../api/favorite-api';
 import './NoticeBoardList.scss';
 import Swal from 'sweetalert2';
+import ListSkeleton, { FullPageSkeleton } from '../../components/common/Skeleton';
 
 const fileIconMap = {
     txt: '/icons/txt.png',
@@ -324,7 +325,9 @@ const NoticeBoardList = () => {
             </div>
 
             {loading ? (
-                <p>불러오는 중...</p>
+                <div style={{ padding: '12px 0' }}>
+                    <ListSkeleton items={8} />
+                </div>
             ) : (
                 <>
                     <table className="notice-table">
