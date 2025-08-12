@@ -112,6 +112,7 @@ const DraftBoxCard = ({ draft, showScheduleInfo = false, onCancelSchedule }) => 
       {/* Right Section: 시각적 결재선 및 예약 취소 버튼 */}
       <div className={styles['right-section']}>
         <div
+          className={styles['approval-line-box']}
           onClick={e => {
             e.stopPropagation();
             setIsModalOpen(true);
