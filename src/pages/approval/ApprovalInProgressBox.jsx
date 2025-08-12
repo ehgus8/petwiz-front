@@ -39,13 +39,14 @@ const ApprovalInProgressBox = () => {
         `${API_BASE_URL}${APPROVAL_SERVICE}/reports`,
         { 
           params: { 
-            role: 'writer', 
+            role: 'writer,approver',
             status: 'IN_PROGRESS', 
-            sortBy: 'reportCreatedAt', 
+            sortBy: 'createdAt', 
             sortOrder: 'desc', 
             page: 0, 
             size: 1000 
-          } 
+          }, 
+          
         }
       );
       if(response.data?.result) {
