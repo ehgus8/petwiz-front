@@ -8,6 +8,7 @@ import { BsThreeDotsVertical } from 'react-icons/bs';
 import { API_BASE_URL, COMMUNITY_SERVICE } from '../../configs/host-config';
 import { UserContext } from '../../context/UserContext';
 import './CommunityDetail.scss';
+import ListSkeleton from '../../components/approval/TemplateFormSkeleton';
 
 const fileIconMap = {
   txt: '/icons/txt.png',
@@ -544,7 +545,11 @@ const CommunityDetail = () => {
       </div>
     ));
 
-  if (loading) return <p>불러오는 중...</p>;
+  if (loading) return (
+    <div style={{ padding: '16px' }}>
+      <ListSkeleton items={6} />
+    </div>
+  );
   if (!posts) return <p>게시글을 찾을 수 없습니다.</p>;
 
   return (

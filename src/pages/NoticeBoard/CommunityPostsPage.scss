@@ -339,24 +339,70 @@
 
 .pagination {
   display: flex;
-  justify-content: center; // ✅ 가운데 정렬
+  align-items: center;
+  gap: 6px;
   margin-top: 20px;
-  gap: 5px;
+  justify-content: center;
+  font-family: 'Pretendard', sans-serif;
 
   button {
     padding: 5px 10px;
     border: 1px solid #ccc;
     background: white;
+    border-radius: 6px;
     cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s ease;
+
+    &:hover:not(:disabled) {
+      background-color: #f5f5f5;
+    }
 
     &.active {
+      background-color: #007bff;
+      color: white;
+      border-color: #007bff;
       font-weight: bold;
-      background: #f0f0f0;
     }
 
     &:disabled {
       opacity: 0.5;
       cursor: not-allowed;
+      color: #ccc;
+    }
+  }
+
+  .ellipsis {
+    padding: 6px 8px;
+    font-size: 14px;
+    color: #999;
+    user-select: none;
+  }
+
+  /* 반응형 */
+  @media (max-width: 768px) {
+    gap: 4px;
+
+    button {
+      padding: 5px 8px;
+      font-size: 13px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    gap: 3px;
+
+    /* 모바일에서는 버튼 개수 제한 */
+    button,
+    .ellipsis {
+      display: none;
+    }
+
+    /* 이전/다음 + 현재 페이지만 표시 */
+    button.active,
+    button:first-child,
+    button:last-child {
+      display: inline-block;
     }
   }
 }

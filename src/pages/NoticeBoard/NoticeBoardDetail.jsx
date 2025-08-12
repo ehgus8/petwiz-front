@@ -634,7 +634,7 @@ const NoticeBoardDetail = () => {
       )}
 
       {isAuthor && (
-        <div className='buttons'>
+        <div className='buttons' id='what'>
           <button onClick={handleEdit}>수정</button>
           <button onClick={handleDelete}>삭제</button>
         </div>

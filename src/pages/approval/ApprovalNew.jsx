@@ -117,7 +117,7 @@ function ApprovalNew() {
     if (resubmitId) {
       // 시나리오 1: 재상신
       method = 'post';
-      url = `${API_BASE_URL}${APPROVAL_SERVICE}/reports/${resubmitId}/resubmit`;
+      url = `${API_BASE_URL}${APPROVAL_SERVICE}/reports/${resubmitId}/resubmit?submit=${isSubmit ? 'true' : 'false'}`;
       const resubmitDto = {
         newTitle: (formData.title || '').trim(),
         newContent: (contentValue ?? '').toString().trim(),
@@ -187,11 +187,16 @@ function ApprovalNew() {
         : {};
 
       if (method === 'post') {
-        res = await axiosInstance.post(url, submissionData, {params: {submit: isSubmit}});
+        res = await axiosInstance.post(url, submissionData);
       } else { // method === 'put'
         res = await axiosInstance.put(url, submissionData);
       }
 
+      axiosInstance.interceptors.request.use((config) => {
+        console.log('[REQ]', config.method, config.url, config.params, config.data);
+        return config;
+      });
+      
       console.log('[ApprovalNew] API 응답:', res?.data);
 
       if (res.data && (res.data.statusCode === 201 || res.data.statusCode === 200)) {

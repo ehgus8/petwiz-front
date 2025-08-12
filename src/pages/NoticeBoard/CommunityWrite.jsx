@@ -177,7 +177,7 @@ const CommunityWrite = ({ isEdit = false }) => {
             console.log('noticeData : ', noticeData);
 
             if (isEdit) {
-                const response = await axios.put(`${API_BASE_URL}${COMMUNITY_SERVICE}/${communityId}`, noticeData, {
+                const response = await axios.put(`${API_BASE_URL}${COMMUNITY_SERVICE}/edit/${communityId}`, noticeData, {
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${accessToken}`

@@ -9,6 +9,7 @@ import {
 import { UserContext, UserContextProvider } from '../../context/UserContext'; // 로그인 유저 정보
 import { fetchFavoriteCommunity, toggleFavoriteCommunity } from '../../api/favorite-api';
 import './CommunityPostsPage.scss';
+import ListSkeleton from '../../components/common/Skeleton';
 
 const fileIconMap = {
     txt: '/icons/txt.png',
@@ -371,7 +372,9 @@ const CommunityPostsPage = () => {
             </div>
 
             {loading ? (
-                <p>불러오는 중...</p>
+                <div style={{ padding: '12px 0' }}>
+                    <ListSkeleton items={8} />
+                </div>
             ) : (
                 <>
                     <table className="notice-table">
@@ -475,7 +478,7 @@ const CommunityPostsPage = () => {
                         </tbody>
                     </table>
 
-                    <div className="pagination">
+                    {/* <div className="pagination">
                         <button onClick={() => setPage(p => Math.max(p - 1, 0))} disabled={page === 0}>이전</button>
                         {Array.from({ length: totalPages }, (_, i) => (
                             <button key={i} className={page === i ? 'active' : ''} onClick={() => setPage(i)}>
@@ -483,6 +486,88 @@ const CommunityPostsPage = () => {
                             </button>
                         ))}
                         <button onClick={() => setPage(p => Math.min(p + 1, totalPages - 1))} disabled={page === totalPages - 1}>다음</button>
+                    </div> */}
+
+                    <div className="pagination">
+                        <button onClick={() => setPage(p => Math.max(p - 1, 0))} disabled={page === 0}>
+                            이전
+                        </button>
+
+                        {(() => {
+                            const maxVisibleAround = 1; // 현재 페이지 앞뒤로 몇 개 보여줄지
+                            const lastPage = totalPages - 1;
+                            const pages = [];
+
+                            // 10페이지 이하 → 전부 표시
+                            if (totalPages <= 10) {
+                                for (let i = 0; i < totalPages; i++) {
+                                    pages.push(
+                                        <button
+                                            key={i}
+                                            className={page === i ? 'active' : ''}
+                                            onClick={() => setPage(i)}
+                                        >
+                                            {i + 1}
+                                        </button>
+                                    );
+                                }
+                                return pages;
+                            }
+
+                            // 항상 첫 페이지 표시
+                            pages.push(
+                                <button
+                                    key={0}
+                                    className={page === 0 ? 'active' : ''}
+                                    onClick={() => setPage(0)}
+                                >
+                                    1
+                                </button>
+                            );
+
+                            // 앞쪽 ...
+                            if (page > maxVisibleAround + 1) {
+                                pages.push(<span key="start-ellipsis">...</span>);
+                            }
+
+                            // 현재 페이지 앞뒤로 표시
+                            const start = Math.max(1, page - maxVisibleAround);
+                            const end = Math.min(lastPage - 1, page + maxVisibleAround);
+
+                            for (let i = start; i <= end; i++) {
+                                pages.push(
+                                    <button
+                                        key={i}
+                                        className={page === i ? 'active' : ''}
+                                        onClick={() => setPage(i)}
+                                    >
+                                        {i + 1}
+                                    </button>
+                                );
+                            }
+
+                            // 뒤쪽 ...
+                            if (page < lastPage - (maxVisibleAround + 1)) {
+                                pages.push(<span key="end-ellipsis">...</span>);
+                            }
+
+                            // 항상 마지막 페이지 표시
+                            pages.push(
+                                <button
+                                    key={lastPage}
+                                    className={page === lastPage ? 'active' : ''}
+                                    onClick={() => setPage(lastPage)}
+                                >
+                                    {lastPage + 1}
+                                </button>
+                            );
+
+                            return pages;
+                        })()}
+
+                        <button onClick={() => setPage(p => Math.min(p + 1, totalPages - 1))} disabled={page === totalPages - 1}>
+                            다음
+                        </button>
                     </div>
 
                     <div className="page-size-selector">
