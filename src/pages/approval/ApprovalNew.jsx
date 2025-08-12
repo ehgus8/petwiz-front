@@ -39,6 +39,19 @@ function ApprovalNew() {
   const navigate = useNavigate();
   const { user } = useContext(UserContext);
 
+  const isEmptyContent = (val) => {
+    if (val == null) return true;
+    let s = typeof val === 'string' ? val : String(val);
+    // TipTap/HTML의 빈값 패턴 제거
+    s = s
+      .replace(/<style[^>]*>.*?<\/style>/gis, '')
+      .replace(/<[^>]*>/g, '')      // 태그 제거
+      .replace(/&nbsp;/g, ' ')      // nbsp -> space
+      .replace(/\s+/g, ' ')         // 연속 공백 정리
+      .trim();
+    return s.length === 0;
+  };
+
   // resubmitId가 있으면 reportId 대신 사용
   const effectiveReportId = resubmitId || reportId;
   console.log('[ApprovalNew] params:', {
@@ -112,7 +125,17 @@ function ApprovalNew() {
         contentValue = formData[editorField.id || 'content'] || '';
       }
     }
-
+    if (isSubmit) {
+      const requiresContent =
+        (template?.content?.some(f => f.type === 'editor')) ||
+        !template?.content?.length; // 기본 에디터 사용하는 경우
+    
+      if (requiresContent && isEmptyContent(contentValue)) {
+        await Swal.fire({ icon: 'warning', title: '내용은 필수 입력 항목입니다.' });
+        if (isSubmit) setIsSubmitting(false); else setIsSaving(false);
+        return;
+      }
+    }
     // [수정] 의도에 따라 API와 데이터를 명확하게 분기
     if (resubmitId) {
       // 시나리오 1: 재상신

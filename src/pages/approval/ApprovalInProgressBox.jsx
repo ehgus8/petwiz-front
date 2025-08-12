@@ -68,7 +68,7 @@ const ApprovalInProgressBox = () => {
 
   return (
     <div className={styles.container}>
-      <h2 className={styles.sectionTitle}>내 결재함</h2>
+      <h2 className={styles.sectionTitle}>결재 중 문서함</h2>
       <ReportFilter onFilterChange={handleFilterChange} />
       
       {error && <div className={styles.error}>{error}</div>}
