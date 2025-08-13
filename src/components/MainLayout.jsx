@@ -112,6 +112,7 @@ export default function MainLayout() {
   const [newPendingReportId, setNewPendingReportId] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const didInitRef = useRef(false);
+  
 
   const sidebarMenus = [
     {
@@ -135,6 +136,19 @@ export default function MainLayout() {
       icon: <FaPen style={{ color: '#b39ddb', opacity: 0.7 }} />,
     },
   ];
+
+  useEffect(() => {
+    if (!refetchCounts) return;
+    if (!location.pathname.startsWith('/approval')) return;
+  
+    // 전자결재로 들어오자마자 최신값 당겨오기
+    refetchCounts();
+  
+    // 원하면 진입 중 폴링도 (부하 적게 20~30초)
+    const id = setInterval(refetchCounts, 30000);
+    return () => clearInterval(id);
+  }, [location.pathname, refetchCounts]);
+  
 
   useEffect(() => {
     if (!userId) return;
@@ -232,7 +246,7 @@ export default function MainLayout() {
         .catch(console.error);
     }
 
-    prevPendingCountRef.current = counts.current;
+    prevPendingCountRef.current = counts.pending;
   }, [counts.pending, userId, accessToken]);
 
   return (

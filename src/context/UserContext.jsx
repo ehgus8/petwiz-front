@@ -59,7 +59,7 @@ export const UserContextProvider = (props) => {
     }
   }, []);
 
-  const [counts, setCounts] = useState({
+  const defaultCounts = {
     pending: 0,
     inProgress: 0,
     completed: 0,
@@ -67,6 +67,15 @@ export const UserContextProvider = (props) => {
     drafts: 0,
     scheduled: 0,
     cc: 0,
+  };
+
+  const [counts, setCounts] = useState(() => {
+    try {
+      const cached = localStorage.getItem('APPROVAL_COUNTS');
+      return cached ? JSON.parse(cached) : defaultCounts;
+    } catch {
+      return defaultCounts;
+    }
   });
 
   useEffect(() => {
@@ -123,7 +132,7 @@ export const UserContextProvider = (props) => {
     setDepartmentId(loginData.departmentId);
     setAccessToken(loginData.token);
     setIsInit(true); // 로그인 시에도 초기화 완료로 설정
-    fetchCounts();
+    refetchCounts();
   };
 
   const logoutHandler = () => {
@@ -162,8 +171,6 @@ export const UserContextProvider = (props) => {
       setUserRole(storedRole);
       setUserPosition(storedPosition);
       setUserName(storedName);
-
-      fetchCounts();
 
       refetchCounts();
 
@@ -220,6 +227,22 @@ export const UserContextProvider = (props) => {
       console.error('문서함 개수 조회 실패:', err);
     }
   };
+
+  useEffect(() => {
+    if (!isLoggedIn) return;
+  
+    const tick = () => refetchCounts(); // counts 갱신
+    tick(); // 로그인 직후 한 번
+  
+    const id = setInterval(tick, 30000); // 30초
+    const onFocus = () => refetchCounts(); // 창 다시 포커스 시 즉시 갱신
+    window.addEventListener('focus', onFocus);
+  
+    return () => {
+      clearInterval(id);
+      window.removeEventListener('focus', onFocus);
+    };
+  }, [isLoggedIn, refetchCounts]);
 
   return (
     <UserContext.Provider
