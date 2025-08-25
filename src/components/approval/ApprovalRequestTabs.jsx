@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { API_BASE_URL, APPROVAL_SERVICE } from '../../configs/host-config';
 import axiosInstance from '../../configs/axios-config';
 import { useNavigate } from 'react-router-dom';
+import { SkeletonBlock } from '../common/Skeleton';
 
 export default function ApprovalRequestTabs() {
   // 결재요청/미승인결재 탭 상태
@@ -11,6 +12,10 @@ export default function ApprovalRequestTabs() {
   // 결재요청 목록 상태
   const [reportList, setReportList] = useState([]);
   const [reportLoading, setReportLoading] = useState(false);
+
+  const truncateTitle = (title, maxLength = 13) => {
+    return title.length > maxLength ? `${title.slice(0, maxLength)}...` : title;
+  };
 
   // 결재요청 목록 API 호출
   useEffect(() => {
@@ -45,7 +50,7 @@ export default function ApprovalRequestTabs() {
   return (
     <div className='hr-card hr-tab-card'>
       <div className='tabs'>
-        <button 원비
+        <button
           className={approvalTab === '결재요청' ? 'active' : ''}
           onClick={() => setApprovalTab('결재요청')}
         >
@@ -57,7 +62,13 @@ export default function ApprovalRequestTabs() {
         >
           미승인결재
         </button>
-        <div className='menu-icon' style={{ cursor: 'pointer' }} onClick={() => navigate('/approval/home')}>≡</div>
+        <div
+          className='menu-icon'
+          style={{ cursor: 'pointer' }}
+          onClick={() => navigate('/approval/home')}
+        >
+          ≡
+        </div>
       </div>
       {approvalTab === '결재요청' && (
         <table className='mini-table'>
@@ -72,7 +83,13 @@ export default function ApprovalRequestTabs() {
           <tbody>
             {reportLoading ? (
               <tr>
-                <td colSpan={4}>로딩중...</td>
+                <td colSpan={4}>
+                  <div style={{ padding: '6px 0' }}>
+                    <SkeletonBlock height={12} style={{ width: '70%', marginBottom: 6 }} />
+                    <SkeletonBlock height={12} style={{ width: '45%', marginBottom: 6 }} />
+                    <SkeletonBlock height={12} style={{ width: '55%' }} />
+                  </div>
+                </td>
               </tr>
             ) : displayList.length === 0 ? (
               <tr>
@@ -87,12 +104,13 @@ export default function ApprovalRequestTabs() {
                   parsedTitle = report.title;
                 }
                 return (
-                  <tr key={report.id || idx}>
+                  <tr
+                    key={report.id || idx}
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => navigate(`/approval/reports/${report.id}`)}
+                  >
                     <td>
-                      <span style={{ color: '#1976d2', cursor: 'pointer', textDecoration: 'underline' }}
-                        onClick={() => navigate(`/approval/reports/${report.id}`)}>
-                        {parsedTitle}
-                      </span>
+                      <span>{truncateTitle(parsedTitle)}</span>
                     </td>
                     <td>
                       {report.reportCreatedAt
@@ -130,7 +148,13 @@ export default function ApprovalRequestTabs() {
           <tbody>
             {reportLoading ? (
               <tr>
-                <td colSpan={4}>로딩중...</td>
+                <td colSpan={4}>
+                  <div style={{ padding: '6px 0' }}>
+                    <SkeletonBlock height={12} style={{ width: '70%', marginBottom: 6 }} />
+                    <SkeletonBlock height={12} style={{ width: '45%', marginBottom: 6 }} />
+                    <SkeletonBlock height={12} style={{ width: '55%' }} />
+                  </div>
+                </td>
               </tr>
             ) : displayList.length === 0 ? (
               <tr>
@@ -146,7 +170,7 @@ export default function ApprovalRequestTabs() {
                 }
                 return (
                   <tr key={report.id || idx}>
-                    <td>{parsedTitle}</td>
+                    <td>{truncateTitle(parsedTitle)}</td>
                     <td>
                       {report.reportCreatedAt
                         ? report.reportCreatedAt.slice(0, 10)

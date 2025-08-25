@@ -58,6 +58,8 @@ export default function EvaluationForm({
     },
     comment: '',
   });
+  const MAX_COMMENT_BYTES = 255;
+  const [commentBytes, setCommentBytes] = useState(0);
 
   // 평가자 이름 상태 추가
   const [evaluatorName, setEvaluatorName] = useState('');
@@ -67,6 +69,7 @@ export default function EvaluationForm({
   const [criteria, setCriteria] = useState(DEFAULT_CRITERIA);
   const [showAddModal, setShowAddModal] = useState(false);
   const [newCriterion, setNewCriterion] = useState('');
+  const [isComposing, setIsComposing] = useState(false);
 
   const isEdit = !!evaluation;
 
@@ -172,6 +175,46 @@ export default function EvaluationForm({
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
+  // UTF-8 바이트 계산
+  const getUtf8ByteLength = (text) => {
+    let total = 0;
+    for (const ch of text) {
+      const code = ch.codePointAt(0);
+      if (code <= 0x7f) total += 1;
+      else if (code <= 0x7ff) total += 2;
+      else if (code <= 0xffff) total += 3;
+      else total += 4;
+    }
+    return total;
+  };
+
+  // UTF-8 바이트 기준 잘라내기
+  const truncateByUtf8Bytes = (text, maxBytes) => {
+    let used = 0;
+    let out = '';
+    for (const ch of text) {
+      const code = ch.codePointAt(0);
+      const need =
+        code <= 0x7f ? 1 : code <= 0x7ff ? 2 : code <= 0xffff ? 3 : 4;
+      if (used + need > maxBytes) break;
+      out += ch;
+      used += need;
+    }
+    return out;
+  };
+
+  // 총평 전용 입력 처리 (바이트 제한)
+  const handleCommentChange = (e) => {
+    const next = e.target.value || '';
+    const truncated = truncateByUtf8Bytes(next, MAX_COMMENT_BYTES);
+    setForm((prev) => ({ ...prev, comment: truncated }));
+  };
+
+  // 총평 바이트 카운트 업데이트
+  useEffect(() => {
+    setCommentBytes(getUtf8ByteLength(form.comment || ''));
+  }, [form.comment]);
+
   // 항목 삭제
   const handleRemoveCriterion = (key) => {
     setCriteria((prev) => prev.filter((c) => c.key !== key));
@@ -184,8 +227,11 @@ export default function EvaluationForm({
 
   // 항목 추가
   const handleAddCriterion = () => {
-    if (!newCriterion.trim()) return;
-    const key = newCriterion.trim();
+    const key = (newCriterion || '').trim();
+    if (!/^[가-힣]{1,7}$/.test(key)) {
+      swalError('평가 항목 이름은 한글 1~7자만 가능합니다.');
+      return;
+    }
     if (criteria.find((c) => c.key === key)) return;
     setCriteria((prev) => [...prev, { key, label: key }]);
     setForm((prev) => ({
@@ -199,6 +245,21 @@ export default function EvaluationForm({
   // 제출 등 이벤트 (실제 로직 연결 가능)
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // 항목 추가 모달이 열려있다면 평가 제출을 막음
+    if (showAddModal) {
+      return;
+    }
+    // 면담일시가 미래면 차단
+    if (form.date) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const chosen = new Date(form.date);
+      chosen.setHours(0, 0, 0, 0);
+      if (chosen > today) {
+        swalError('면담일시는 미래 날짜를 선택할 수 없습니다.');
+        return;
+      }
+    }
     try {
       if (isEdit) {
         await axiosInstance.patch(
@@ -218,7 +279,7 @@ export default function EvaluationForm({
             updateMemo,
           },
         );
-        succeed('평가 수정 완료');
+        await succeed('평가 수정 완료'); // ← 확인 후 새로고침
       } else {
         await axiosInstance.post(
           `${API_BASE_URL}${HR_SERVICE}/evaluation/${employee.employeeId}`,
@@ -236,16 +297,16 @@ export default function EvaluationForm({
             interviewDate: form.date,
           },
         );
-        succeed('평가등록 완료');
+        await succeed('평가등록 완료'); // ← 확인 후 새로고침
       }
-      if (onSubmitSuccess) onSubmitSuccess();
-      if (onClose) onClose();
+      window.location.reload(); // 알림 OK 누른 후 새로고침!
     } catch (error) {
       swalError(
         '제출 실패: ' + (error.response?.data?.message || error.message),
       );
     }
   };
+
   const handleCancel = async () => {
     const result = await swalConfirm('취소하시겠습니까?');
     if (result.isConfirmed) {
@@ -289,19 +350,11 @@ export default function EvaluationForm({
                   dateFormat='yyyy.MM.dd'
                   selected={form.date}
                   onChange={(date) => setForm((prev) => ({ ...prev, date }))}
+                  maxDate={new Date()}
                   placeholderText='날짜 선택'
                   className='datepicker-input'
                   isClearable
                 />
-                <button
-                  type='button'
-                  className='eval-date-clear'
-                  title='날짜 삭제'
-                  onClick={handleDateClear}
-                  tabIndex={-1}
-                >
-                  ❌
-                </button>
               </div>
             </div>
             <div className='eval-field'>
@@ -358,8 +411,31 @@ export default function EvaluationForm({
                   <input
                     type='text'
                     value={newCriterion}
-                    onChange={(e) => setNewCriterion(e.target.value)}
-                    placeholder='항목 이름 입력'
+                    onChange={(e) => {
+                      const raw = e.target.value || '';
+                      if (isComposing) {
+                        setNewCriterion(raw);
+                        return;
+                      }
+                      const onlyKr = raw.replace(/[^가-힣]/g, '');
+                      setNewCriterion(onlyKr.slice(0, 7));
+                    }}
+                    onCompositionStart={() => setIsComposing(true)}
+                    onCompositionEnd={(e) => {
+                      setIsComposing(false);
+                      const raw = e.target.value || '';
+                      const onlyKr = raw.replace(/[^가-힣]/g, '');
+                      setNewCriterion(onlyKr.slice(0, 7));
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        if (isComposing) return;
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleAddCriterion();
+                      }
+                    }}
+                    placeholder='항목 이름 (한글 1~7자)'
                     autoFocus
                   />
                   <div className='modal-btns'>
@@ -386,8 +462,11 @@ export default function EvaluationForm({
               <textarea
                 name='comment'
                 value={form.comment}
-                onChange={handleChange}
+                onChange={handleCommentChange}
               />
+              <div className='byte-hint'>
+                {commentBytes} / {MAX_COMMENT_BYTES} bytes
+              </div>
             </div>
             <div className='eval-field avg'>
               <span>평균 점수</span>

@@ -1,9 +1,10 @@
+#
 name: Deploy React App to S3 (Vite)
 
 on:
   push:
     branches:
-      - dev
+      - dev-s3
 
 jobs:
   build-and-deploy:

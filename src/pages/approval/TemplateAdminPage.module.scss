@@ -155,64 +155,81 @@
 }
 
 .controls {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
-    gap: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  gap: 12px;
+  flex-wrap: nowrap; /* 한 줄 유지 */
+  overflow-x: auto; /* 좁은 화면에서 가로 스크롤 */
+  -webkit-overflow-scrolling: touch;
 }
 
 .searchBar {
-    flex-grow: 1;
-    input {
-        width: 100%;
-        max-width: 350px;
-        padding: 0.7rem 1rem;
-        border: 1px solid #dee2e6;
-        border-radius: 6px;
-        font-size: 0.95rem;
-    }
+  flex: 1 1 260px;
+  input {
+    width: 100%;
+    max-width: 420px;
+    padding: 0.7rem 1rem;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    box-sizing: border-box;
+  }
 }
 
 .filterTabs {
-    display: flex;
-    gap: 0.5rem;
-    button {
-        padding: 0.6rem 1.2rem;
-        border: 1px solid transparent;
-        background-color: transparent;
-        color: #868e96;
-        cursor: pointer;
-        font-size: 0.95rem;
-        font-weight: 500;
-        border-radius: 6px;
-        transition: background-color 0.2s, color 0.2s;
+  display: flex;
+  gap: 8px;
+  flex: 0 0 auto;
 
-        &.active {
-            background-color: #fff;
-            color: #0052cc;
-            font-weight: 700;
-            border: 1px solid #dee2e6;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-        }
+  button {
+    padding: 0.6rem 1rem;
+    background-color: #fff;
+    color: #495057;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+
+    &:hover {
+      background-color: #f1f3f5;
+      border-color: #cfd8dc;
     }
+
+    &.active {
+      background-color: #007bff;
+      border-color: #007bff;
+      color: #fff;
+      font-weight: 700;
+    }
+  }
 }
 
-
-.actions .addButton {
+.actions {
+  flex: 0 0 auto;
+  .addButton {
+    height: 40px;
+    padding: 0 16px;
     background-color: #0052cc;
-    color: white;
+    color: #fff;
     border: none;
-    padding: 0.7rem 1.5rem;
     border-radius: 6px;
     cursor: pointer;
     font-weight: 600;
     font-size: 0.95rem;
-    transition: background-color 0.2s;
+    white-space: nowrap;
+    transition: background-color 0.2s ease;
+    &:hover { background-color: #0041a3; }
+  }
+}
 
-    &:hover {
-        background-color: #0041a3;
-    }
+@media (max-width: 768px) {
+  .controls { gap: 8px; }
+  .searchBar { flex: 1 1 200px; }
 }
 
 .templateListContainer {
@@ -224,8 +241,9 @@
 }
 
 .templateItem {
-    display: flex;
-    align-items: center;
+    display: flex;         /* 1. Flexbox 레이아웃 적용 */
+    align-items: center;   /* 2. 자식 요소들을 수직 중앙 정렬 */
+    gap: 1rem;             /* 3. 자식 요소들 사이의 간격 추가 */
     padding: 1.25rem 1rem;
     border-bottom: 1px solid #f1f3f5;
     transition: background-color 0.2s;
@@ -240,7 +258,8 @@
 }
 
 .checkboxContainer {
-    padding-right: 1.5rem;
+    flex-shrink: 0; /* 크기가 줄어들지 않도록 고정 */
+    padding-right: 0.5rem;
     input[type="checkbox"] {
         width: 18px;
         height: 18px;
@@ -248,16 +267,13 @@
 }
 
 .templateDetails {
-    flex-grow: 1;
+    flex-grow: 1;   /* 4. 남는 공간을 모두 차지 */
+    min-width: 0;   /* 5. 내용이 길어져도 줄어들 수 있도록 허용 (가장 중요!) */
 }
-
 .templateTitle {
     font-size: 1.05rem;
     font-weight: 600;
     color: #343a40;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
     margin-bottom: 0.25rem;
 }
 
@@ -280,9 +296,15 @@
 .templateDescription {
     font-size: 0.9rem;
     color: #6c757d;
+    /* 6. 단어가 길어져도 자연스럽게 줄바꿈되도록 설정 */
+    word-break: break-word; 
+    white-space: normal; /* 여러 줄 표시 허용 */
 }
 
 .templateActions {
+    flex-shrink: 0; /* 7. 버튼 영역은 크기가 줄어들지 않도록 고정 */
+    display: flex;
+    gap: 0.5rem;
     button {
         background: #fff;
         border: 1px solid #ced4da;
@@ -350,44 +372,148 @@
   
     // 4. 템플릿 목록 아이템 스타일 조정
     .templateItem {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 12px;
-      padding: 16px;
+        display: flex;
+        /* 1. 자식 요소들을 수직 중앙에 정렬합니다. */
+        align-items: center; 
+        padding: 1.25rem 1rem;
+        border-bottom: 1px solid #f1f3f5;
+        transition: background-color 0.2s;
+        /* 2. 자식 요소들 사이에 간격을 줍니다. */
+        gap: 1rem; 
+    
+        &:last-child {
+            border-bottom: none;
+        }
+    
+        &:hover {
+            background-color: #fafafa;
+        }
     }
   
     .checkboxContainer {
-      display: none; // 모바일에서는 체크박스 숨김 (선택사항)
+        /* 체크박스는 크기가 변하지 않도록 합니다. */
+        flex-shrink: 0;
+        padding-right: 0.5rem; /* 오른쪽 여백 조정 */
+        
+        input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+        }
     }
-  
     .templateDetails {
-      width: 100%;
+        /* 3. 남는 공간을 모두 차지하도록 설정합니다. */
+        flex-grow: 1; 
+        /* 4. 내용이 길어져도 줄어들 수 있도록 허용합니다. (중요!) */
+        min-width: 0; 
     }
-  
+    
     .templateTitle {
-      font-size: 16px;
+        font-size: 1.05rem;
+        font-weight: 600;
+        color: #343a40;
+        margin-bottom: 0.25rem;
     }
-  
+    
     .templateDescription {
-      font-size: 13px;
+        font-size: 0.9rem;
+        color: #6c757d;
+        /* 5. 단어가 길어져도 자연스럽게 줄바꿈이 되도록 합니다. */
+        word-break: break-word; 
     }
-  
+    
     .templateActions {
-      width: 100%;
-      display: flex;
-      justify-content: flex-end; // 버튼을 오른쪽으로 정렬
-      gap: 8px;
+        /* 6. 버튼 영역은 크기가 줄어들지 않도록 고정합니다. */
+        flex-shrink: 0; 
+        display: flex;
+        gap: 0.5rem; /* 버튼 사이 간격 */
+    
+        button {
+            background: #fff;
+            border: 1px solid #ced4da;
+            color: #495057;
+            padding: 0.4rem 1rem;
+            font-size: 0.9rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s, border-color 0.2s;
+            /* 버튼 텍스트가 줄바꿈되지 않도록 합니다. */
+            white-space: nowrap; 
+    
+            &:hover {
+                background-color: #f8f9fa;
+                border-color: #adb5bd;
+            }
+            
+            &.deleteButton { // 삭제 버튼에만 특별히 스타일을 주고 싶을 때 사용
+                &:hover {
+                    border-color: #dc3545;
+                    color: #dc3545;
+                }
+            }
+        }
     }
-  }
-  .mobileCategoryFilter {
-    margin-bottom: 16px;
-  
-    select {
-      width: 100%;
-      padding: 12px;
-      font-size: 16px;
-      border: 1px solid #dee2e6;
-      border-radius: 6px;
-      background-color: #fff;
+    
+    .noResults {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        text-align: center;
+        color: #868e96;
+        font-size: 1rem;
+    } 
+    
+    /* --- 반응형 스타일은 기존 코드를 그대로 유지 --- */
+    @media (max-width: 768px) {
+        /* ... (기존 반응형 코드) ... */
+        .templateItem {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 12px;
+          padding: 16px;
+        }
+        
+        .templateActions {
+          width: 100%;
+          display: flex;
+          justify-content: flex-end;
+          gap: 8px;
+        }
     }
+}
+
+@media (min-width: 769px) {
+  .controls {
+    display: grid;
+    grid-template-columns: 1fr auto auto; /* 검색 | 전체 | 추가 */
+    align-items: center;
+    column-gap: 16px;
+    overflow: visible; /* 데스크톱에서는 스크롤 제거 */
   }
+  .filterTabs { white-space: nowrap; }
+  .actions { white-space: nowrap; }
+  .actions .addButton { width: auto; }
+}
+
+@media (max-width: 576px) {
+  .controls {
+    flex-wrap: wrap; /* 두 줄 배치로 변경 */
+    gap: 10px;
+  }
+  .searchBar {
+    order: 1;
+    flex: 1 1 100%;
+    input { max-width: none; }
+  }
+  .filterTabs {
+    order: 2;
+    flex: 1 1 auto;
+  }
+  .actions {
+    order: 3;
+    flex: 1 1 100%;
+    display: flex;
+    justify-content: flex-end;
+    .addButton { width: 100%; }
+  }
+}

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import styles from './Weather.module.scss';
+import { SkeletonBlock } from '../../components/common/Skeleton';
 
 // 위경도 -> 격자 좌표 변환 스크립트
 const lamcproj = {};
@@ -111,8 +112,11 @@ const Weather = () => {
       base_time = closest_time;
 
       try {
-        const url = `/api/getVilageFcst?serviceKey=${KMA_API_KEY}&pageNo=1&numOfRows=1000&dataType=JSON&base_date=${base_date}&base_time=${base_time}&nx=${rs.x}&ny=${rs.y}`;
+        // const url = `/api/getVilageFcst?serviceKey=${KMA_API_KEY}&pageNo=1&numOfRows=1000&dataType=JSON&base_date=${base_date}&base_time=${base_time}&nx=${rs.x}&ny=${rs.y}`;
+        // const response = await axios.get(url);
+        const url = `/hr/getVilageFcst?pageNo=1&numOfRows=1000&dataType=JSON&base_date=${base_date}&base_time=${base_time}&nx=${rs.x}&ny=${rs.y}`;
         const response = await axios.get(url);
+
         const items = response.data.response.body.items.item;
 
         const currentTemperature = items.find(
@@ -185,7 +189,13 @@ const Weather = () => {
   };
 
   if (loading) {
-    return <div className={styles.weatherWidget}>날씨 정보 로딩 중...</div>;
+    return (
+      <div className={styles.weatherWidget}>
+        <SkeletonBlock height={18} style={{ width: '55%', marginBottom: 8 }} />
+        <SkeletonBlock height={14} style={{ width: '70%', marginBottom: 6 }} />
+        <SkeletonBlock height={14} style={{ width: '40%' }} />
+      </div>
+    );
   }
 
   if (error) {

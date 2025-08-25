@@ -9,15 +9,27 @@ export const useReportFilter = (reports) => {
     category: ''
   });
 
+  const extractTitle = (report) => {
+    const raw = report?.title || '';
+    if (typeof raw !== 'string') return String(raw || '');
+    try {
+      const parsed = JSON.parse(raw);
+      if (parsed && typeof parsed.title === 'string') return parsed.title;
+    } catch (_) {}
+    return raw;
+  };
+
   // 필터링 로직
   useEffect(() => {
     let filtered = [...reports];
     
-    // 제목 필터링 (대소문자 무시)
+    // 제목 필터링 (대소문자 무시, JSON 문자열 대응)
     if (filters.title) {
-      filtered = filtered.filter(report => 
-        report.title && report.title.toLowerCase().includes(filters.title.toLowerCase())
-      );
+      const keyword = filters.title.toLowerCase();
+      filtered = filtered.filter(report => {
+        const title = extractTitle(report).toLowerCase();
+        return title.includes(keyword);
+      });
     }
     
     // 카테고리 필터링

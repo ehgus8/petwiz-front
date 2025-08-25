@@ -112,6 +112,7 @@ const DraftBoxCard = ({ draft, showScheduleInfo = false, onCancelSchedule }) => 
       {/* Right Section: 시각적 결재선 및 예약 취소 버튼 */}
       <div className={styles['right-section']}>
         <div
+          className={styles['approval-line-box']}
           onClick={e => {
             e.stopPropagation();
             setIsModalOpen(true);
@@ -125,6 +126,17 @@ const DraftBoxCard = ({ draft, showScheduleInfo = false, onCancelSchedule }) => 
             mode='summary'
           />
         </div>
+        {showScheduleInfo && draft.reportStatus === 'SCHEDULED' && onCancelSchedule && (
+          <button
+            className={styles['cancel-schedule-btn']}
+            onClick={(e) => {
+              e.stopPropagation(); // 카드 클릭(수정페이지 이동) 방지
+              onCancelSchedule(draft.id);
+            }}
+          >
+            예약 취소
+          </button>
+        )}
       </div>
       {isModalOpen && (
         <ModalPortal>

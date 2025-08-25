@@ -29,7 +29,7 @@ function ResetPasswordModal({ isOpen, onClose }) {
       await axios.get(
         `${API_BASE_URL}${HR_SERVICE}/employees/email/verification/${email}`,
       );
-      succeed('이메일이 전송되었습니다');
+      succeed('이메일이 전송되었습니다.');
       onClose();
     } catch (error) {
       swalError(
@@ -138,7 +138,7 @@ export default function Login() {
           password: newPassword,
           verificationCode, // 인증번호 추가
         });
-        succeed('비밀번호 설정 완료!');
+        succeed('비밀번호 설정 완료');
         navigate('/');
       } catch (error) {
         swalError(

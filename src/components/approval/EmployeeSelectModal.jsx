@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styles from './EmployeeSelectModal.module.scss';
+import { SkeletonBlock } from '../common/Skeleton';
 import axiosInstance from '../../configs/axios-config';
 import {
   API_BASE_URL,
@@ -127,13 +128,15 @@ const EmployeeSelectModal = ({
         onClick={(e) => e.stopPropagation()}
       >
         <h3 className={styles.modalTitle}>직원 선택</h3>
-        <input
-          type='text'
-          placeholder='이름/부서/직급/직책 검색'
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className={styles.searchInput}
-        />
+        <div className={styles.searchRow}>
+          <input
+            type='text'
+            placeholder='이름/부서/직급/직책 검색'
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className={styles.searchInput}
+          />
+        </div>
         <div className={styles.tabGroup}>
           <button
             className={activeTab === '전체' ? styles.activeTab : styles.tab}
@@ -151,7 +154,13 @@ const EmployeeSelectModal = ({
           </button>
         </div>
 
-        {loading && <div className={styles.loading}>로딩 중...</div>}
+        {loading && (
+          <div style={{padding: '8px 0'}}>
+            <SkeletonBlock height={12} style={{ width: '30%', marginBottom: 6 }} />
+            <SkeletonBlock height={12} style={{ width: '55%', marginBottom: 6 }} />
+            <SkeletonBlock height={12} style={{ width: '45%' }} />
+          </div>
+        )}
         {error && <div className={styles.error}>{error}</div>}
 
         {!loading && !error && activeTab === '전체' && (

@@ -2,23 +2,31 @@
 
 .approvalPageContainer {
   display: flex;
-  min-height: 100vh;
-  width: 100%; // ★ 컨테이너 너비가 화면을 넘지 않도록
-  overflow: hidden; // ★ 내부 요소가 넘쳐도 숨김
+  height: 100vh; /* 화면 전체 높이를 차지 */
+  background-color: #f4f7fa;
+  /* ★★★ 페이지 전체에 가로 스크롤이 생기는 것을 원천적으로 방지 */
+  overflow: hidden; 
 }
 
 
 .content {
-  flex-grow: 1;
-  background-color: #f4f6f8;
-  width: 100%; // ★ 너비를 명시
-  min-width: 0; // ★ flex 아이템이 줄어들 수 있도록 허용
+  /* ★★★ 메인 콘텐츠 영역의 핵심 수정 부분 ★★★ */
+  flex: 1; /* 1. 사이드바를 제외한 모든 공간을 차지 */
+  min-width: 0; /* 2. 내용이 길어져도 부모를 밀어내지 않고 스스로의 너비를 유지 (가장 중요!) */
+  overflow-y: auto; /* 3. 내용이 길어지면 이 영역 안에서만 세로 스크롤 생성 */
+  padding: 24px 32px;
 }
 
 /* --- 📱 모바일 레이아웃 스타일 --- */
 .mobileLayout {
+  flex-direction: column;
+  height: auto;
+  overflow: visible; /* 모바일에서는 일반 페이지처럼 스크롤 */
+
   .content {
-    // 하단 탭 메뉴(높이 60px)에 콘텐츠가 가려지지 않도록 아래쪽에 여백 추가
-    padding-bottom: 60px;
+    padding: 16px;
+    /* 하단 네비게이션에 내용이 가려지지 않도록 여백 확보 */
+    padding-bottom: 80px; 
+    overflow-y: visible;
   }
 }

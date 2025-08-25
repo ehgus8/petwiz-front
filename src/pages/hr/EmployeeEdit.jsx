@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../context/UserContext';
 import { getDepartmentNameById } from '../../common/hr';
 import Swal from 'sweetalert2';
-import { swalConfirm, swalError } from '../../common/common';
+import { succeed, swalConfirm, swalError } from '../../common/common';
 import ModalPortal from '../../components/approval/ModalPortal';
 
 export default function EmployeeEdit({ employee, onClose, hideHeader }) {
@@ -110,7 +110,7 @@ export default function EmployeeEdit({ employee, onClose, hideHeader }) {
           name: newDeptName,
         },
       );
-      alert('부서 등록 성공!');
+      succeed('부서 등록 성공!');
       setNewDeptName('');
       setShowDeptModal(false);
       fetchDepartments();
@@ -153,7 +153,7 @@ export default function EmployeeEdit({ employee, onClose, hideHeader }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!isValidEmail(email)) {
-      alert('유효하지 않은 이메일 형식입니다!');
+      alert('유효하지 않은 이메일 형식입니다.');
       return;
     }
     if (!hireDate.trim()) {
@@ -476,10 +476,9 @@ export default function EmployeeEdit({ employee, onClose, hideHeader }) {
           <div className='dept-modal-overlay'>
             <div className='dept-modal'>
               <h3>수정 정보 확인</h3>
-              <div
-                style={{ maxHeight: 320, overflowY: 'auto', marginBottom: 16 }}
-              >
-                <table style={{ width: '100%', fontSize: '1rem' }}>
+              <p className='modal-subtitle'>변경될 내용을 확인해 주세요.</p>
+              <div className='confirm-preview'>
+                <table className='confirm-table'>
                   <tbody>
                     <tr>
                       <th align='left'>이메일</th>

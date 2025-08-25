@@ -165,6 +165,7 @@
       justify-content: right;
       // margin-left: 55%;
       margin-left: auto; // ✅ 오른쪽 끝으로 정렬
+      margin-right: auto;
     }
     .write-button {
       padding: 0.5rem 1.2rem;
@@ -275,15 +276,6 @@
     .buttons {
       margin-top: 10px;
     }
-
-    .buttons button {
-      margin-right: 10px;
-      padding: 6px 12px;
-      background-color: blue;
-      color: black;
-      border: none;
-      cursor: pointer;
-    }
   }
 }
 
@@ -298,7 +290,7 @@
 
   th,
   td {
-    padding: 10px;
+    padding: 6px;
     border: none;
     text-align: center;
   }
@@ -347,24 +339,70 @@
 
 .pagination {
   display: flex;
-  justify-content: center; // ✅ 가운데 정렬
+  align-items: center;
+  gap: 6px;
   margin-top: 20px;
-  gap: 5px;
+  justify-content: center;
+  font-family: 'Pretendard', sans-serif;
 
   button {
     padding: 5px 10px;
     border: 1px solid #ccc;
     background: white;
+    border-radius: 6px;
     cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s ease;
+
+    &:hover:not(:disabled) {
+      background-color: #f5f5f5;
+    }
 
     &.active {
+      background-color: #007bff;
+      color: white;
+      border-color: #007bff;
       font-weight: bold;
-      background: #f0f0f0;
     }
 
     &:disabled {
       opacity: 0.5;
       cursor: not-allowed;
+      color: #ccc;
+    }
+  }
+
+  .ellipsis {
+    padding: 6px 8px;
+    font-size: 14px;
+    color: #999;
+    user-select: none;
+  }
+
+  /* 반응형 */
+  @media (max-width: 768px) {
+    gap: 4px;
+
+    button {
+      padding: 5px 8px;
+      font-size: 13px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    gap: 3px;
+
+    /* 모바일에서는 버튼 개수 제한 */
+    button,
+    .ellipsis {
+      display: none;
+    }
+
+    /* 이전/다음 + 현재 페이지만 표시 */
+    button.active,
+    button:first-child,
+    button:last-child {
+      display: inline-block;
     }
   }
 }
@@ -390,4 +428,178 @@
 
 .hide-reported {
   right-margin: 100px;
+}
+@media (max-width: 431px) {
+  .notice-board {
+    // min-height: 100%; << 이중 스크롤 문제 해결
+    margin-top: 0;
+    .page-size-selector {
+      display: none;
+    }
+  }
+
+  .filters {
+    display: flex;
+    input[type='date'] {
+      flex-grow: 1;
+    }
+    input[type='text'] {
+      flex-grow: 1;
+    }
+    .sort-options {
+      flex-grow: 1;
+      select {
+        flex-grow: 1;
+      }
+    }
+    .reset-button {
+      flex-grow: 1;
+    }
+    .hide-reported {
+      display: none !important;
+    }
+  }
+
+  .header h2 {
+    display: none;
+  }
+  // .filters input[type='text'] {
+  //   width: 300px;
+  // }
+
+  .write-button-wrapper {
+    display: none !important;
+  }
+
+  .notice-table {
+    thead {
+      display: none;
+    }
+    tbody {
+      display: block;
+      width: 100%;
+
+      td:nth-child(2) {
+        display: none;
+      }
+      td:nth-child(3) {
+        width: 100%;
+        flex-grow: 1;
+      }
+
+      td:nth-child(4) {
+        margin-left: auto;
+      }
+
+      td:nth-child(5)::after {
+        display: none;
+      }
+
+      td:nth-child(6) {
+        display: none;
+      }
+    }
+
+    tr {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+      border-radius: 6px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+      background: #fff;
+      padding: 8px 6px 6px 6px;
+      position: relative;
+      min-height: 48px;
+      // width: 100%;
+      align-items: flex-start;
+      transition: background 0.15s;
+    }
+    tr:hover {
+      background: #f1f4ff;
+    }
+    td {
+      border: none;
+      padding: 0 4px 0 0;
+      background: none;
+      font-size: 1em;
+      text-align: left !important;
+      display: inline-block;
+      vertical-align: middle;
+      margin-bottom: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    td:nth-child(1) {
+      font-size: 0.95em;
+      color: #444;
+      min-width: 32px;
+      margin-left: 2px;
+      font-weight: 600;
+    }
+    td:nth-child(2) {
+      width: 20px;
+      height: 20px;
+      margin-right: 6px;
+    }
+    td:nth-child(3) {
+      font-weight: bold;
+      font-size: 1.08em;
+      color: #222;
+      max-width: 65vw;
+      margin-right: 8px;
+    }
+    .bold-row td:nth-child(3) {
+      color: #21429e;
+    }
+    td:nth-child(4),
+    td:nth-child(5),
+    td:nth-child(6) {
+      font-size: 0.8em;
+      color: #666;
+      margin-right: 0;
+      position: relative;
+    }
+    // 중간점(·) 구분자 추가
+    td:nth-child(4)::after,
+    td:nth-child(5)::after {
+      content: ' ·';
+      color: #bbb;
+      margin: 0 4px;
+      font-weight: bold;
+    }
+    td:nth-child(6)::after {
+      content: '';
+    }
+    // 제목과 작성자/날짜/조회수 사이 여백
+    td:nth-child(3) {
+      margin-right: 8px;
+    }
+    .no-post {
+      font-size: 1rem;
+      padding: 18px 0;
+      text-align: center;
+      width: 100%;
+    }
+  }
+}
+
+.date-wrapper {
+  display: inline-block;
+  margin-right: 10px;
+}
+
+.custom-date-input {
+  width: 160px;
+  padding: 10px 12px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: white;
+  color: #000;
+
+  &::placeholder {
+    color: #999;
+  }
 }

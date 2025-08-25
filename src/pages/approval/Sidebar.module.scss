@@ -11,50 +11,113 @@
 .menuHeader {
   font-size: 24px;
   font-weight: 700;
-  padding-bottom: 20px;
-  margin-bottom: 20px;
-  border-bottom: 2px solid #343a40;
-  color: #343a40;
+  color: #222;
+  padding: 8px 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+}
+
+.menuHeaderHint {
+  font-size: 12px;
+  color: #6c757d;
+  margin-left: 8px;
+  opacity: 0;
+  transform: translateY(-2px);
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  white-space: nowrap;
+}
+
+.menuHeader:hover .menuHeaderHint,
+.menuHeader:focus .menuHeaderHint,
+.menuHeader:focus-within .menuHeaderHint {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.actionBtn {
+  width: 100%;
+  height: 40px;
+  padding: 0 14px;
+  border-radius: 10px;
+  border: 1px solid #dfe3e6;
+  background: linear-gradient(180deg, #ffffff 0%, #f7f9fb 100%);
+  color: #1f2d3d;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: .2px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: transform .12s ease, box-shadow .12s ease, background .2s ease, border-color .2s ease;
+  box-shadow: 0 1px 2px rgba(16,24,40,0.06);
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(16,24,40,0.10);
+    background: linear-gradient(180deg, #ffffff 0%, #f3f6f9 100%);
+  }
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(16,24,40,0.08);
+  }
+  &:focus-visible {
+    outline: 2px solid #2b80ff;
+    outline-offset: 2px;
+  }
+  &:disabled {
+    opacity: .6;
+    cursor: not-allowed;
+  }
 }
 
 .newApprovalBtn {
   width: 100%;
-  padding: 12px;
-  margin-bottom: 20px;
-  background-color: #007bff;
-  color: white;
-  border: none;
+  padding: 12px 14px;
+  margin: 10px 0 16px 0;
   border-radius: 8px;
-  font-size: 16px;
+  border: none;
+  background-color: #007bff;
+  color: #fff;
+  font-size: 15px;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s;
-  &:hover {
-    background-color: #0056b3;
-  }
+  transition: background-color 0.2s ease;
+  box-shadow: none;
+
+  &:hover { background-color: #0056b3; }
+  &:active { background-color: #004a99; }
+  &:focus-visible { outline: 2px solid #90caf9; outline-offset: 2px; }
 }
 
 .adminSettingsBtn {
   width: 100%;
-  padding: 12px 15px;
-  margin: 10px 0 20px 0;
-  border-radius: 6px;
-  background-color: #6c757d;
-  color: white;
-  font-size: 1rem;
-  font-weight: bold;
+  padding: 12px 14px;
+  margin: 0 0 20px 0;
+  border-radius: 8px;
   border: none;
+  background-color: #6c757d;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
   cursor: pointer;
-  text-align: center;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  transition: background-color 0.2s;
-  &:hover {
-    background-color: #5a6268;
-  }
+  transition: background-color 0.2s ease;
+  box-shadow: none;
+
+  &:hover { background-color: #5a6268; }
+  &:active { background-color: #4e555b; }
+  &:focus-visible { outline: 2px solid #cfd8dc; outline-offset: 2px; }
 }
+
+.adminSettingsBtn svg { opacity: .9; }
 
 .menuGroup {
   margin-bottom: 20px;
@@ -77,43 +140,120 @@
   gap: 8px;
 }
 
-/* ★★★ 여기가 핵심 수정 부분입니다 ★★★ */
-/* 중복된 menuItem 정의를 하나로 합치고, active 클래스에도 flex를 적용합니다. */
 .menuItem {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  
   padding: 10px 15px;
-  color: #495057;
-  text-decoration: none;
   border-radius: 6px;
   font-weight: 500;
-  transition:
-    background-color 0.2s,
-    color 0.2s;
+  text-decoration: none;
+  transition: background-color 0.2s, color 0.2s;
+
+  /* ★★★ 1. 메뉴 이름(span)은 항상 기본 색상을 유지합니다. ★★★ */
+  span {
+    span:not(.countBadge):not(.newBadge) {
+      color: #495057;
+      font-weight: 500;
+    }
+  }
 
   &:hover {
     background-color: #e9ecef;
   }
 
+  /* ★★★ 2. 활성화(.active) 상태일 때의 스타일 ★★★ */
   &.active {
     background-color: #007bff;
-    color: white !important;
-    font-weight: 600;
+    
+    /* 활성 메뉴의 이름(span)은 흰색으로 변경 */
+    span {
+      color: white !important;
+      font-weight: 600;
+    }
 
-    &:hover {
-      background-color: #007bff;
+    /* 활성 메뉴의 배지(countBadge)도 흰색으로 변경 */
+    .countBadge {
+      color: white !important;
+      font-weight: 900;
+    }
+    .newBadge {
+      color: white;
     }
   }
 }
 
 .countBadge {
-  margin-left: 8px;
+  font-size: 18px; /* 폰트 크기를 크게 조정 */
+  font-weight: 900; /* 더 두껍게 */
+
+  transition: opacity 0.3s ease, transform 0.3s ease;
+
+  &[data-count="0"] {
+    opacity: 0;
+    transform: scale(0.5);
+    pointer-events: none;
+  }
+}
+
+.badgeContainer {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.newBadge {
   background-color: #dc3545;
-  color: white;
-  border-radius: 10px;
-  padding: 2px 7px;
-  font-size: 11px;
-  font-weight: 600;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700 !important;
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+
+/* ★★★ 4. '결재 예정 문서함'에만 특별한 스타일을 적용합니다. ★★★ */
+/* to="/approval/pending"을 가진 NavLink를 직접 타겟팅합니다. */
+.menuItem[href$="/approval/pending"] {
+  /* 비활성 상태일 때 '결재 예정'의 배지만 빨간색으로 변경 */
+  &:not(.active) .countBadge {
+    color: #dc3545;
+  }
+}
+
+.menuItem[href$="/approval/in-progress"] {
+  /* 비활성 상태일 때 '결재 예정'의 배지만 빨간색으로 변경 */
+  &:not(.active) .countBadge {
+    color: #007bff;
+  }
+}
+
+.menuItem[href$="/approval/completed"] {
+  /* 비활성 상태일 때 '결재 예정'의 배지만 빨간색으로 변경 */
+  &:not(.active) .countBadge {
+    color: #007bff;
+  }
+}
+.menuItem[href$="/approval/rejected"] {
+  /* 비활성 상태일 때 '결재 예정'의 배지만 빨간색으로 변경 */
+  &:not(.active) .countBadge {
+    color: #007bff;
+  }
+}
+.menuItem[href$="/approval/drafts"] {
+  /* 비활성 상태일 때 '결재 예정'의 배지만 빨간색으로 변경 */
+  &:not(.active) .countBadge {
+    color: #007bff;
+  }
+}
+.menuItem[href$="/approval/scheduled"] {
+  /* 비활성 상태일 때 '결재 예정'의 배지만 빨간색으로 변경 */
+  &:not(.active) .countBadge {
+    color: #007bff;
+  }
+}
+.menuItem[href$="/approval/cc"] {
+  /* 비활성 상태일 때 '결재 예정'의 배지만 빨간색으로 변경 */
+  &:not(.active) .countBadge {
+    color: #007bff;
+  }
 }

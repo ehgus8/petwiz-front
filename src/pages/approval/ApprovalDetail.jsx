@@ -5,6 +5,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axiosInstance from '../../configs/axios-config';
 import { API_BASE_URL, APPROVAL_SERVICE, HR_SERVICE } from '../../configs/host-config';
 import styles from './ApprovalDetail.module.scss';
+import { FullPageSkeleton } from '../../components/common/Skeleton';
 import { UserContext } from '../../context/UserContext';
 import VisualApprovalLine from '../../components/approval/VisualApprovalLine';
 import ApprovalLineModal from '../../components/approval/ApprovalLineModal';
@@ -23,7 +24,7 @@ const COMMON_COMMENTS = [
 const ApprovalDetail = () => {
   const { reportId } = useParams();
   const navigate = useNavigate();
-  const { user } = useContext(UserContext);
+  const { user, refetchCounts } = useContext(UserContext);
 
   const [report, setReport] = useState(null);
   const [history, setHistory] = useState([]);
@@ -64,7 +65,19 @@ const ApprovalDetail = () => {
       ]);
 
       const reportData = reportResponse.data?.result;
+      if (!reportData.template?.content?.length && reportData.templateId) {
+        const tplRes = await axiosInstance.get(
+          `${API_BASE_URL}${APPROVAL_SERVICE}/form?templateId=${reportData.templateId}`
+        );
+        if (tplRes.data.statusCode === 200) {
+          reportData.template = tplRes.data.result.template;
+        }
+      }
+      setReport(reportData);
+      
       const historyData = historyResponse.data?.result;
+      console.log('🧐 reportData from GET /reports/:', reportData);
+      
 
       if (historyData && historyData.length > 0) {
         const employeeIds = [...new Set(historyData.map(h => h.employeeId))];
@@ -136,6 +149,7 @@ const ApprovalDetail = () => {
         comment: comment || (isApproved ? '승인합니다.' : ''),
       });
       await Swal.fire({ icon: 'success', title: '성공적으로 처리되었습니다.', confirmButtonText: '확인' });
+      await refetchCounts();
       fetchReportDetail();
     } catch (err) {
       await Swal.fire({
@@ -166,6 +180,7 @@ const ApprovalDetail = () => {
       await Swal.fire({ icon: 'success', title: '성공적으로 처리되었습니다.', confirmButtonText: '확인' });
       setConfirmModalOpen(false);
       setApprovalComment('');
+      await refetchCounts();
       fetchReportDetail();
     } catch (err) {
       await Swal.fire({
@@ -192,6 +207,8 @@ const ApprovalDetail = () => {
     try {
       await axiosInstance.post(`${API_BASE_URL}${APPROVAL_SERVICE}/reports/${reportId}/recall`);
       await Swal.fire({ icon: 'success', title: '회수 처리되었습니다.', confirmButtonText: '확인' });
+      await refetchCounts();
+      fetchReportDetail();
       navigate('/approval/drafts');
     } catch (err) {
       await Swal.fire({
@@ -202,7 +219,7 @@ const ApprovalDetail = () => {
     }
   };
 
-  if (loading) return <div className={styles.loading}>로딩 중...</div>;
+  if (loading) return <FullPageSkeleton lines={8} />;
   if (error) return <div className={styles.error}>에러: {error}</div>;
   if (!report) return <div className={styles.noData}>데이터가 없습니다.</div>;
 

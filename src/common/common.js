@@ -13,7 +13,7 @@ export const removeLocalStorageForLogout = () => {
 };
 
 export const succeed = (text) => {
-  Swal.fire({
+  return Swal.fire({
     title: '성공',
     text: text,
     icon: 'success',
@@ -22,7 +22,7 @@ export const succeed = (text) => {
 };
 
 export const warn = (text) => {
-  Swal.fire({
+  return Swal.fire({
     title: '경고',
     text: text,
     icon: 'warning',
@@ -30,7 +30,7 @@ export const warn = (text) => {
   });
 };
 export const swalError = (text) => {
-  Swal.fire({
+  return Swal.fire({
     title: '에러',
     text: text,
     icon: 'error',

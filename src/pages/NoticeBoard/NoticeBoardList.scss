@@ -197,7 +197,7 @@
 
   th,
   td {
-    padding: 10px;
+    padding: 6px;
     border: none;
     text-align: center;
   }
@@ -217,8 +217,6 @@
 
   .notice-row {
     background-color: #eef3ff;
-    // font-weight: bold;
-    // color: #21429e;
   }
 
   .divider-row td {
@@ -246,24 +244,70 @@
 
 .pagination {
   display: flex;
-  justify-content: center; // ✅ 가운데 정렬
+  align-items: center;
+  gap: 6px;
   margin-top: 20px;
-  gap: 5px;
+  justify-content: center;
+  font-family: 'Pretendard', sans-serif;
 
   button {
     padding: 5px 10px;
     border: 1px solid #ccc;
-    background: white;
+    background-color: white;
+    border-radius: 6px;
     cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s ease;
+
+    &:hover:not(:disabled) {
+      background-color: #f5f5f5;
+    }
 
     &.active {
+      background-color: #007bff;
+      color: white;
+      border-color: #007bff;
       font-weight: bold;
-      background: #f0f0f0;
     }
 
     &:disabled {
       opacity: 0.5;
       cursor: not-allowed;
+      color: #ccc;
+    }
+  }
+
+  .ellipsis {
+    padding: 6px 8px;
+    font-size: 14px;
+    color: #999;
+    user-select: none;
+  }
+
+  /* 반응형 */
+  @media (max-width: 768px) {
+    gap: 4px;
+
+    button {
+      padding: 5px 8px;
+      font-size: 13px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    gap: 3px;
+
+    /* 모바일에서는 버튼 개수 제한 */
+    button,
+    .ellipsis {
+      display: none;
+    }
+
+    /* 이전/다음 + 현재 페이지만 표시 */
+    button.active,
+    button:first-child,
+    button:last-child {
+      display: inline-block;
     }
   }
 }
@@ -285,21 +329,162 @@
 
 .view-mode-buttons {
   margin-right: 10px;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+  font-family: 'arial';
+
   button {
     border-radius: 50%;
     margin-right: 5px;
     padding: 6px 12px;
     border: 0px solid #ccc;
-    background-color: white;
+    background-color: #f3f3f3;
+    font-size: 0.95rem;
     cursor: pointer;
     &.active {
-      // background-color: #007bff;
-      color: blue;
+      background-color: #007bff;
+      color: white;
       font-weight: 700;
+      border-color: #007bff;
+    }
+    &:hover {
+      background-color: #e0e0e0;
+    }
+  }
+
+  .favorite-toggle {
+    display: flex;
+    align-items: center;
+    font-size: 0.95rem;
+    margin-left: auto;
+    gap: 4px;
+    font-family: inherit; // ✅ 전체 글꼴과 동일하게
+    cursor: pointer;
+    user-select: none;
+    padding: 6px 12px;
+    border: 0px solid #ccc;
+
+    input[type='checkbox'] {
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+    }
+
+    span {
+      cursor: pointer;
+      user-select: none;
+      font-family: inherit; // ✅ 통일된 글꼴 적용
     }
   }
 }
 
 .bold-row {
   font-weight: bold;
+}
+
+.favorite-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 2px 6px;
+  font-size: 1.3em;
+  transition:
+    transform 0.2s ease,
+    color 0.3s ease;
+  color: #bbb;
+
+  &:hover {
+    transform: scale(1.2);
+    color: gold; // 호버 시 노란 별
+  }
+
+  &.active {
+    color: gold; // 즐겨찾기 된 경우
+    .star-icon {
+      animation: pop 0.3s ease-in-out;
+    }
+  }
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.5);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.write-button-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+
+  .write-button {
+    padding: 6px 12px;
+    font-size: 0.95rem;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+
+    &:hover {
+      background-color: #0056b3;
+    }
+  }
+
+  .favorite-toggle-icon {
+    font-size: 1rem;
+    font-family: inherit;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #f5b400;
+    padding: 0;
+    margin-left: 2px;
+
+    &:hover {
+      color: #d49f00;
+    }
+  }
+}
+
+.active-star {
+  color: gold;
+  font-size: 1rem;
+  animation: pop 0.3s ease-in-out;
+}
+
+.star {
+  animation: pop 0.3s ease-in-out;
+  color: #bbb;
+}
+
+.date-wrapper {
+  display: inline-block;
+  max-width: 140px !important;
+  margin-right: 0px !important;
+}
+
+.custom-date-input {
+  max-width: 140px !important;
+  width: 100% !important;
+  padding: 10px 12px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: white;
+  color: #000;
+  box-sizing: border-box;
+
+  &::placeholder {
+    color: #999;
+  }
 }

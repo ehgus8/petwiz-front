@@ -18,7 +18,12 @@ const CategoryModal = ({ open, onClose, onSubmit, category }) => {
       setName('');
       setDescription('');
     }
-  }, [open, category]);
+    // 모달이 닫힐 때 상태 초기화
+    else if (!open) {
+      setName('');
+      setDescription('');
+    }
+  }, [open, category?.id, category?.categoryName, category?.categoryDescription]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -35,10 +40,17 @@ const CategoryModal = ({ open, onClose, onSubmit, category }) => {
       categoryName: name,
       categoryDescription: description,
     });
+    console.log(category.categoryDescription);
   };
 
   const handleDelete = async () => {
     onSubmit(null, true); 
+  };
+
+  const handleClose = () => {
+    setName('');
+    setDescription('');
+    onClose();
   };
 
   if (!open) {
@@ -69,6 +81,7 @@ const CategoryModal = ({ open, onClose, onSubmit, category }) => {
               onChange={(e) => setDescription(e.target.value)}
               placeholder='카테고리에 대한 간단한 설명을 입력하세요.'
               rows='3'
+              
             ></textarea>
           </div>
           <div className={styles.buttonGroup}>
@@ -77,7 +90,7 @@ const CategoryModal = ({ open, onClose, onSubmit, category }) => {
                 삭제
               </button>
             )}
-            <button type='button' onClick={onClose} className={styles.cancelButton}>
+            <button type='button' onClick={handleClose} className={styles.cancelButton}>
               취소
             </button>
             <button type='submit' className={styles.saveButton}>

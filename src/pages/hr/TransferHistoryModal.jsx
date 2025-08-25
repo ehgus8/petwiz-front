@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { SkeletonBlock } from '../../components/common/Skeleton';
 import axiosInstance from '../../configs/axios-config';
 import { API_BASE_URL, HR_SERVICE } from '../../configs/host-config';
 import './EmployeeList.scss';
@@ -100,7 +101,11 @@ export default function TransferHistoryModal({ employeeId, onClose }) {
           ×
         </button>
         {loading || deptLoading ? (
-          <div>로딩 중...</div>
+          <div style={{padding: '8px 0'}}>
+            <SkeletonBlock height={12} style={{ width: '40%', marginBottom: 6 }} />
+            <SkeletonBlock height={12} style={{ width: '60%', marginBottom: 6 }} />
+            <SkeletonBlock height={12} style={{ width: '50%' }} />
+          </div>
         ) : error ? (
           <div style={{ color: 'red' }}>{error}</div>
         ) : deptError ? (

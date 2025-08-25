@@ -92,4 +92,18 @@
       }
     }
   }
+}
+
+@media (max-width: 768px) {
+  .approval-line {
+    .approval-item {
+      min-width: auto;
+      width: 100%;
+      padding: 10px 12px;
+      .approval-row { flex-wrap: wrap; gap: 8px; }
+      .approver-name { font-size: 14px; }
+      .approver-position { font-size: 13px; }
+      .approval-date { min-width: auto; text-align: left; }
+    }
+  }
 } 

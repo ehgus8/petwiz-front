@@ -1,20 +1,12 @@
 import React, { useEffect, useRef } from 'react';
-import styles from './AddFieldModal.module.scss'; // 1. SCSS 파일 import
-
-// 아이콘 임포트 (React Icons 라이브러리 사용 예시)
-// npm install react-icons
-import { TfiText, TfiLayoutMenuV } from 'react-icons/tfi';
-import {
-  IoCalendarOutline,
-  IoSwapHorizontalOutline,
-  IoCreateOutline,
-} from 'react-icons/io5';
+import styles from './AddFieldModal.module.scss';
+import { TfiText } from 'react-icons/tfi';
+import { IoCalendarOutline, IoSwapHorizontalOutline } from 'react-icons/io5';
 import { FaHashtag } from 'react-icons/fa';
 
 const AddFieldModal = ({ isOpen, onClose, onSelect }) => {
   const modalContentRef = useRef(null);
 
-  // ESC 키로 닫기
   useEffect(() => {
     if (!isOpen) return;
     const handleKeyDown = (e) => {
@@ -26,7 +18,6 @@ const AddFieldModal = ({ isOpen, onClose, onSelect }) => {
 
   if (!isOpen) return null;
 
-  // 오버레이 클릭 시 닫기
   const handleOverlayClick = (e) => {
     if (
       modalContentRef.current &&
@@ -38,10 +29,10 @@ const AddFieldModal = ({ isOpen, onClose, onSelect }) => {
 
   const componentOptions = [
     {
-      id: 'text',
+      id: 'text', // ★★★ 이제 이 'text'가 사용자 정의 모달을 여는 역할을 합니다.
       icon: <TfiText />,
       name: '텍스트',
-      desc: '한 줄 텍스트를 입력받습니다.',
+      desc: '필드명, 필수 여부 등 모든 속성을 직접 설정합니다.', // 설명을 더 명확하게 변경
     },
     {
       id: 'date_ymd',
@@ -62,17 +53,10 @@ const AddFieldModal = ({ isOpen, onClose, onSelect }) => {
       desc: '숫자만 입력받습니다.',
     },
   ];
-
-  const customOption = {
-    id: 'custom',
-    icon: <IoCreateOutline />,
-    name: '새 항목 직접 만들기',
-    desc: '필드명, 필수 여부 등 모든 속성을 직접 설정합니다.',
-    note: '※ 필드명(제목)은 필수 입력 항목입니다.',
-  };
+  
+  // ★★★ 'customOption' 객체는 이제 필요 없으므로 삭제합니다.
 
   return (
-    // 2. className 적용
     <div className={styles.modalOverlay} onMouseDown={handleOverlayClick}>
       <div className={styles.modalContent} ref={modalContentRef}>
         <button
@@ -87,7 +71,7 @@ const AddFieldModal = ({ isOpen, onClose, onSelect }) => {
         <h2 className={styles.title}>필드 추가</h2>
 
         <div className={styles.section}>
-          <h3 className={styles.sectionTitle}>기본 컴포넌트</h3>
+          <h3 className={styles.sectionTitle}>컴포넌트 유형</h3>
           <p className={styles.sectionDesc}>
             추가할 컴포넌트 유형을 선택하세요.
           </p>
@@ -108,29 +92,8 @@ const AddFieldModal = ({ isOpen, onClose, onSelect }) => {
           </div>
         </div>
 
-        <div className={styles.divider}>또는</div>
-
-        <div className={styles.section}>
-          <h3 className={styles.sectionTitle}>사용자 정의 컴포넌트</h3>
-          <p className={styles.sectionDesc}>
-            더 상세한 설정이 필요한 경우, 새 항목을 직접 만드세요.
-          </p>
-          <div className={styles.optionGrid}>
-            <div
-              className={styles.optionCard}
-              onClick={() => onSelect(customOption.id)}
-            >
-              <div className={styles.icon}>{customOption.icon}</div>
-              <div className={styles.details}>
-                <div className={styles.name}>{customOption.name}</div>
-                <div className={styles.desc}>{customOption.desc}</div>
-                {customOption.note && (
-                  <div className={styles.note}>{customOption.note}</div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
+        {/* ★★★ '또는' 구분선과 '사용자 정의 컴포넌트' 섹션을 모두 제거합니다. ★★★ */}
+        
       </div>
     </div>
   );

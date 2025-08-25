@@ -1,0 +1,39 @@
+/* /src/components/approval/SkeletonCard.module.scss (신규 파일) */
+.skeletonCard {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 20px 24px;
+    border: 1px solid #e9ecef;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+  }
+  
+  .line {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+    border-radius: 4px;
+    height: 16px;
+  }
+  
+  .left {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .right {
+    width: 150px;
+  }
+  
+  .short { width: 40%; }
+  .medium { width: 80%; }
+  .long { width: 90%; }
+  
+  @keyframes loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }

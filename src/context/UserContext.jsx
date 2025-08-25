@@ -1,24 +1,26 @@
-import React, { useEffect, useState, useContext } from 'react';
-import axios from 'axios';
-import { API_BASE_URL } from '../configs/host-config';
+import React, { useEffect, useState, useContext, useCallback } from 'react';
+import axiosInstance from '../configs/axios-config';
+import { API_BASE_URL, APPROVAL_SERVICE } from '../configs/host-config';
 import { removeLocalStorageForLogout } from '../common/common';
 
 export const UserContext = React.createContext({
   isLoggedIn: false,
-  onLogin: () => { },
-  onLogout: () => { },
+  onLogin: () => {},
+  onLogout: () => {},
   userRole: '',
   userPosition: '',
   userName: '',
   badge: null,
-  setBadge: () => { },
+  setBadge: () => {},
   userId: null,
   departmentId: null,
   userImage: '', // 유저 프로필사진
-  setUserImage: () => { },
+  setUserImage: () => {},
   isInit: false,
   accessToken: '',
-  counts: {},      
+  counts: {},
+  setCounts: () => {},
+  refetchCounts: () => {},
 });
 
 export const UserContextProvider = (props) => {
@@ -34,7 +36,30 @@ export const UserContextProvider = (props) => {
   const [accessToken, setAccessToken] = useState(null);
   const [user, setUser] = useState(null); // user 객체 상태 추가
 
-  const [counts, setCounts] = useState({
+  const refetchCounts = useCallback(async () => {
+    const token = localStorage.getItem('ACCESS_TOKEN');
+    if (!token) return;
+
+    try {
+      const res = await axiosInstance.get(
+        `${API_BASE_URL}${APPROVAL_SERVICE}/reports/counts`,
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
+      if (res.data?.statusCode === 200) {
+        const newCounts = res.data.result;
+        setCounts(newCounts);
+        localStorage.setItem('APPROVAL_COUNTS', JSON.stringify(newCounts));
+        console.log("📦 localStorage counts:", localStorage.getItem('APPROVAL_COUNTS'));
+        console.log("🎯 API counts:", newCounts);
+        console.log("📣 refetchCounts 호출됨");
+      }
+
+    } catch (err) {
+      console.error('문서함 개수 조회 실패:', err);
+    }
+  }, []);
+
+  const defaultCounts = {
     pending: 0,
     inProgress: 0,
     completed: 0,
@@ -42,32 +67,17 @@ export const UserContextProvider = (props) => {
     drafts: 0,
     scheduled: 0,
     cc: 0,
-  });
-    useEffect(() => {
-    // 로그인 했을 때만 API 호출
-    if (accessToken) {
-      const fetchCounts = async () => {
-        try {
-          const res = await axiosInstance.get(
-            `${API_BASE_URL}${APPROVAL_SERVICE}/reports/counts`
-          );
-          if (res.data?.statusCode === 200) {
-            setCounts(res.data.result);
-          }
-        } catch (err) {
-          console.error("문서함 개수 조회 실패:", err);
-        }
-      };
+  };
 
-      fetchCounts();
-
-      // (선택사항) 1분마다 폴링
-      const intervalId = setInterval(fetchCounts, 60000);
-      return () => clearInterval(intervalId); // 컴포넌트 언마운트 시 인터벌 정리
+  const [counts, setCounts] = useState(() => {
+    try {
+      const cached = localStorage.getItem('APPROVAL_COUNTS');
+      return cached ? JSON.parse(cached) : defaultCounts;
+    } catch {
+      return defaultCounts;
     }
-  }, [accessToken]); // accessToken이 생기거나 바뀔 때 실행
+  });
 
-  // 사용자 정보가 변경될 때마다 user 객체를 업데이트하는 useEffect
   useEffect(() => {
     if (isLoggedIn) {
       setUser({
@@ -76,7 +86,7 @@ export const UserContextProvider = (props) => {
         name: userName,
         position: userPosition,
         departmentId: departmentId,
-        image: userImage
+        image: userImage,
       });
     } else {
       setUser(null);
@@ -121,6 +131,8 @@ export const UserContextProvider = (props) => {
     setUserPosition(loginData.position);
     setDepartmentId(loginData.departmentId);
     setAccessToken(loginData.token);
+    setIsInit(true); // 로그인 시에도 초기화 완료로 설정
+    refetchCounts();
   };
 
   const logoutHandler = () => {
@@ -135,12 +147,15 @@ export const UserContextProvider = (props) => {
     setUserId(null); // Clear userId on logout
     setUserPosition(''); // Clear userPosition on logout
     setDepartmentId(null); // Clear departmentId on logout
+    // 로그아웃 후에도 초기화는 완료 상태 유지
+    setIsInit(true);
   };
 
   useEffect(() => {
     console.log('🌀 [useEffect] 초기 렌더링 시 로컬스토리지 확인');
     const storedToken = localStorage.getItem('ACCESS_TOKEN');
 
+    let intervalId = null;
     if (storedToken) {
       const storedId = localStorage.getItem('USER_ID');
       const storedRole = localStorage.getItem('USER_ROLE');
@@ -156,6 +171,9 @@ export const UserContextProvider = (props) => {
       setUserRole(storedRole);
       setUserPosition(storedPosition);
       setUserName(storedName);
+
+      refetchCounts();
+
       if (storedImage) {
         setUserImage(storedImage);
       }
@@ -172,10 +190,59 @@ export const UserContextProvider = (props) => {
           console.error('⚠️ 로컬 배지 파싱 실패:', e);
         }
       }
+
+      setIsInit(true);
+
+      return () => {
+        if (intervalId) {
+          clearInterval(intervalId);
+        }
+      };
     }
 
+    // 토큰이 있든 없든 초기화는 완료로 표시
+    console.log('✅ UserContext 초기화 완료 - isInit을 true로 설정');
     setIsInit(true);
-  }, []);
+
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
+  }, [refetchCounts]);
+
+  const fetchCounts = async () => {
+    try {
+      const res = await axiosInstance.get(
+        `${API_BASE_URL}${APPROVAL_SERVICE}/reports/counts`
+      );
+      if (res.data?.statusCode === 200 && res.data.result) {
+        const newCounts = res.data.result;
+        setCounts(newCounts);
+        localStorage.setItem('APPROVAL_COUNTS', JSON.stringify(newCounts));
+        console.log("📦 localStorage counts:", localStorage.getItem('APPROVAL_COUNTS'));
+        console.log("🎯 API counts:", newCounts);
+      }
+    } catch (err) {
+      console.error('문서함 개수 조회 실패:', err);
+    }
+  };
+
+  useEffect(() => {
+    if (!isLoggedIn) return;
+  
+    const tick = () => refetchCounts(); // counts 갱신
+    tick(); // 로그인 직후 한 번
+  
+    const id = setInterval(tick, 30000); // 30초
+    const onFocus = () => refetchCounts(); // 창 다시 포커스 시 즉시 갱신
+    window.addEventListener('focus', onFocus);
+  
+    return () => {
+      clearInterval(id);
+      window.removeEventListener('focus', onFocus);
+    };
+  }, [isLoggedIn, refetchCounts]);
 
   return (
     <UserContext.Provider
@@ -196,6 +263,8 @@ export const UserContextProvider = (props) => {
         accessToken,
         user, // Provider value에 user 객체 추가
         counts,
+        setCounts, // counts 업데이트 함수 추가
+        refetchCounts,
       }}
     >
       {props.children}

@@ -1,5 +1,6 @@
 import React from 'react';
 import pin from '../../assets/pin.jpg';
+import './UserCard.scss';
 
 export default function UserCard({
   userName,

@@ -1,6 +1,7 @@
 import React from 'react';
 import styles from './ApprovalPendingCard.module.scss';
 import { useNavigate } from 'react-router-dom';
+import useWindowDimensions from '../../hooks/useWindowDimensions';
 
 const reportStatusMap = {
   DRAFT: '임시 저장',
@@ -22,10 +23,17 @@ const approvalStatusMap = {
 
 const ApprovalPendingCard = ({ report }) => {
   const navigate = useNavigate();
+  const { width } = useWindowDimensions();
+  const isMobile = (width || 0) <= 768;
 
   const handleClick = () => {
     navigate(`/approval/reports/${report.id}`);
   };
+
+  // 모바일에서는 현재 결재자(또는 첫 사람)만 표시
+  const approvers = Array.isArray(report.approvalLine) ? report.approvalLine : [];
+  const current = approvers.find(a => a.approvalStatus === 'PENDING') || approvers[0];
+  const visibleApprovers = isMobile ? (current ? [current] : []) : approvers;
 
   return (
     <div className={styles['approvalpending-card']} onClick={handleClick}>
@@ -36,9 +44,9 @@ const ApprovalPendingCard = ({ report }) => {
         <span className={styles['approvalpending-date']}>{new Date(report.createdAt || report.reportCreatedAt).toLocaleDateString()}</span>
         <span className={styles['approvalpending-writer']}>{report.name}</span>
       </div>
-      {report.approvalLine && (
+      {visibleApprovers.length > 0 && (
         <div className={styles['approval-line']}>
-          {report.approvalLine.map((a, i) => {
+          {visibleApprovers.map((a, i) => {
             const s = approvalStatusMap[a.approvalStatus] || approvalStatusMap.PENDING;
             return (
               <div key={i} className={styles['approval-item']} style={{ borderColor: s.color }}>

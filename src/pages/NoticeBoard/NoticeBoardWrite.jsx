@@ -144,11 +144,18 @@ const NoticeBoardWrite = ({ isEdit = false }) => {
                 title: '제목을 입력해주세요.',
                 confirmButtonText: '확인',
             });
-
-
             return;
         } else {
             setTitleError(false);
+        }
+
+        if (title.length > 100) {
+            Swal.fire({
+                icon: 'warning',
+                title: '제목은 100자 이내로 입력해주세요.',
+                confirmButtonText: '확인',
+            });
+            return;
         }
 
         if (!content.trim()) {
@@ -293,6 +300,7 @@ const NoticeBoardWrite = ({ isEdit = false }) => {
                 type="text"
                 placeholder="제목을 입력하세요"
                 className={`title-input ${titleError ? 'error-input' : ''}`}
+                maxLength={100}
                 value={title}
                 onChange={(e) => {
                     setTitle(e.target.value);
@@ -371,7 +379,39 @@ const NoticeBoardWrite = ({ isEdit = false }) => {
             )}
 
             <div className="attachments">
-                <input type="file" multiple onChange={(e) => setFiles([...e.target.files])} />
+                {/* 숨겨진 실제 파일 선택 input */}
+                <input
+                    type="file"
+                    id="fileUpload"
+                    multiple
+                    onChange={(e) => setFiles([...e.target.files])}
+                    style={{ display: 'none' }}
+                />
+
+                {/* 사용자 친화적인 커스텀 버튼 */}
+                <label htmlFor="fileUpload" className="file-upload-label">
+                    파일 선택
+                </label>
+
+                {/* 선택한 파일명 리스트 */}
+                {files.length > 0 && (
+                    <ul className="selected-files">
+                        {files.map((file, index) => (
+                            <li key={index} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                📄 {file.name}
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        setFiles(prev => prev.filter((_, i) => i !== index))
+                                    }
+                                    className="file-remove-button"
+                                >
+                                    ❌
+                                </button>
+                            </li>
+                        ))}
+                    </ul>
+                )}
             </div>
 
             <div className="buttons">

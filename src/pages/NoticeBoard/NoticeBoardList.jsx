@@ -1,40 +1,98 @@
+import axios from 'axios';
 import React, { useEffect, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-    API_BASE_URL,
-    NOTICE_SERVICE
+    API_BASE_URL, NOTICE_SERVICE
 } from '../../configs/host-config';
 import { UserContext, UserContextProvider } from '../../context/UserContext'; // 로그인 유저 정보
+import { fetchFavoriteNotices, toggleFavoriteNotice } from '../../api/favorite-api';
 import './NoticeBoardList.scss';
 import Swal from 'sweetalert2';
+import ListSkeleton, { FullPageSkeleton } from '../../components/common/Skeleton';
+
+const fileIconMap = {
+    txt: '/icons/txt.png',
+    doc: '/icons/doc.png',
+    docx: '/icons/docx.png',
+    pdf: '/icons/pdf.png',
+    php: '/icons/php.png',
+    xls: '/icons/xls.png',
+    xlsx: '/icons/xlsx.png',
+    csv: '/icons/csv.png',
+    css: '/icons/css.png',
+    jpg: '/icons/jpg.png',
+    jpeg: '/icons/jpg.png',
+    js: '/icons/js.png',
+    png: '/icons/png.png',
+    gif: '/icons/gif.png',
+    htm: '/icons/htm.png',
+    html: '/icons/html.png',
+    zip: '/icons/zip.png',
+    mp3: '/icons/mp3.png',
+    mp4: '/icons/mp4.png',
+    ppt: '/icons/ppt.png',
+    exe: '/icons/exe.png',
+    svg: '/icons/svg.png',
+    webp: '/icons/webp.jpg',
+};
 
 const NoticeBoardList = () => {
+
     const navigate = useNavigate();
     const { isInit, userId, accessToken, departmentId, userPosition, userRole } = useContext(UserContext);
-
+    const [favoriteList, setFavoriteList] = useState([]); // 즐겨찾기된 noticeId 배열
     const [viewMode, setViewMode] = useState('ALL'); // ALL | MY | DEPT
     const [posts, setPosts] = useState([]);
     const [notices, setNotices] = useState([]);
     const [generalNotices, setGeneralNotices] = useState([]);
     const [filters, setFilters] = useState({
-        startDate: '',
-        endDate: '',
-        keyword: '',
-        sortBy: 'createdAt',
-        sortDir: 'desc',
+        startDate: '', endDate: '', keyword: '',
+        sortBy: 'createdAt', sortDir: 'desc',
     });
     const [page, setPage] = useState(0);
     const [totalPages, setTotalPages] = useState(1);
     const [pageSize, setPageSize] = useState(10); // ✅ 보기 개수
     const [loading, setLoading] = useState(false);
     const [deletingId, setDeletingId] = useState(null); // 삭제 중인 공지 ID
+    const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
 
+    const DateInput = ({ name, value, onChange, placeholder }) => {
+        const [type, setType] = useState('text');
+
+        return (
+            <input
+                className="custom-date-input"
+                type={type}
+                name={name}
+                value={value}
+                placeholder={placeholder}
+                onFocus={() => setType('date')}
+                onBlur={() => {
+                    if (!value) setType('text');
+                }}
+                onChange={onChange}
+            />
+        );
+    };
+
+
+    const filteredNotices = showFavoritesOnly
+        ? notices.filter(notices => favoriteList.includes(notices.noticeId))
+        : notices;
+
+    const filteredGeneralNotices = showFavoritesOnly
+        ? generalNotices.filter(generalNotices => favoriteList.includes(generalNotices.noticeId))
+        : generalNotices;
 
     const dateOptions = { year: 'numeric', month: '2-digit', day: '2-digit' };
     const dateTimeOptions = {
         year: 'numeric', month: '2-digit', day: '2-digit',
         hour: '2-digit', minute: '2-digit', second: '2-digit',
         hour12: false,
+    };
+
+    const truncateTitle = (title, maxLength = 35) => {
+        return title.length > maxLength ? `${title.slice(0, maxLength)}...` : title;
     };
 
     const handleDeleteScheduled = async (noticeId) => {
@@ -55,9 +113,7 @@ const NoticeBoardList = () => {
             setDeletingId(noticeId); // 삭제 중 상태
             const res = await fetch(`${API_BASE_URL}${NOTICE_SERVICE}/schedule/${noticeId}`, {
                 method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${accessToken}`
-                }
+                headers: { 'Authorization': `Bearer ${accessToken}` }
             });
 
             if (!res.ok) {
@@ -74,9 +130,12 @@ const NoticeBoardList = () => {
         }
     };
 
+    console.log("isInit:", isInit);
+    console.log("accessToken:", accessToken);
+    console.log("userId:", userId);
 
     useEffect(() => {
-        if (!isInit || !accessToken || !userId) return; // ✅ 초기화 완료 여부 확인
+        // if (!isInit || !accessToken || !userId) return; // ✅ 초기화 완료 여부 확인
 
         const fetchPosts = async () => {
             setLoading(true);
@@ -86,18 +145,16 @@ const NoticeBoardList = () => {
                     keyword: filters.keyword.trim(),
                     fromDate: startDate,
                     toDate: endDate,
-                    sortBy,
-                    sortDir,
-                    page,
-                    pageSize,
+                    sortBy: sortBy,
+                    sortDir: sortDir, page, pageSize: pageSize,
                 });
 
                 let url;
-
                 console.log('viewMode : ', viewMode);
                 console.log('departmentId : ', departmentId);
                 if (viewMode === 'MY') {
-                    url = `${API_BASE_URL}${NOTICE_SERVICE}/my`;
+                    // url = `${API_BASE_URL}${NOTICE_SERVICE}/my`;
+                    url = `${API_BASE_URL}${NOTICE_SERVICE}/my?${params.toString()}`;
                 } else if (viewMode === 'SCHEDULE') {
                     url = `${API_BASE_URL}${NOTICE_SERVICE}/schedule`;
                 }
@@ -106,9 +163,7 @@ const NoticeBoardList = () => {
                 }
 
                 const res = await fetch(url, {
-                    headers: {
-                        'Authorization': `Bearer ${accessToken}`,
-                    }
+                    headers: { 'Authorization': `Bearer ${accessToken}`, }
                 });
 
                 if (!res.ok) throw new Error(`서버 오류: ${res.status}`);
@@ -117,7 +172,6 @@ const NoticeBoardList = () => {
                 console.log('data : ', data);
                 console.log('data.generalNotices : ', data.generalNotices);
                 console.log('data.notices : ', data.notices);
-                console.log('data.posts : ', data.posts);
 
                 if (viewMode === 'MY') {
                     setGeneralNotices([])
@@ -139,7 +193,6 @@ const NoticeBoardList = () => {
                 setLoading(false);
             }
         };
-
         fetchPosts();
     }, [filters, page, pageSize, departmentId, isInit, viewMode, accessToken, userId]);
 
@@ -156,27 +209,52 @@ const NoticeBoardList = () => {
         setPage(0); // 첫 페이지로 초기화
     };
 
+    useEffect(() => {
+        if (accessToken) {
+            fetchFavoriteNotices(accessToken)
+                .then(setFavoriteList)
+                .catch(console.error);
+        }
+    }, [accessToken]);
+
+    const handleFavoriteClick = async (noticeId) => {
+        try {
+            await toggleFavoriteNotice(noticeId, accessToken);
+            const updated = await fetchFavoriteNotices(accessToken);
+            setFavoriteList(updated);
+        } catch (err) {
+            alert('즐겨찾기 처리 중 오류가 발생했습니다.');
+        }
+    };
+
     return (
         <div className="notice-board">
             <div className="header">
                 <h2>공지사항</h2>
                 <div className="filters">
-                    <input type="date" name="startDate" value={filters.startDate} onChange={handleInputChange} />
-                    <input type="date" name="endDate" value={filters.endDate} onChange={handleInputChange} />
-                    <input type="text"
-                        name="keyword"
-                        value={filters.keyword}
-                        placeholder="제목 검색"
+                    <div className="date-wrapper">
+                        <DateInput
+                            name="startDate"
+                            value={filters.startDate}
+                            onChange={handleInputChange}
+                            placeholder="시작일"
+                        />
+                    </div>
+                    <div className="date-wrapper">
+                        <DateInput
+                            name="endDate"
+                            value={filters.endDate}
+                            onChange={handleInputChange}
+                            placeholder="종료일"
+                        />
+                    </div>
+
+                    <input type="text" name="keyword" value={filters.keyword} placeholder="제목 검색"
                         onChange={handleInputChange}
-                        onKeyDown={(e) => {
-                            if (e.key === 'Enter') handleSearch();
-                        }}
-                    />
+                        onKeyDown={(e) => { if (e.key === 'Enter') handleSearch(); }} />
 
                     <div className="sort-options" style={{ display: 'flex', alignItems: 'center' }}>
-                        <select
-                            name="sortBy"
-                            value={filters.sortBy}
+                        <select name="sortBy" value={filters.sortBy}
                             onChange={(e) => setFilters(prev => ({ ...prev, sortBy: e.target.value }))}
                         >
                             <option value="createdAt">등록일</option>
@@ -187,34 +265,23 @@ const NoticeBoardList = () => {
                         <button
                             onClick={() =>
                                 setFilters(prev => ({
-                                    ...prev,
-                                    sortDir: prev.sortDir === 'asc' ? 'desc' : 'asc'
+                                    ...prev, sortDir: prev.sortDir === 'asc' ? 'desc' : 'asc'
                                 }))
                             }
                             style={{
-                                marginLeft: '8px',
-                                background: 'none',
-                                border: 'none',
-                                cursor: 'pointer',
-                                fontSize: '1.2em',
+                                background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.2em',
                             }}
                             title={filters.sortDir === 'asc' ? '오름차순' : '내림차순'}
                         >
                             {filters.sortDir === 'asc' ? '⬆️' : '⬇️'}
                         </button>
                     </div>
-
-
-                    <button onClick={handleSearch}>검색</button>
                     <button
                         className="reset-button"
                         onClick={() => {
                             setFilters({
-                                startDate: '',
-                                endDate: '',
-                                keyword: '',
-                                sortBy: 'createdAt',
-                                sortDir: 'desc'
+                                startDate: '', endDate: '', keyword: '',
+                                sortBy: 'createdAt', sortDir: 'desc'
                             });
                             setPage(0);
                             setPageSize(10);
@@ -222,6 +289,14 @@ const NoticeBoardList = () => {
                     >
                         초기화
                     </button>
+
+                    <div className="write-button-wrapper">
+                        {(userRole === 'ADMIN' && ['MANAGER', 'DIRECTOR', 'CEO'].includes(userPosition)) && (
+                            <button className="write-button" onClick={() => navigate('/notice/write')}>
+                                작성하기
+                            </button>
+                        )}
+                    </div>
 
                     <div className="view-mode-buttons">
                         <button className={viewMode === 'ALL' ? 'active' : ''} onClick={() => { setViewMode('ALL'); setPage(0); navigate('/notice') }}>
@@ -233,21 +308,26 @@ const NoticeBoardList = () => {
                         <button className={viewMode === 'SCHEDULE' ? 'active' : ''} onClick={() => { setViewMode('SCHEDULE'); setPage(0); navigate(`/notice/schedule`) }}>
                             예약목록
                         </button>
+                        <button
+                            className="favorite-toggle-icon"
+                            onClick={() => setShowFavoritesOnly(prev => !prev)}
+                            title={showFavoritesOnly ? '즐겨찾기 해제' : '즐겨찾기만 보기'}
+                        >
+                            <span className={showFavoritesOnly ? 'active-star' : 'star'}>
+                                {showFavoritesOnly ? '★ ' : '☆ '}
+                            </span>
+                            <label>
+                                즐겨찾기
+                            </label>
+                        </button>
                     </div>
-
-                    <div className="write-button-wrapper">
-                        {(userRole === 'ADMIN' && ['MANAGER', 'DIRECTOR', 'CEO'].includes(userPosition)) && (
-                            <button className="write-button" onClick={() => navigate('/notice/write')}>
-                                작성하기
-                            </button>
-                        )}
-                    </div>
-
                 </div>
             </div>
 
             {loading ? (
-                <p>불러오는 중...</p>
+                <div style={{ padding: '12px 0' }}>
+                    <ListSkeleton items={8} />
+                </div>
             ) : (
                 <>
                     <table className="notice-table">
@@ -263,27 +343,74 @@ const NoticeBoardList = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {generalNotices.map(post => (
+                            {filteredGeneralNotices.map(post => (
                                 <tr
                                     key={`generalnotice-${post.noticeId}`} className="generalnotice-row" onClick={() => navigate(`/notice/${post.noticeId}`)}>
                                     <td style={{
                                         color: post.position === userPosition ? '#28c309' : '#000',
                                         fontWeight: post.position === userPosition ? 'bold' : 'normal'
                                     }}>{post.noticeId}</td>
-                                    <td>{post.attachmentUri && post.attachmentUri.length > 0 && post.attachmentUri != '[]' ? '📎' : ''}</td>
+                                    <td>
+                                        {(() => {
+                                            try {
+                                                const files = JSON.parse(post.attachmentUri); // attachmentUri는 JSON 문자열
+                                                if (!Array.isArray(files) || files.length === 0) return null;
+
+                                                if (files.length === 1) {
+                                                    const ext = files[0].split('.').pop().toLowerCase();
+                                                    const iconPath = fileIconMap[ext] || '/icons/default.png';
+                                                    return <img src={iconPath} alt={ext} style={{ width: '20px', height: '20px' }} />;
+                                                } else {
+                                                    return <img src="/icons/multiple.png" alt="multiple files" style={{ width: '20px', height: '20px' }} />;
+                                                }
+                                            } catch (e) {
+                                                return null;
+                                            }
+                                        })()}
+                                    </td>
                                     <td style={{
                                         color: post.position === userPosition ? '#28c309' : '#000',
                                         fontWeight: post.position === userPosition ? 'bold' : 'normal'
-                                    }}>{post.title}</td>
+                                    }}>
+                                        {/* ⭐ 별 아이콘 표시 */}
+                                        {viewMode !== 'SCHEDULE' && <button
+                                            className={`favorite-btn ${favoriteList.includes(post.noticeId) ? 'active' : ''}`}
+                                            onClick={(e) => {
+                                                e.stopPropagation(); // 클릭 이벤트 버블링 방지
+                                                handleFavoriteClick(post.noticeId);
+                                            }}
+                                            title={favoriteList.includes(post.noticeId) ? '즐겨찾기 해제' : '즐겨찾기 추가'}
+                                        >
+                                            <span className="star-icon">{favoriteList.includes(post.noticeId) ? '★' : '☆'}</span>
+                                        </button>}
+
+                                        <span onClick={() => navigate(`/notice/${post.noticeId}`)}>
+                                            {post.departmentId === 0 ? (
+                                                <span style={{ 'color': 'red', 'fontWeight': 'bold', 'marginRight': '4px' }}>
+                                                    [전체]
+                                                </span>
+                                            ) : (
+                                                <span></span>
+                                            )}
+                                            {post.commentCount === 0 ? (
+                                                truncateTitle(`${post.title}`)
+                                            ) : (
+                                                <>
+                                                    {truncateTitle(post.title)}
+                                                    <span style={{ color: '#777', fontSize: '0.9em' }}> ({post.commentCount})</span>
+                                                </>
+                                            )}
+                                        </span>
+                                    </td>
+
                                     <td style={{
                                         color: post.position === userPosition ? '#28c309' : '#000',
                                         fontWeight: post.position === userPosition ? 'bold' : 'normal'
                                     }}>
                                         {post.employStatus === 'INACTIVE' ?
                                             (<span style={{ color: '#aaa', fontStyle: 'italic', marginLeft: '4px' }}>
-                                                `${post.name}(퇴사)`
-                                            </span>)
-                                            : `${post.name}`
+                                                {`${post.name}(퇴사)`}
+                                            </span>) : `${post.name}`
                                         }
                                     </td>
                                     <td style={{
@@ -306,12 +433,9 @@ const NoticeBoardList = () => {
                                                 onClick={() => handleDeleteScheduled(post.noticeId)}
                                                 disabled={deletingId === post.noticeId}
                                                 style={{
-                                                    background: 'none',
-                                                    border: 'none',
-                                                    color: 'red',
-                                                    fontSize: '1.1em',
+                                                    background: 'none', border: 'none', color: 'red',
+                                                    fontSize: '1.1em', transition: 'color 0.2s',
                                                     cursor: deletingId === post.noticeId ? 'not-allowed' : 'pointer',
-                                                    transition: 'color 0.2s',
                                                 }}
                                                 onMouseEnter={(e) => {
                                                     if (deletingId !== post.noticeId) e.currentTarget.style.color = '#ff4444';
@@ -335,24 +459,63 @@ const NoticeBoardList = () => {
                                 </tr>
                             )}
 
-
-                            {notices.map(post => (
+                            {filteredNotices.map(post => (
                                 <tr
-                                    key={`notice-${post.noticeId}`} className="notice-row" onClick={() => navigate(`${post.noticeId}`)}>
+                                    key={`notice-${post.noticeId}`} className="notice-row">
                                     <td style={{
                                         color: post.position === userPosition ? '#21429e' : '#000',
                                         fontWeight: post.position === userPosition ? 'bold' : 'normal'
                                     }}>{post.noticeId}</td>
-                                    <td>{post.attachmentUri && post.attachmentUri.length > 0 && post.attachmentUri != '[]' ? '📎' : ''}</td>
-                                    {/* <td>{post.title}</td> */}
+                                    {/* <td>{post.attachmentUri && post.attachmentUri.length > 0 && post.attachmentUri != '[]' ? '📎' : ''}</td> */}
+                                    <td>
+                                        {(() => {
+                                            try {
+                                                const files = JSON.parse(post.attachmentUri); // attachmentUri는 JSON 문자열
+                                                if (!Array.isArray(files) || files.length === 0) return null;
+                                                if (files.length === 1) {
+                                                    const ext = files[0].split('.').pop().toLowerCase();
+                                                    const iconPath = fileIconMap[ext] || '/icons/default.png';
+                                                    return <img src={iconPath} alt={ext} style={{ width: '20px', height: '20px' }} />;
+                                                } else {
+                                                    return <img src="/icons/multiple.png" alt="multiple files" style={{ width: '20px', height: '20px' }} />;
+                                                }
+                                            } catch (e) {
+                                                return null;
+                                            }
+                                        })()}
+                                    </td>
                                     <td style={{
                                         color: post.position === userPosition ? '#21429e' : '#000',
                                         fontWeight: post.position === userPosition ? 'bold' : 'normal'
                                     }}>
-                                        {post.commentCount === 0 ?
-                                            (`${post.title}`)
-                                            : `${post.title}(${post.commentCount})`
-                                        }
+                                        {/* ⭐ 별 아이콘 표시 */}
+                                        {viewMode !== 'SCHEDULE' && <button
+                                            className={`favorite-btn ${favoriteList.includes(post.noticeId) ? 'active' : ''}`}
+                                            onClick={(e) => {
+                                                e.stopPropagation(); // 클릭 이벤트 버블링 방지
+                                                handleFavoriteClick(post.noticeId);
+                                            }}
+                                            title={favoriteList.includes(post.noticeId) ? '즐겨찾기 해제' : '즐겨찾기 추가'}
+                                        >
+                                            <span className="star-icon">{favoriteList.includes(post.noticeId) ? '★' : '☆'}</span>
+                                        </button>}
+                                        <span onClick={() => navigate(`/notice/${post.noticeId}`)}>
+                                            {post.departmentId === 0 ? (
+                                                <span style={{ 'color': 'red', 'fontWeight': 'bold', 'marginRight': '4px' }}>
+                                                    [전체]
+                                                </span>
+                                            ) : (
+                                                <span></span>
+                                            )}
+                                            {post.commentCount === 0 ? (
+                                                truncateTitle(`${post.title}`)
+                                            ) : (
+                                                <>
+                                                    {truncateTitle(post.title)}
+                                                    <span style={{ color: '#777', fontSize: '0.9em' }}> ({post.commentCount})</span>
+                                                </>
+                                            )}
+                                        </span>
                                     </td>
                                     <td style={{
                                         color: post.position === userPosition ? '#21429e' : '#000',
@@ -360,7 +523,7 @@ const NoticeBoardList = () => {
                                     }}>
                                         {post.employStatus === 'INACTIVE' ?
                                             (<span style={{ color: '#aaa', fontStyle: 'italic', marginLeft: '4px' }}>
-                                                `${post.name}(퇴사)`
+                                                {post.name}(퇴사)
                                             </span>)
                                             : `${post.name}`
                                         }
@@ -384,12 +547,9 @@ const NoticeBoardList = () => {
                                                 onClick={() => handleDeleteScheduled(post.noticeId)}
                                                 disabled={deletingId === post.noticeId}
                                                 style={{
-                                                    background: 'none',
-                                                    border: 'none',
-                                                    color: 'red',
-                                                    fontSize: '1.1em',
+                                                    background: 'none', border: 'none', color: 'red',
+                                                    fontSize: '1.1em', transition: 'color 0.2s',
                                                     cursor: deletingId === post.noticeId ? 'not-allowed' : 'pointer',
-                                                    transition: 'color 0.2s',
                                                 }}
                                                 onMouseEnter={(e) => {
                                                     if (deletingId !== post.noticeId) e.currentTarget.style.color = '#ff4444';
@@ -405,12 +565,10 @@ const NoticeBoardList = () => {
                                     )}
                                 </tr>
                             ))}
-
-
                         </tbody>
                     </table>
 
-                    <div className="pagination">
+                    {/* <div className="pagination">
                         <button onClick={() => setPage(p => Math.max(p - 1, 0))} disabled={page === 0}>이전</button>
                         {Array.from({ length: totalPages }, (_, i) => (
                             <button key={i} className={page === i ? 'active' : ''} onClick={() => setPage(i)}>
@@ -418,7 +576,90 @@ const NoticeBoardList = () => {
                             </button>
                         ))}
                         <button onClick={() => setPage(p => Math.min(p + 1, totalPages - 1))} disabled={page === totalPages - 1}>다음</button>
+                    </div> */}
+
+                    <div className="pagination">
+                        <button onClick={() => setPage(p => Math.max(p - 1, 0))} disabled={page === 0}>
+                            이전
+                        </button>
+
+                        {(() => {
+                            const maxVisibleAround = 1; // 현재 페이지 앞뒤로 몇 개 보여줄지
+                            const lastPage = totalPages - 1;
+                            const pages = [];
+
+                            // 10페이지 이하 → 전부 표시
+                            if (totalPages <= 10) {
+                                for (let i = 0; i < totalPages; i++) {
+                                    pages.push(
+                                        <button
+                                            key={i}
+                                            className={page === i ? 'active' : ''}
+                                            onClick={() => setPage(i)}
+                                        >
+                                            {i + 1}
+                                        </button>
+                                    );
+                                }
+                                return pages;
+                            }
+
+                            // 항상 첫 페이지 표시
+                            pages.push(
+                                <button
+                                    key={0}
+                                    className={page === 0 ? 'active' : ''}
+                                    onClick={() => setPage(0)}
+                                >
+                                    1
+                                </button>
+                            );
+
+                            // 앞쪽 ...
+                            if (page > maxVisibleAround + 1) {
+                                pages.push(<span key="start-ellipsis">...</span>);
+                            }
+
+                            // 현재 페이지 앞뒤로 표시
+                            const start = Math.max(1, page - maxVisibleAround);
+                            const end = Math.min(lastPage - 1, page + maxVisibleAround);
+
+                            for (let i = start; i <= end; i++) {
+                                pages.push(
+                                    <button
+                                        key={i}
+                                        className={page === i ? 'active' : ''}
+                                        onClick={() => setPage(i)}
+                                    >
+                                        {i + 1}
+                                    </button>
+                                );
+                            }
+
+                            // 뒤쪽 ...
+                            if (page < lastPage - (maxVisibleAround + 1)) {
+                                pages.push(<span key="end-ellipsis">...</span>);
+                            }
+
+                            // 항상 마지막 페이지 표시
+                            pages.push(
+                                <button
+                                    key={lastPage}
+                                    className={page === lastPage ? 'active' : ''}
+                                    onClick={() => setPage(lastPage)}
+                                >
+                                    {lastPage + 1}
+                                </button>
+                            );
+
+                            return pages;
+                        })()}
+
+                        <button onClick={() => setPage(p => Math.min(p + 1, totalPages - 1))} disabled={page === totalPages - 1}>
+                            다음
+                        </button>
                     </div>
+
 
                     <div className="page-size-selector">
                         <label>보기 개수:&nbsp;</label>
@@ -429,8 +670,9 @@ const NoticeBoardList = () => {
                         </select>
                     </div>
                 </>
-            )}
-        </div>
+            )
+            }
+        </div >
     );
 };
 
